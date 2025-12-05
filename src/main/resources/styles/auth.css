@@ -58,6 +58,9 @@
     -fx-padding: 10px 45px;
     -fx-cursor: hand;
 }
+.button:hover {
+    -fx-background-color: #0f4225;
+}
 
 /* Styles pour la partie bleue */
 .toggle-panel {
@@ -75,7 +78,7 @@
 .toggle-text {
     -fx-font-size: 14px;
     -fx-text-fill: white;
-    -fx-line-spacing: 20px;
+    -fx-line-spacing: 10px;
     -fx-letter-spacing: 0.3px;
     -fx-text-alignment: center;
     -fx-wrap-text: true;
