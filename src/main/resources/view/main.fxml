@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx/23"
+            xmlns:fx="http://javafx.com/fxml/1"
+            prefWidth="900" prefHeight="600">
+
+    <!-- TOP BAR -->
+    <top>
+        <HBox spacing="10" style="-fx-background-color: #2d3436; -fx-padding: 15;">
+            <Label text="📚 Application Gestion Scolaire"
+                   style="-fx-text-fill: white; -fx-font-size: 18; -fx-font-weight: bold;" />
+        </HBox>
+    </top>
+
+    <!-- LEFT MENU -->
+    <left>
+        <VBox spacing="15" style="-fx-background-color: #dfe6e9; -fx-padding: 20;">
+            <Button text="Dashboard" prefWidth="150" />
+            <Button text="Élèves" prefWidth="150" />
+            <Button text="Professeurs" prefWidth="150" />
+            <Button text="Classes" prefWidth="150" />
+            <Button text="Paramètres" prefWidth="150" />
+        </VBox>
+    </left>
+
+    <!-- MAIN CONTENT -->
+    <center>
+        <VBox spacing="20" alignment="CENTER"
+              style="-fx-padding: 20;">
+            <Label text="Bienvenue dans le système de gestion scolaire"
+                   style="-fx-font-size: 20; -fx-font-weight: bold;" />
+
+            <Label text="Interface JavaFX moderne prête à l'emploi." />
+        </VBox>
+    </center>
+
+</BorderPane>

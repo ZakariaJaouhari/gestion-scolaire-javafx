@@ -1,0 +1,100 @@
+* {
+    -fx-font-family: 'Montserrat';
+}
+
+/* Container principal - StackPane transparent */
+.container {
+    -fx-background-color: white;
+    -fx-background-radius: 30px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.35), 5, 0, 0, 15);
+    -fx-min-width: 968px;
+    -fx-min-height: 480px;
+    -fx-max-width: 968px;
+    -fx-max-height: 480px;
+}
+
+/* Partie gauche (formulaire) - TOUS les coins arrondis car elle est complète */
+.left-pane {
+    -fx-pref-width: 484px; /* Prend toute la largeur */
+    -fx-pref-height: 480px;
+    -fx-background-color: white;
+    -fx-background-radius: 30px 0 0 30px; /* Tous les coins arrondis */
+    -fx-translate-x: 0; /* Positionné à gauche */
+}
+
+/* Partie droite (bleue) - Positionnée par-dessus le formulaire */
+.right-pane {
+    -fx-pref-width: 484px;
+    -fx-pref-height: 480px;
+    -fx-background-color: #1e3a8a;
+    -fx-background-radius: 30px; /* Tous les coins arrondis */
+}
+
+.form-inner {
+    -fx-max-width: 390px;
+    -fx-padding: 40px 80px 40px 40px;
+    -fx-spacing: 20px;
+    -fx-alignment: center;
+}
+
+.title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
+}
+
+.text-field, .password-field {
+    -fx-background-color: #eee;
+    -fx-background-radius: 8px;
+    -fx-padding: 10px 15px;
+    -fx-pref-width: 300px;
+}
+
+.button {
+    -fx-background-radius: 8px;
+    -fx-background-color: #14532d;
+    -fx-text-fill: white;
+    -fx-font-weight: 600;
+    -fx-padding: 10px 45px;
+    -fx-cursor: hand;
+}
+
+/* Styles pour la partie bleue */
+.toggle-panel {
+    -fx-padding: 0 30px;
+    -fx-alignment: center;
+    -fx-spacing: 15px;
+}
+
+.toggle-title {
+    -fx-font-size: 24px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.toggle-text {
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+    -fx-line-spacing: 20px;
+    -fx-letter-spacing: 0.3px;
+    -fx-text-alignment: center;
+    -fx-wrap-text: true;
+}
+
+.toggle-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: white;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-padding: 10px 45px;
+    -fx-font-weight: 600;
+    -fx-letter-spacing: 0.5px;
+    -fx-text-transform: uppercase;
+    -fx-cursor: hand;
+}
+
+.toggle-btn:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+}

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/23"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.controller.SignupController"
+            style="-fx-background-color: linear-gradient(to right, #e2e2e2, #c9d6ff);">
+
+    <!-- LOGO en haut à gauche -->
+    <ImageView fx:id="logo"
+               fitWidth="240"
+               preserveRatio="true"
+               AnchorPane.leftAnchor="-60"
+               AnchorPane.topAnchor="-30">
+        <image>
+            <Image url="/images/LogoN.png" />
+        </image>
+    </ImageView>
+
+    <AnchorPane fx:id="containerWrapper"
+                AnchorPane.topAnchor="0"
+                AnchorPane.bottomAnchor="0"
+                AnchorPane.leftAnchor="0"
+                AnchorPane.rightAnchor="0">
+
+        <!-- Ce StackPane occupe toute la fenêtre et centre son contenu -->
+        <StackPane alignment="CENTER"
+                   AnchorPane.topAnchor="0"
+                   AnchorPane.bottomAnchor="0"
+                   AnchorPane.leftAnchor="0"
+                   AnchorPane.rightAnchor="0">
+
+            <!-- HBox qui contient les deux parties côte à côte -->
+            <HBox styleClass="container" spacing="0">
+
+                <!-- PARTIE GAUCHE: Formulaire d'inscription -->
+                <VBox prefWidth="484" prefHeight="480" alignment="CENTER" styleClass="form-container sign-up">
+                    <VBox alignment="CENTER" spacing="15" styleClass="form-inner">
+                        <Label text="S’inscrire" styleClass="title"/>
+                        <Label text="C’est rapide et facile." styleClass="subtitle"/>
+
+                        <!-- Ligne 1: Nom d'école + Nom directeur -->
+                        <HBox spacing="10" alignment="CENTER">
+                            <TextField fx:id="nomEcole" promptText="Nom d'école" styleClass="input-field-half-width"/>
+                            <TextField fx:id="nomDirecteur" promptText="Nom directeur" styleClass="input-field-half-width"/>
+                        </HBox>
+
+                        <!-- Ligne 2: Email -->
+                        <TextField fx:id="email" promptText="Adresse email" styleClass="input-field-full-width"/>
+
+                        <!-- Ligne 3: Mot de passe + Année scolaire -->
+                        <HBox spacing="10" alignment="CENTER">
+                            <PasswordField fx:id="password" promptText="Mot de passe" styleClass="input-field-half-width"/>
+                            <TextField fx:id="annee" promptText="Année scolaire" styleClass="input-field-half-width"/>
+                        </HBox>
+
+                        <!-- Ligne 4: Académie + Direction -->
+                        <HBox spacing="10" alignment="CENTER">
+                            <TextField fx:id="academie" promptText="Académie" styleClass="input-field-half-width"/>
+                            <TextField fx:id="direction" promptText="Direction" styleClass="input-field-half-width"/>
+                        </HBox>
+
+                        <!-- Bouton S'inscrire -->
+                        <Button text="S'inscrire" onAction="#register" styleClass="primary-btn"/>
+                    </VBox>
+                </VBox>
+
+                <!-- PARTIE DROITE: Section bleue -->
+                <VBox prefWidth="484" prefHeight="480" alignment="CENTER" styleClass="right-pane">
+                    <VBox alignment="CENTER" spacing="15" styleClass="toggle-panel toggle-right">
+                        <Label text="Bonjour!" styleClass="toggle-title"/>
+                        <Label text="Un système d'information intégré qui permet la mise en place de nouvelles méthodes de gestion scolaire."
+                               wrapText="true" styleClass="toggle-text"/>
+                        <Button fx:id="loginButton" text="Se connecter" onAction="#switchToLogin" styleClass="toggle-btn"/>
+                    </VBox>
+                </VBox>
+
+            </HBox>
+
+        </StackPane>
+
+    </AnchorPane>
+
+</AnchorPane>

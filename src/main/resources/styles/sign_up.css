@@ -1,0 +1,153 @@
+* {
+    -fx-font-family: 'Montserrat', sans-serif;
+}
+
+/* Container principal */
+.container {
+    -fx-background-color: white;
+    -fx-background-radius: 30px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.35), 5, 0, 0, 15);
+    -fx-min-width: 968px;
+    -fx-min-height: 480px;
+    -fx-max-width: 968px;
+    -fx-max-height: 480px;
+}
+
+/* Container du formulaire */
+.form-container {
+    -fx-pref-width: 484px;
+    -fx-pref-height: 480px;
+    -fx-alignment: center;
+}
+
+/* Contenu intérieur du formulaire */
+.form-inner {
+    -fx-padding: 0 40px;
+    -fx-alignment: center;
+    -fx-background-color: #fff;
+}
+
+/* Titres */
+.title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
+}
+
+.subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: #666;
+    -fx-line-spacing: 20px;
+    -fx-letter-spacing: 0.3px;
+    -fx-margin: 20px 0;
+}
+
+/* Champs de saisie */
+.input-field {
+    -fx-background-color: #eee;
+    -fx-border: none;
+    -fx-padding: 10px 15px;
+    -fx-font-size: 13px;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-min-height: 40px;
+    -fx-margin: 8px 0;
+    -fx-outline: none;
+}
+
+.full-width {
+    -fx-pref-width: 380px;
+}
+
+.half-width {
+    -fx-pref-width: 185px;
+    -fx-max-width: 185px;
+}
+
+/* HBox pour les champs en ligne */
+HBox {
+    -fx-spacing: 10px;
+    -fx-alignment: center;
+}
+
+/* Boutons */
+.primary-btn {
+    -fx-background-radius: 8px;
+    -fx-background-color: #14532d;
+    -fx-text-fill: white;
+    -fx-font-weight: 600;
+    -fx-padding: 10px 45px;
+    -fx-cursor: hand;
+}
+
+.primary-btn:hover {
+    -fx-background-color: #0f4225;
+}
+
+/* Partie droite (bleue) */
+.right-pane {
+    -fx-pref-width: 484px;
+    -fx-pref-height: 480px;
+    -fx-background-color: #1e3a8a;
+    -fx-background-radius: 30px; /* Tous les coins arrondis */
+}
+
+/* Panneau bleu */
+.toggle-panel {
+    -fx-pref-width: 484px;
+    -fx-pref-height: 480px;
+    -fx-alignment: center;
+    -fx-padding: 0 30px;
+    -fx-text-alignment: center;
+}
+
+/* Textes de la partie bleue */
+.toggle-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.toggle-text {
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+    -fx-line-spacing: 10px;
+    -fx-max-width: 350px;
+    -fx-letter-spacing: 0.3px;
+    -fx-text-alignment: center;
+    -fx-wrap-text: true;
+}
+
+/* Bouton de la partie bleue */
+.toggle-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: white;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-padding: 10px 45px;
+    -fx-font-weight: 600;
+    -fx-letter-spacing: 0.5px;
+    -fx-text-transform: uppercase;
+    -fx-cursor: hand;
+}
+
+.toggle-btn:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+}
+
+
+.input-field-half-width {
+    -fx-background-color: #eee;
+    -fx-background-radius: 8px;
+    -fx-padding: 10px 15px;
+    -fx-pref-width: 300px;
+}
+
+.input-field-full-width {
+    -fx-background-color: #eee;
+    -fx-background-radius: 8px;
+    -fx-padding: 10px 15px;
+    -fx-pref-width: 600px;
+}

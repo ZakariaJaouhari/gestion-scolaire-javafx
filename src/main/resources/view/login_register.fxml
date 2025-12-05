@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.image.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/23"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.controller.AuthController"
+            style="-fx-background-color: linear-gradient(to right, #e2e2e2, #c9d6ff);">
+
+    <!-- LOGO en haut à gauche -->
+    <ImageView fx:id="logo"
+               fitWidth="240"
+               preserveRatio="true"
+               AnchorPane.leftAnchor="-60"
+               AnchorPane.topAnchor="-30">
+        <image>
+            <Image url="/images/LogoN.png" />
+        </image>
+    </ImageView>
+
+    <AnchorPane fx:id="containerWrapper"
+                AnchorPane.topAnchor="0"
+                AnchorPane.bottomAnchor="0"
+                AnchorPane.leftAnchor="0"
+                AnchorPane.rightAnchor="0">
+
+        <!-- Ce StackPane occupe toute la fenêtre et centre son contenu -->
+        <StackPane alignment="CENTER"
+                   AnchorPane.topAnchor="0"
+                   AnchorPane.bottomAnchor="0"
+                   AnchorPane.leftAnchor="0"
+                   AnchorPane.rightAnchor="0">
+
+            <!-- HBox qui contient les deux parties côte à côte -->
+            <HBox styleClass="container" spacing="0">
+
+                <!-- PARTIE GAUCHE: Formulaire -->
+                <VBox prefWidth="400" prefHeight="480" alignment="CENTER" styleClass="left-pane">
+                    <VBox alignment="CENTER" spacing="20" styleClass="form-inner">
+                        <Label text="Bienvenue" styleClass="title"/>
+                        <TextField fx:id="loginEmail" promptText="Adresse email"/>
+                        <PasswordField fx:id="loginPassword" promptText="Mot de passe"/>
+                        <Button text="Connexion" onAction="#login"/>
+                    </VBox>
+                </VBox>
+
+                <!-- PARTIE DROITE: Section bleue -->
+                <VBox prefWidth="400" prefHeight="480" alignment="CENTER" styleClass="right-pane">
+                    <VBox alignment="CENTER" spacing="15" styleClass="toggle-panel">
+                        <Label text="Bonjour!" styleClass="toggle-title"/>
+                        <Label text="Un système d'information intégré qui permet la mise en place de nouvelles méthodes de gestion scolaire."
+                               wrapText="true" styleClass="toggle-text"/>
+                        <Button fx:id="registerButton" text="Créer compte pour mon école" onAction="#switchToRegister" styleClass="toggle-btn"/>
+                    </VBox>
+                </VBox>
+
+            </HBox>
+
+        </StackPane>
+
+    </AnchorPane>
+
+</AnchorPane>
