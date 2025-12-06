@@ -58,6 +58,22 @@ public class DirecteurDAO {
         return Optional.empty();
     }
 
+    public String getNomEcoleByDirecteurId(int directeurId) {
+        String sql = "SELECT nom_ecole FROM directeurs WHERE id = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, directeurId);
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getString("nom_ecole");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return "École non trouvée";
+    }
+
     // Trouver par email
     public Optional<Directeur> findByEmail(String email) {
         String sql = "SELECT * FROM directeurs WHERE email = ?";

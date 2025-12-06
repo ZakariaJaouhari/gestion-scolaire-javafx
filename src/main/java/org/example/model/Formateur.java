@@ -1,5 +1,7 @@
 package org.example.model;
 
+import org.example.util.SessionManager;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -19,6 +21,7 @@ public class Formateur {
     private String password;
     private String profilePicture;
     private Long directeurId;
+
 
     // Enums
     public enum Sexe {

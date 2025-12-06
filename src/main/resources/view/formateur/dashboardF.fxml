@@ -37,7 +37,7 @@
                 <ImageView fitWidth="27" fitHeight="27">
                     <image><Image url="@../../images/Bhome-hover.png"/></image>
                 </ImageView>
-                <Label text="Home" style="-fx-text-fill: #43639a; -fx-font-size: 17;"/>
+                <Label text="Home" style="-fx-text-fill: #43639a; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
             </HBox>
 
             <!-- PROFILE -->
@@ -45,7 +45,7 @@
                 <ImageView fitWidth="30" fitHeight="30">
                     <image><Image url="@../../images/prof.png"/></image>
                 </ImageView>
-                <Label text="Profile" style="-fx-text-fill: white; -fx-font-size: 17;"/>
+                <Label text="Profile" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
             </HBox>
 
             <!-- GROUPES -->
@@ -53,7 +53,7 @@
                 <ImageView fitWidth="30" fitHeight="30">
                     <image><Image url="@../../images/groupe.png"/></image>
                 </ImageView>
-                <Label text="Groupes" style="-fx-text-fill: white; -fx-font-size: 17;"/>
+                <Label text="Groupes" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
             </HBox>
 
             <!-- MODULES -->
@@ -61,7 +61,7 @@
                 <ImageView fitWidth="27" fitHeight="27">
                     <image><Image url="@../../images/module.png"/></image>
                 </ImageView>
-                <Label text="Modules" style="-fx-text-fill: white; -fx-font-size: 17;"/>
+                <Label text="Modules" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
             </HBox>
 
             <!-- NOTES -->
@@ -69,17 +69,17 @@
                 <ImageView fitWidth="35" fitHeight="35">
                     <image><Image url="@../../images/note.png"/></image>
                 </ImageView>
-                <Label text="Notes" style="-fx-text-fill: white; -fx-font-size: 17;"/>
+                <Label text="Notes" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 7;"/>
             </HBox>
 
             <Region VBox.vgrow="ALWAYS"/>
 
             <!-- LOGOUT -->
-            <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 0 12 30;" onMouseClicked="#handleLogout">
+            <HBox alignment="CENTER_LEFT" style="-fx-padding: 350 0 12 30;" onMouseClicked="#handleLogout">
                 <ImageView fitWidth="30" fitHeight="30">
                     <image><Image url="@../../images/logout.png"/></image>
                 </ImageView>
-                <Label text="Log out" style="-fx-text-fill: white; -fx-font-size: 17;"/>
+                <Label text="Log out" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
             </HBox>
 
             <Region prefHeight="20"/>
@@ -93,31 +93,43 @@
         <HBox alignment="CENTER_LEFT" style="-fx-padding: 20 40 0 40;">
 
             <!-- LOGO -->
-            <ImageView fitWidth="130" fitHeight="130" preserveRatio="true">
-                <image><Image url="/images/NOTES.png"/></image>
-            </ImageView>
-
-            <Label text="V 0.1.0"
-                   style="-fx-background-color: #ef4444; -fx-padding: 2 8; -fx-background-radius: 10; -fx-text-fill: white;"/>
-
-            <Region HBox.hgrow="ALWAYS"/>
-
-            <!-- ECOLE -->
             <HBox alignment="CENTER_LEFT" spacing="5">
-                <ImageView fitWidth="48" fitHeight="40">
-                    <image><Image url="@../../images/ecole(1).png"/></image>
+                <ImageView fitWidth="130" fitHeight="137" preserveRatio="true" style="-fx-padding: 0 27 0 0;">
+                    <image><Image url="/images/notes 2.png"/></image>
                 </ImageView>
-                <Label fx:id="nomEcoleLabel" style="-fx-font-size: 24; -fx-font-weight: 600; -fx-font-family: 'Apple Chancery';"/>
+                <VBox alignment="CENTER_LEFT" spacing="4" style="-fx-padding: 2 0 0 0;">
+                    <Label fx:id="versionLabel" text="V 0.1.0"
+                           style="-fx-font-size: 10; -fx-background-color: #ef4444; -fx-padding: 2 8; -fx-background-radius: 10; -fx-text-fill: white;"/>
+                </VBox>
             </HBox>
 
             <Region HBox.hgrow="ALWAYS"/>
 
+            <!-- ECOLE -->
+            <HBox alignment="CENTER_LEFT" spacing="5" style="-fx-padding: 0 30 0 0">
+                <ImageView fitWidth="48" fitHeight="40">
+                    <image>
+                        <Image url="/images/ecole(1).png"/>
+                    </image>
+                </ImageView>
+                <VBox alignment="CENTER_LEFT" spacing="2">
+                    <Label text="École" style="-fx-font-size: 14; -fx-text-fill: #6b7280;"/>
+                    <Label fx:id="nomEcoleLabel" style="-fx-font-size: 18; -fx-font-weight: 600;"/>
+                </VBox>
+            </HBox>
+
+
             <!-- NOM FORMATEUR -->
             <HBox alignment="CENTER_LEFT" spacing="5">
                 <ImageView fitWidth="48" fitHeight="40">
-                    <image><Image url="@../../images/profil.png"/></image>
+                    <image>
+                        <Image url="/images/profil.png"/>
+                    </image>
                 </ImageView>
-                <Label fx:id="nomFormateurLabel" style="-fx-font-size: 24; -fx-font-weight: 600; -fx-font-family: 'Apple Chancery';"/>
+                <VBox alignment="CENTER_LEFT" spacing="2">
+                    <Label text="Professeur" style="-fx-font-size: 14; -fx-text-fill: #6b7280;"/>
+                    <Label fx:id="nomFormateurLabel" style="-fx-font-size: 18; -fx-font-weight: 600;"/>
+                </VBox>
             </HBox>
         </HBox>
 
@@ -125,24 +137,28 @@
         <HBox style="-fx-padding: 0 0 0 44;">
 
             <!-- WELCOME TEXT -->
-            <VBox style="-fx-padding: 112 0 0 0;" prefWidth="600">
-                <Label text="Bonjour" style="-fx-font-size: 30; -fx-font-weight: 600; -fx-font-family: 'Apple Chancery';"/>
-                <Label fx:id="welcomeNameLabel" style="-fx-font-size: 48; -fx-font-weight: bold; -fx-font-family: 'Apple Chancery';"/>
-                <Label text="Un système d'information intégré qui permet la mise en place de nouvelles méthodes de gestion scolaire."
-                       wrapText="true" style="-fx-font-size: 20; -fx-text-fill: #6b7280; -fx-padding: 10 0 0 0;"/>
+            <VBox style="-fx-padding: 112 0 0 44;" prefWidth="500">
+                <Label text="Bonjour" style="-fx-font-size: 30; -fx-font-weight: 600;"/>
+                <Label fx:id="welcomeNameLabel" style="-fx-font-size: 48; -fx-font-weight: bold;"/>
+                <Label text="Un système d'information intégré qui permet la
+mise en place de nouvelles méthodes de gestion scolaire."
+                       wrapText="true" style="-fx-font-size: 20; -fx-text-fill: #6b7280;"/>
             </VBox>
 
             <!-- TODAY LABEL -->
-            <VBox alignment="CENTER" style="-fx-padding: 0 20;">
-                <Label text="TODAY"
-                       style="-fx-font-size: 24; -fx-text-fill: #6b7280; -fx-writing-mode: vertical-rl; -fx-rotate: 180;"/>
+            <VBox alignment="CENTER" prefWidth="40" prefHeight="200" style="-fx-padding: 85 30 0 150;">
+                <ImageView fitWidth="32" fitHeight="160">
+                    <image>
+                        <Image url="/images/today.png"/>
+                    </image>
+                </ImageView>
             </VBox>
 
             <!-- STATS CARDS -->
             <HBox spacing="20" alignment="CENTER" style="-fx-padding: 100 40 0 0;">
 
                 <!-- MODULES CARD -->
-                <VBox prefWidth="224" prefHeight="256"
+                <VBox fx:id="cardModules" prefWidth="224" prefHeight="256"
                       style="-fx-background-color: #059669; -fx-background-radius: 30; -fx-padding: 12;">
                     <Label text="01" style="-fx-text-fill: white; -fx-font-size: 18;"/>
                     <Region VBox.vgrow="ALWAYS"/>
@@ -157,7 +173,7 @@
                 </VBox>
 
                 <!-- STAGIAIRES CARD -->
-                <VBox prefWidth="224" prefHeight="256"
+                <VBox fx:id="cardEtudiants" prefWidth="224" prefHeight="256"
                       style="-fx-background-color: #3730a3; -fx-background-radius: 30; -fx-padding: 12;">
                     <Label text="02" style="-fx-text-fill: white; -fx-font-size: 18;"/>
                     <Region VBox.vgrow="ALWAYS"/>
@@ -172,7 +188,7 @@
                 </VBox>
 
                 <!-- GROUPES CARD -->
-                <VBox prefWidth="224" prefHeight="256"
+                <VBox fx:id="cardGroupes" prefWidth="224" prefHeight="256"
                       style="-fx-background-color: #ef4444; -fx-background-radius: 30; -fx-padding: 12;">
                     <Label text="03" style="-fx-text-fill: white; -fx-font-size: 18;"/>
                     <Region VBox.vgrow="ALWAYS"/>
@@ -192,68 +208,8 @@
         <HBox style="-fx-padding: 40 40 40 165;" spacing="40">
 
             <!-- EXAMENS TABLE -->
-            <VBox prefWidth="800" style="-fx-background-color: white; -fx-background-radius: 30; -fx-padding: 24;">
-                <HBox alignment="CENTER_LEFT" spacing="10">
-                    <VBox>
-                        <Label text="Examens" style="-fx-font-size: 36; -fx-font-weight: bold; -fx-font-family: 'Apple Chancery';"/>
-                        <Label text="Pour rester en contact avec vos stagiaires" style="-fx-font-size: 14; -fx-text-fill: #6b7280;"/>
-                    </VBox>
-                    <Region HBox.hgrow="ALWAYS"/>
-                    <Button fx:id="addExamButton" text="+ Examen"
-                            style="-fx-background-color: #059669; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20; -fx-background-radius: 10;"/>
-                </HBox>
 
-                <!-- EXAMENS TABLE -->
-                <TableView fx:id="examensTable" prefHeight="300" style="-fx-padding: 20 0;">
-                    <columns>
-                        <TableColumn text="Groupe" prefWidth="150" fx:id="groupeColumn"/>
-                        <TableColumn text="Module" prefWidth="200" fx:id="moduleColumn"/>
-                        <TableColumn text="Date" prefWidth="120" fx:id="dateColumn"/>
-                        <TableColumn text="Heure" prefWidth="100" fx:id="heureColumn"/>
-                        <TableColumn text="Actions" prefWidth="80"/>
-                    </columns>
-                </TableView>
-
-
-                <!-- ADD EXAM FORM (HIDDEN INITIALLY) -->
-                <VBox fx:id="addExamForm" visible="false" spacing="20" style="-fx-padding: 20;">
-                    <HBox spacing="20">
-                        <VBox spacing="5">
-                            <Label text="Sélectionner un groupe" style="-fx-font-size: 12; -fx-text-fill: #666;"/>
-                            <ComboBox fx:id="groupeComboBox" prefWidth="300"/>
-                        </VBox>
-                        <VBox spacing="5">
-                            <Label text="Sélectionner un module" style="-fx-font-size: 12; -fx-text-fill: #666;"/>
-                            <ComboBox fx:id="moduleComboBox" prefWidth="300"/>
-                        </VBox>
-                    </HBox>
-                    <HBox spacing="20">
-                        <VBox spacing="5">
-                            <Label text="Date et heure" style="-fx-font-size: 12; -fx-text-fill: #666;"/>
-                            <HBox spacing="10">
-                                <DatePicker fx:id="examDatePicker" prefWidth="150"/>
-                                <ComboBox fx:id="heureComboBox" prefWidth="150">
-                                    <items>
-                                        <FXCollections fx:factory="observableArrayList">
-                                        </FXCollections>
-                                    </items>
-                                </ComboBox>
-                            </HBox>
-                        </VBox>
-                        <VBox spacing="5">
-                            <Label text="Durée (minutes)" style="-fx-font-size: 12; -fx-text-fill: #666;"/>
-                            <TextField fx:id="dureeTextField" prefWidth="150"/>
-                        </VBox>
-                    </HBox>
-                    <HBox spacing="20">
-                        <Button text="Ajouter" style="-fx-background-color: #059669; -fx-text-fill: white; -fx-padding: 10 30;"
-                                onAction="#addExam"/>
-                        <Button text="Annuler" style="-fx-background-color: #ef4444; -fx-text-fill: white; -fx-padding: 10 30;"
-                                onAction="#cancelAddExam"/>
-                    </HBox>
-                </VBox>
-            </VBox>
-
+            <Region HBox.hgrow="ALWAYS"/>
             <!-- CALENDAR -->
             <VBox prefWidth="490" style="-fx-background-color: white; -fx-background-radius: 30; -fx-padding: 20;">
 

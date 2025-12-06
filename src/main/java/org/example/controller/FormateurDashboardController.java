@@ -7,7 +7,13 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import org.example.dao.DirecteurDAO;
 import org.example.dao.FormateurDAO;
 import org.example.model.Formateur;
 import org.example.util.SessionManager;
@@ -17,8 +23,15 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
+import java.util.Locale;
 
 public class FormateurDashboardController {
+
+    @FXML private Label versionLabel;
+    @FXML private VBox cardModules;
+    @FXML private VBox cardGroupes;
+    @FXML private VBox cardEtudiants;
 
     @FXML private Label welcomeNameLabel;
     @FXML private Label nomEcoleLabel;
@@ -28,7 +41,7 @@ public class FormateurDashboardController {
     @FXML private Label groupesCountLabel;
     @FXML private ImageView profileImageView;
 
-    @FXML private TableView<Examen> examensTable;
+    //@FXML private TableView<Examen> examensTable;
     @FXML private VBox addExamForm;
     @FXML private Button addExamButton;
     @FXML private ComboBox<String> groupeComboBox;
@@ -42,9 +55,9 @@ public class FormateurDashboardController {
 
     private YearMonth currentYearMonth;
     private FormateurDAO formateurDAO;
-    private ObservableList<Examen> examensList;
+   // private ObservableList<Examen> examensList;
 
-    // Classe interne pour les examens
+    /* Classe interne pour les examens
     public static class Examen {
         private String groupe;
         private String module;
@@ -62,7 +75,7 @@ public class FormateurDashboardController {
         public String getModule() { return module; }
         public String getDate() { return date; }
         public String getHeure() { return heure; }
-    }
+    }*/
 
     @FXML
     public void initialize() {
@@ -92,26 +105,32 @@ public class FormateurDashboardController {
         loadStats();
 
         // Initialiser la table des examens
-        initializeExamensTable();
+        //initializeExamensTable();
 
         // Initialiser le calendrier
         currentYearMonth = YearMonth.now();
         updateCalendar();
 
         // Initialiser les combobox
-        initializeComboBoxes();
+       // initializeComboBoxes();
 
         // Charger les examens
-        loadExamens();
+        // loadExamens();
     }
 
     private void updateUserInfo(Formateur formateur) {
         welcomeNameLabel.setText(formateur.getNomComplet());
         nomFormateurLabel.setText(formateur.getNomComplet());
 
-        // Pour l'école, vous devrez récupérer via le directeur
-        // nomEcoleLabel.setText(formateur.getDirecteur().getNomEcole());
-        nomEcoleLabel.setText("École de Formation");
+        // Récupérer et afficher le nom de l'école via le directeur
+        if (formateur.getDirecteurId() != null) {
+            DirecteurDAO DirecteurDAO = new DirecteurDAO();
+            String nomEcole = DirecteurDAO.getNomEcoleByDirecteurId(formateur.getDirecteurId().intValue());
+            nomEcoleLabel.setText(nomEcole);
+        } else {
+            nomEcoleLabel.setText("École non spécifiée");
+        }
+
 
         // Charger la photo de profil si disponible
         if (formateur.getProfilePicture() != null && !formateur.getProfilePicture().isEmpty()) {
@@ -135,7 +154,7 @@ public class FormateurDashboardController {
         groupesCountLabel.setText("4");
     }
 
-    private void initializeExamensTable() {
+    /*private void initializeExamensTable() {
         examensList = FXCollections.observableArrayList();
         examensTable.setItems(examensList);
 
@@ -240,63 +259,114 @@ public class FormateurDashboardController {
         // Charger les examens depuis la base de données
         // List<Examen> examens = formateurDAO.getExamens();
         // examensList.addAll(examens);
-    }
+    }*/
 
     private void updateCalendar() {
-        // Mettre à jour le label du mois/année
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM yyyy");
-        monthYearLabel.setText(currentYearMonth.format(formatter));
+        try {
+            // Mettre à jour le label du mois/année
+            String month = currentYearMonth.getMonth().getDisplayName(TextStyle.FULL, Locale.FRENCH);
+            int year = currentYearMonth.getYear();
+            monthYearLabel.setText(month.substring(0, 1).toUpperCase() + month.substring(1) + " " + year);
 
-        // Nettoyer le calendrier
-        calendarGrid.getChildren().clear();
+            // Nettoyer le grid
+            calendarGrid.getChildren().clear();
 
-        // Obtenir le premier jour du mois
-        LocalDate firstDay = currentYearMonth.atDay(1);
-        int firstDayOfWeek = firstDay.getDayOfWeek().getValue() % 7; // 0 pour dimanche
-
-        // Remplir le calendrier
-        int daysInMonth = currentYearMonth.lengthOfMonth();
-        LocalDate today = LocalDate.now();
-
-        int row = 0;
-        int col = firstDayOfWeek;
-
-        for (int day = 1; day <= daysInMonth; day++) {
-            Label dayLabel = new Label(String.valueOf(day));
-            dayLabel.setStyle("-fx-font-size: 16; -fx-alignment: center; -fx-padding: 15;");
-
-            // Mettre en évidence le jour actuel
-            if (currentYearMonth.equals(YearMonth.from(today)) && day == today.getDayOfMonth()) {
-                dayLabel.setStyle(dayLabel.getStyle() +
-                        "-fx-background-color: #059669; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20;");
-            } else {
-                dayLabel.setStyle(dayLabel.getStyle() +
-                        "-fx-background-color: white; -fx-border-color: #e5e7eb; -fx-border-width: 1;");
+            // Ajouter les jours de la semaine
+            String[] joursSemaine = {"Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"};
+            for (int i = 0; i < 7; i++) {
+                Label dayLabel = new Label(joursSemaine[i]);
+                dayLabel.setFont(Font.font("System", FontWeight.BOLD, 12));
+                dayLabel.setTextFill(Color.web("#6b7280"));
+                dayLabel.setStyle("-fx-padding: 10; -fx-alignment: center;");
+                calendarGrid.add(dayLabel, i, 0);
             }
 
-            // Effet hover
-            dayLabel.setOnMouseEntered(e -> {
-                if (!dayLabel.getStyle().contains("#059669")) {
-                    dayLabel.setStyle(dayLabel.getStyle().replace("white", "#f3f4f6"));
+            // Premier jour du mois
+            LocalDate firstDay = currentYearMonth.atDay(1);
+            int firstDayOfWeek = firstDay.getDayOfWeek().getValue() % 7; // Dimanche = 0
+
+            // Nombre de jours dans le mois
+            int daysInMonth = currentYearMonth.lengthOfMonth();
+
+            // Remplir les jours
+            int row = 1;
+            int col = firstDayOfWeek;
+
+            for (int day = 1; day <= daysInMonth; day++) {
+                StackPane dayCell = createDayCell(day);
+                calendarGrid.add(dayCell, col, row);
+
+                col++;
+                if (col > 6) {
+                    col = 0;
+                    row++;
                 }
-            });
-
-            dayLabel.setOnMouseExited(e -> {
-                if (!dayLabel.getStyle().contains("#059669")) {
-                    dayLabel.setStyle(dayLabel.getStyle().replace("#f3f4f6", "white"));
-                }
-            });
-
-            calendarGrid.add(dayLabel, col, row);
-
-            col++;
-            if (col > 6) {
-                col = 0;
-                row++;
             }
+
+            System.out.println("✅ Calendrier mis à jour: " + month + " " + year);
+
+        } catch (Exception e) {
+            System.err.println("❌ Erreur mise à jour calendrier: " + e.getMessage());
         }
     }
 
+    private StackPane createDayCell(int day) {
+        StackPane cell = new StackPane();
+        cell.setPrefSize(50, 50);
+
+        // Vérifier si c'est aujourd'hui
+        boolean isToday = currentYearMonth.equals(YearMonth.from(LocalDate.now())) &&
+                day == LocalDate.now().getDayOfMonth();
+
+        // Cercle de fond pour aujourd'hui
+        if (isToday) {
+            Circle circle = new Circle(20);
+            circle.setFill(Color.web("#059669"));
+            cell.getChildren().add(circle);
+        }
+
+        // Label du jour
+        Label dayLabel = new Label(String.valueOf(day));
+        dayLabel.setFont(Font.font("System", FontWeight.NORMAL, 14));
+        dayLabel.setTextFill(isToday ? Color.WHITE : Color.BLACK);
+
+        cell.getChildren().add(dayLabel);
+
+        // Effet hover
+        cell.setOnMouseEntered(e -> {
+            if (!isToday) {
+                cell.setStyle("-fx-background-color: #f3f4f6; -fx-background-radius: 25;");
+            }
+        });
+
+        cell.setOnMouseExited(e -> {
+            if (!isToday) {
+                cell.setStyle("");
+            }
+        });
+
+        return cell;
+    }
+
+    private void initializeStyles() {
+        // Style version label
+        versionLabel.setText("V 0.1.0");
+
+        // Appliquer les ombres aux cartes
+        String shadowStyle = "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 20, 0, 0, 10);";
+
+        if (cardModules != null) {
+            cardModules.setStyle(cardModules.getStyle() + shadowStyle);
+        }
+        if (cardEtudiants != null) {
+            cardEtudiants.setStyle(cardEtudiants.getStyle() + shadowStyle);
+        }
+        if (cardGroupes != null) {
+            cardGroupes.setStyle(cardGroupes.getStyle() + shadowStyle);
+        }
+    }
+
+    // ========== NAVIGATION CALENDRIER ==========
     @FXML
     private void previousMonth() {
         currentYearMonth = currentYearMonth.minusMonths(1);
@@ -346,17 +416,14 @@ public class FormateurDashboardController {
 
     @FXML
     private void handleLogout() {
+        System.out.println("Déconnexion demandée");
         SessionManager.getInstance().clearSession();
-        try {
-            StageManager.loadScene("/view/login.fxml", "/styles/auth.css", "Connexion - Gestion Scolaire");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        redirectToLogin();
     }
 
     private void redirectToLogin() {
         try {
-            StageManager.loadScene("/view/login.fxml", "/styles/auth.css", "Connexion - Gestion Scolaire");
+            StageManager.loadScene("/view/login_register.fxml", "/styles/auth.css", "Connexion");
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -50,12 +50,6 @@ public class AuthController {
                     SessionManager.getInstance().setCurrentDirecteur(directeur);
 
 
-                    // Afficher message de bienvenue
-                    showAlert("Succès", "Connexion réussie",
-                            "Bienvenue " + directeur.getNomDirecteur() + " !",
-                            Alert.AlertType.INFORMATION);
-
-
                     switchToDashboard();
                     return;
                 } else {
