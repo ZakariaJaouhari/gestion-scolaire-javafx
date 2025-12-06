@@ -3,9 +3,12 @@ package org.example.controller;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import org.example.dao.DirecteurDAO;
+import org.example.dao.FormateurDAO;
 import org.example.model.Directeur;
+import org.example.model.Formateur;
 import org.example.util.SessionManager;
 import org.example.util.StageManager;
+
 import java.io.IOException;
 import java.util.Optional;
 
@@ -16,10 +19,11 @@ public class AuthController {
     @FXML private Button registerButton;
 
     private DirecteurDAO directeurDAO = new DirecteurDAO();
+    private FormateurDAO formateurDAO = new FormateurDAO();
 
     @FXML
     private void login() {
-        System.out.println("=== TENTATIVE DE CONNEXION ===");
+        System.out.println("=== TENTATIVE DE CONNEXION AUTOMATIQUE ===");
 
         String email = loginEmail.getText().trim();
         String password = loginPassword.getText();
@@ -33,40 +37,61 @@ public class AuthController {
         }
 
         try {
-            // Chercher le directeur par email
+            // Essayer d'abord comme DIRECTEUR
             Optional<Directeur> directeurOpt = directeurDAO.findByEmail(email);
 
             if (directeurOpt.isPresent()) {
                 Directeur directeur = directeurOpt.get();
 
-                // Vérifier le mot de passe (dans une vraie app, il faudrait hasher)
                 if (directeur.getPassword().equals(password)) {
-                    System.out.println("✅ Connexion réussie pour: " + directeur.getNomDirecteur());
+                    System.out.println("✅ Connexion DIRECTEUR réussie pour: " + directeur.getNomDirecteur());
 
-                    // Sauvegarder l'utilisateur connecté (singleton)
+                    // Sauvegarder dans la session
                     SessionManager.getInstance().setCurrentDirecteur(directeur);
 
+<<<<<<< Updated upstream
                     // Afficher message de bienvenue
                     showAlert("Succès", "Connexion réussie",
                             "Bienvenue " + directeur.getNomDirecteur() + " !",
                             Alert.AlertType.INFORMATION);
 
                     // Rediriger vers le dashboard
+=======
+                    // Rediriger vers dashboard directeur
+>>>>>>> Stashed changes
                     switchToDashboard();
-
+                    return;
                 } else {
-                    System.out.println("❌ Mot de passe incorrect");
-                    showAlert("Erreur", "Authentification échouée",
-                            "Mot de passe incorrect.",
-                            Alert.AlertType.ERROR);
-                    loginPassword.clear();
+                    System.out.println("❌ Mot de passe directeur incorrect");
                 }
-            } else {
-                System.out.println("❌ Email non trouvé: " + email);
-                showAlert("Erreur", "Compte non trouvé",
-                        "Aucun compte trouvé avec cet email. Voulez-vous vous inscrire ?",
-                        Alert.AlertType.ERROR);
             }
+
+            // Si pas directeur ou mauvais mot de passe, essayer comme FORMATEUR
+            Optional<Formateur> formateurOpt = formateurDAO.findByEmail(email);
+
+            if (formateurOpt.isPresent()) {
+                Formateur formateur = formateurOpt.get();
+
+                if (formateur.getPassword().equals(password)) {
+                    System.out.println("✅ Connexion FORMATEUR réussie pour: " + formateur.getNomComplet());
+
+                    // Sauvegarder dans la session
+                    SessionManager.getInstance().setCurrentFormateur(formateur);
+
+                    // Rediriger vers dashboard formateur
+                    switchToFormateurDashboard();
+                    return;
+                } else {
+                    System.out.println("❌ Mot de passe formateur incorrect");
+                }
+            }
+
+            // Si on arrive ici, c'est que l'utilisateur n'existe pas ou mauvais mot de passe
+            System.out.println("❌ Identifiants incorrects pour: " + email);
+            showAlert("Erreur", "Identifiants incorrects",
+                    "Email ou mot de passe incorrect. Vérifiez vos informations.",
+                    Alert.AlertType.ERROR);
+            loginPassword.clear();
 
         } catch (Exception e) {
             System.err.println("❌ Erreur technique lors du login: " + e.getMessage());
@@ -90,10 +115,20 @@ public class AuthController {
     @FXML
     public void switchToDashboard() {
         try {
-            // Charger le dashboard selon le rôle
+            // Charger le dashboard directeur
             StageManager.loadScene("/view/dashboard.fxml", "/styles/dashboard.css", "Tableau de bord - Gestion Scolaire");
         } catch (IOException e) {
             System.err.println("Erreur lors du chargement du dashboard: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void switchToFormateurDashboard() {
+        try {
+            // Charger le dashboard formateur
+            StageManager.loadScene("/view/formateur/dashboardF.fxml", "/styles/dashboard.css", "Tableau de bord Formateur - Gestion Scolaire");
+        } catch (IOException e) {
+            System.err.println("Erreur lors du chargement du dashboard formateur: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -108,12 +143,12 @@ public class AuthController {
 
     @FXML
     private void initialize() {
-        System.out.println("AuthController initialisé");
+        System.out.println("AuthController initialisé - Détection automatique");
 
-        // Optionnel: Entrée sur le champ mot de passe pour login
+        // Entrée sur le champ mot de passe pour login
         loginPassword.setOnAction(event -> login());
 
-        // Optionnel: Focus automatique
+        // Focus automatique
         loginEmail.requestFocus();
     }
 }
