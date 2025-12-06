@@ -49,16 +49,13 @@ public class AuthController {
                     // Sauvegarder dans la session
                     SessionManager.getInstance().setCurrentDirecteur(directeur);
 
-<<<<<<< Updated upstream
+
                     // Afficher message de bienvenue
                     showAlert("Succès", "Connexion réussie",
                             "Bienvenue " + directeur.getNomDirecteur() + " !",
                             Alert.AlertType.INFORMATION);
 
-                    // Rediriger vers le dashboard
-=======
-                    // Rediriger vers dashboard directeur
->>>>>>> Stashed changes
+
                     switchToDashboard();
                     return;
                 } else {
@@ -126,7 +123,7 @@ public class AuthController {
     public void switchToFormateurDashboard() {
         try {
             // Charger le dashboard formateur
-            StageManager.loadScene("/view/formateur/dashboardF.fxml", "/styles/dashboard.css", "Tableau de bord Formateur - Gestion Scolaire");
+            StageManager.loadScene("/view/formateur/dashboardF.fxml", "/styles/dashboardF.css", "Tableau de bord Formateur - Gestion Scolaire");
         } catch (IOException e) {
             System.err.println("Erreur lors du chargement du dashboard formateur: " + e.getMessage());
             e.printStackTrace();
