@@ -46,11 +46,6 @@ public class AuthController {
                     // Sauvegarder l'utilisateur connecté (singleton)
                     SessionManager.getInstance().setCurrentDirecteur(directeur);
 
-                    // Afficher message de bienvenue
-                    showAlert("Succès", "Connexion réussie",
-                            "Bienvenue " + directeur.getNomDirecteur() + " !",
-                            Alert.AlertType.INFORMATION);
-
                     // Rediriger vers le dashboard
                     switchToDashboard();
 

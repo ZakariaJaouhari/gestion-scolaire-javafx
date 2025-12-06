@@ -34,7 +34,7 @@
                 </ImageView>
 
                 <Label text="Home"
-                       style="-fx-text-fill: #43639a; -fx-font-size: 17;"/>
+                       style="-fx-text-fill: #43639a; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
             </HBox>
 
             <!-- FORMATEURS -->
@@ -46,7 +46,7 @@
                     </image>
                 </ImageView>
 
-                <Label text="Formateurs" style="-fx-text-fill: white; -fx-font-size: 17;"/>
+                <Label text="Formateurs" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
             </HBox>
 
             <!-- STAGIAIRES -->
@@ -58,7 +58,7 @@
                     </image>
                 </ImageView>
 
-                <Label text="Stagiaires" style="-fx-text-fill: white; -fx-font-size: 17;"/>
+                <Label text="Stagiaires" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
             </HBox>
 
             <!-- GROUPES -->
@@ -70,7 +70,7 @@
                     </image>
                 </ImageView>
 
-                <Label text="Groupes" style="-fx-text-fill: white; -fx-font-size: 17;"/>
+                <Label text="Groupes" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
             </HBox>
 
             <!-- MODULES -->
@@ -82,7 +82,7 @@
                     </image>
                 </ImageView>
 
-                <Label text="Modules" style="-fx-text-fill: white; -fx-font-size: 17;"/>
+                <Label text="Modules" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 15;"/>
             </HBox>
 
             <!-- NOTES -->
@@ -94,7 +94,7 @@
                     </image>
                 </ImageView>
 
-                <Label text="Notes" style="-fx-text-fill: white; -fx-font-size: 17;"/>
+                <Label text="Notes" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 7;"/>
             </HBox>
 
             <!-- CERTIFICATS -->
@@ -106,13 +106,13 @@
                     </image>
                 </ImageView>
 
-                <Label text="Certificats" style="-fx-text-fill: white; -fx-font-size: 17;"/>
+                <Label text="Certificats" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 7;"/>
             </HBox>
 
             <Region VBox.vgrow="ALWAYS"/>
 
             <!-- LOGOUT -->
-            <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 0 12 30;" onMouseClicked="#handleLogout">
+            <HBox alignment="CENTER_LEFT" style="-fx-padding: 350 0 12 30;" onMouseClicked="#handleLogout">
 
                 <ImageView fitWidth="30" fitHeight="30">
                     <image>
@@ -120,7 +120,7 @@
                     </image>
                 </ImageView>
 
-                <Label text="Log out" style="-fx-text-fill: white; -fx-font-size: 17;"/>
+                <Label text="Log out" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
             </HBox>
 
             <Region prefHeight="20"/>
@@ -131,52 +131,67 @@
     <VBox AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="250" AnchorPane.rightAnchor="0">
 
         <!-- HEADER -->
-        <HBox alignment="CENTER_LEFT" style="-fx-padding: 20 40 0 40;">
+        <HBox alignment="CENTER_LEFT" style="-fx-padding: 40 40 0 40;">
+            <HBox alignment="CENTER_LEFT" spacing="5">
+                 <ImageView fitWidth="130" fitHeight="130" preserveRatio="true" >
+                     <image>
+                         <Image url="/images/notes 2.png"/>
+                     </image>
+                 </ImageView>
 
-            <ImageView fitWidth="320" fitHeight="320" preserveRatio="true">
-                <image>
-                    <Image url="/images/NOTES.png"/>
-                </image>
-            </ImageView>
+                 <Label fx:id="versionLabel" text="V 0.1.0"
+                        style="-fx-background-color: #ef4444; -fx-padding: 2 8; -fx-background-radius: 10; -fx-text-fill: white;"/>
 
-            <Label fx:id="versionLabel" text="V 0.1.0"
-                   style="-fx-background-color: #ef4444; -fx-padding: 2 8; -fx-background-radius: 10; -fx-text-fill: white;"/>
-
+            </HBox>
+            <!-- Espace central qui pousse le reste à droite -->
             <Region HBox.hgrow="ALWAYS"/>
 
-            <HBox alignment="CENTER_LEFT">
+            <!-- École -->
+            <HBox alignment="CENTER_LEFT" spacing="5" style="-fx-padding: 0 30 0 0">
                 <ImageView fitWidth="48" fitHeight="40">
                     <image>
                         <Image url="/images/ecole(1).png"/>
                     </image>
                 </ImageView>
-                <Label fx:id="nomEcoleLabel" style="-fx-font-size: 24; -fx-font-weight: 600;" />
+                <VBox alignment="CENTER_LEFT" spacing="2">
+                    <Label text="École" style="-fx-font-size: 14; -fx-text-fill: #6b7280;"/>
+                    <Label fx:id="nomEcoleLabel" style="-fx-font-size: 18; -fx-font-weight: 600;"/>
+                </VBox>
             </HBox>
 
-            <Region HBox.hgrow="ALWAYS"/>
-
-            <HBox alignment="CENTER_LEFT">
+            <!-- Directeur -->
+            <HBox alignment="CENTER_LEFT" spacing="5">
                 <ImageView fitWidth="48" fitHeight="40">
                     <image>
                         <Image url="/images/profil.png"/>
                     </image>
                 </ImageView>
-                <Label fx:id="nomDirecteurLabel" style="-fx-font-size: 24; -fx-font-weight: 600;"/>
+                <VBox alignment="CENTER_LEFT" spacing="2">
+                    <Label text="Directeur" style="-fx-font-size: 14; -fx-text-fill: #6b7280;"/>
+                    <Label fx:id="nomDirecteurLabel" style="-fx-font-size: 18; -fx-font-weight: 600;"/>
+                </VBox>
             </HBox>
         </HBox>
 
         <!-- BIENVENUE -->
         <HBox style="-fx-padding: 0 0 0 28;">
 
-            <VBox style="-fx-padding: 112 0 0 44;" prefWidth="600">
+            <VBox style="-fx-padding: 112 0 0 44;" prefWidth="500">
                 <Label text="Bonjour" style="-fx-font-size: 30; -fx-font-weight: 600;"/>
                 <Label fx:id="welcomeNameLabel" style="-fx-font-size: 48; -fx-font-weight: bold;"/>
-                <Label text="Un système d'information intégré qui permet la gestion scolaire."
+                <Label text="Un système d'information intégré qui permet la
+mise en place de nouvelles méthodes de gestion scolaire."
                        wrapText="true" style="-fx-font-size: 20; -fx-text-fill: #6b7280;"/>
             </VBox>
 
-            <Label text="TODAY"
-                   style="-fx-font-size: 24; -fx-text-fill: #6b7280; -fx-writing-mode: vertical-rl; -fx-rotate: 180;"/>
+            <!-- TODAY Label avec conteneur plus grand -->
+            <VBox alignment="CENTER" prefWidth="40" prefHeight="200" style="-fx-padding: 85 30 0 150;">
+                <ImageView fitWidth="32" fitHeight="160">
+                    <image>
+                        <Image url="/images/today.png"/>
+                    </image>
+                </ImageView>
+            </VBox>
 
             <!-- CARTES -->
             <HBox spacing="20" alignment="CENTER" style="-fx-padding: 100 40 0 0;">
@@ -244,7 +259,7 @@
         </HBox>
 
         <!-- GRAPHIQUE + CALENDRIER -->
-        <HBox style="-fx-padding: 0 60 40 165;" spacing="40">
+        <HBox style="-fx-padding: 40 0 40 165;" spacing="40">
 
             <!-- GRAPH -->
             <VBox prefWidth="700" style="-fx-background-color: white; -fx-background-radius: 30; -fx-padding: 24;">
