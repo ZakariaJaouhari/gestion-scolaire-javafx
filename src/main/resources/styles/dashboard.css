@@ -1,0 +1,113 @@
+/* ============================
+   BASE
+============================ */
+.root {
+    -fx-font-family: "Poppins", sans-serif;
+    -fx-background-color: #f5f5f4;
+}
+
+/* Désactivation du focus bleu par défaut */
+*:focused {
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+/* ============================
+   SIDEBAR MENU
+============================ */
+.hbox-menu {
+    -fx-padding: 12 0 12 30;
+    -fx-background-radius: 0 30 30 0;
+    -fx-cursor: hand;
+    -fx-transition: all 0.3s ease;
+}
+
+/* Effet hover */
+.hbox-menu:hover {
+    -fx-background-color: #f5f5f4;
+    -fx-translate-x: 15;
+}
+
+.hbox-menu:hover .label-menu {
+    -fx-text-fill: #43639a;
+}
+
+/* Label menu */
+.label-menu {
+    -fx-text-fill: white;
+    -fx-font-size: 17;
+    -fx-font-family: "System";
+}
+
+/* ============================
+   STAT CARDS
+============================ */
+.stat-card {
+    -fx-background-radius: 30;
+    -fx-padding: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 20, 0, 0, 10);
+    -fx-transition: all 0.3s;
+}
+
+.stat-card:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.45), 25, 0, 0, 15);
+    -fx-translate-y: -5;
+}
+
+/* ============================
+   APPLE CHANCERY TITLES
+============================ */
+.apple-chancery {
+    -fx-font-family: "Apple Chancery";
+    -fx-font-weight: bold;
+}
+
+/* ============================
+   GRAPH TITLES & TEXT
+============================ */
+.chart-title {
+    -fx-font-size: 18;
+    -fx-font-weight: bold;
+    -fx-text-fill: #111827;
+}
+
+.chart-label {
+    -fx-font-size: 12;
+    -fx-text-fill: #6b7280;
+}
+
+/* ============================
+   CALENDAR
+============================ */
+.calendar-day {
+    -fx-font-size: 16;
+    -fx-alignment: center;
+    -fx-padding: 10;
+    -fx-border-color: #e5e7eb;
+    -fx-border-width: 1;
+    -fx-background-color: white;
+}
+
+.calendar-day:hover {
+    -fx-background-color: #f3f4f6;
+    -fx-cursor: hand;
+}
+
+.calendar-today {
+    -fx-background-color: #3b82f6;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+}
+
+/* ============================
+   BUTTONS
+============================ */
+.button {
+    -fx-cursor: hand;
+    -fx-background-color: transparent;
+}
+
+.button:hover {
+    -fx-opacity: 0.7;
+}
