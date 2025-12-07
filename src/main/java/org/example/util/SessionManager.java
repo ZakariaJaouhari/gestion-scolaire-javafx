@@ -1,6 +1,7 @@
 package org.example.util;
 
 import org.example.model.Directeur;
+import org.example.model.Etudiant;
 import org.example.model.Formateur;
 
 public class SessionManager {
@@ -13,9 +14,12 @@ public class SessionManager {
         return directeur != null ? directeur.getNomDirecteur() : "";
     }
 
+
+
     public enum UserType {
         DIRECTEUR,
-        FORMATEUR
+        FORMATEUR,
+        ETUDIANT
     }
 
     private SessionManager() {
@@ -50,12 +54,20 @@ public class SessionManager {
         System.out.println("✅ Session formateur démarrée pour: " + formateur.getNomComplet());
     }
 
+    public void setCurrentEtudiant(Etudiant etudiant) {
+        this.currentUser = etudiant;
+        this.userType = UserType.ETUDIANT;
+        System.out.println("✅ Session etudiant démarrée pour: " + etudiant.getNomComplet());
+    }
+
     public void clearSession() {
         if (currentUser != null) {
             if (userType == UserType.DIRECTEUR) {
                 System.out.println("👋 Session directeur terminée pour: " + ((Directeur) currentUser).getNomDirecteur());
             } else if (userType == UserType.FORMATEUR) {
                 System.out.println("👋 Session formateur terminée pour: " + ((Formateur) currentUser).getNomComplet());
+            } else if (userType == UserType.ETUDIANT) {
+                System.out.println("👋 Session ETUDIANT terminée pour: " + ((Etudiant) currentUser).getNomComplet());
             }
         }
         currentUser = null;
@@ -74,6 +86,10 @@ public class SessionManager {
         return isLoggedIn() && userType == UserType.FORMATEUR;
     }
 
+    public boolean isEtudiant() {
+        return isLoggedIn() && userType == UserType.ETUDIANT;
+    }
+
     // Méthodes pour obtenir les informations
     public String getNomUtilisateur() {
         if (currentUser == null) return "Invité";
@@ -82,6 +98,8 @@ public class SessionManager {
             return ((Directeur) currentUser).getNomDirecteur();
         } else if (userType == UserType.FORMATEUR) {
             return ((Formateur) currentUser).getNomComplet();
+        } else if (userType == UserType.ETUDIANT) {
+            return ((Etudiant) currentUser).getNomComplet();
         }
         return "Invité";
     }
@@ -105,7 +123,9 @@ public class SessionManager {
         if (userType == UserType.DIRECTEUR) {
             return ((Directeur) currentUser).getId();
         } else if (userType == UserType.FORMATEUR) {
-            return ((Formateur) currentUser).getId().intValue();
+            return ((Formateur) currentUser).getId();
+        } else if (userType == UserType.ETUDIANT) {
+            return ((Etudiant) currentUser).getId();
         }
         return -1;
     }
@@ -118,4 +138,10 @@ public class SessionManager {
     public Formateur getCurrentFormateur() {
         return isFormateur() ? (Formateur) currentUser : null;
     }
+
+    public Etudiant getCurrentEtudiant() {
+        return isEtudiant() ? (Etudiant) currentUser : null;
+    }
+
+
 }

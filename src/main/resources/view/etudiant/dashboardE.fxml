@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.geometry.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/23"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.example.controller.EtudiantDashboardController"
+            style="-fx-background-color: #f5f5f4;">
+
+    <!-- SIDEBAR -->
+    <VBox style="-fx-background-color: #142b77; -fx-background-radius: 0 40 40 0;"
+          prefWidth="250"
+          AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0">
+
+        <!-- Profile Image -->
+        <StackPane alignment="CENTER" style="-fx-padding: 40 0 20 0;">
+            <Circle radius="60" fill="white"/>
+            <ImageView fx:id="profileImageView" fitWidth="110" fitHeight="110" preserveRatio="true">
+                <image>
+                    <Image url="@../../images/profil.png"/>
+                </image>
+            </ImageView>
+        </StackPane>
+
+        <VBox spacing="2" style="-fx-padding: 0 0 0 20;">
+
+            <!-- HOME -->
+            <HBox alignment="CENTER_LEFT"
+                  style="-fx-background-color: #f5f5f4; -fx-background-radius: 30 0 0 30; -fx-padding: 12 0 12 30;"
+                  onMouseClicked="#handleHome">
+                <ImageView fitWidth="27" fitHeight="27">
+                    <image><Image url="@../../images/Bhome-hover.png"/></image>
+                </ImageView>
+                <Label text="Accueil" style="-fx-text-fill: #43639a; -fx-font-size: 17;"/>
+            </HBox>
+
+            <!-- NOTES -->
+            <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 0 12 30;" onMouseClicked="#handleNotes">
+                <ImageView fitWidth="35" fitHeight="35">
+                    <image><Image url="@../../images/note.png"/></image>
+                </ImageView>
+                <Label text="Mes Notes" style="-fx-text-fill: white; -fx-font-size: 17;"/>
+            </HBox>
+
+            <!-- EMPLOI DU TEMPS -->
+            <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 0 12 30;" onMouseClicked="#handleEmploiDuTemps">
+                <ImageView fitWidth="30" fitHeight="30">
+                    <image><Image url="@../../images/certificat.png"/></image>
+                </ImageView>
+                <Label text="Emploi du temps" style="-fx-text-fill: white; -fx-font-size: 17;"/>
+            </HBox>
+
+            <!-- EXAMENS -->
+            <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 0 12 30;" onMouseClicked="#handleExamens">
+                <ImageView fitWidth="30" fitHeight="30">
+                    <image><Image url="@../../images/note.png"/></image>
+                </ImageView>
+                <Label text="Mes Examens" style="-fx-text-fill: white; -fx-font-size: 17;"/>
+            </HBox>
+
+            <!-- PROFIL -->
+            <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 0 12 30;" onMouseClicked="#handleProfil">
+                <ImageView fitWidth="30" fitHeight="30">
+                    <image><Image url="@../../images/profil.png"/></image>
+                </ImageView>
+                <Label text="Mon Profil" style="-fx-text-fill: white; -fx-font-size: 17;"/>
+            </HBox>
+
+            <Region VBox.vgrow="ALWAYS"/>
+
+            <!-- LOGOUT -->
+            <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 0 12 30;" onMouseClicked="#handleLogout">
+                <ImageView fitWidth="30" fitHeight="30">
+                    <image><Image url="@../../images/logout.png"/></image>
+                </ImageView>
+                <Label text="Déconnexion" style="-fx-text-fill: white; -fx-font-size: 17;"/>
+            </HBox>
+
+            <Region prefHeight="20"/>
+        </VBox>
+    </VBox>
+
+    <!-- MAIN CONTENT -->
+    <VBox AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="250" AnchorPane.rightAnchor="0">
+
+        <!-- HEADER -->
+        <HBox alignment="CENTER_LEFT" style="-fx-padding: 20 40 0 40;">
+
+            <!-- LOGO -->
+            <ImageView fitWidth="130" fitHeight="130" preserveRatio="true">
+                <image><Image url="@../../images/notes 2.png"/></image>
+            </ImageView>
+
+            <Label text="V 0.1.0"
+                   style="-fx-background-color: #ef4444; -fx-padding: 2 8; -fx-background-radius: 10; -fx-text-fill: white;"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <!-- ECOLE -->
+            <HBox alignment="CENTER_LEFT" spacing="5">
+                <ImageView fitWidth="48" fitHeight="40">
+                    <image><Image url="@../../images/ecole(1).png"/></image>
+                </ImageView>
+                <Label fx:id="nomEcoleLabel" style="-fx-font-size: 24; -fx-font-weight: 600; -fx-font-family: 'Apple Chancery';"/>
+            </HBox>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <!-- NOM ETUDIANT -->
+            <HBox alignment="CENTER_LEFT" spacing="5">
+                <ImageView fitWidth="48" fitHeight="40">
+                    <image><Image url="@../../images/profil.png"/></image>
+                </ImageView>
+                <Label fx:id="nomEtudiantLabel" style="-fx-font-size: 24; -fx-font-weight: 600; -fx-font-family: 'Apple Chancery';"/>
+            </HBox>
+        </HBox>
+
+        <!-- WELCOME SECTION -->
+        <HBox style="-fx-padding: 0 0 0 44;">
+
+            <!-- WELCOME TEXT -->
+            <VBox style="-fx-padding: 112 0 0 0;" prefWidth="600">
+                <Label text="Bonjour" style="-fx-font-size: 30; -fx-font-weight: 600; -fx-font-family: 'Apple Chancery';"/>
+                <Label fx:id="welcomeNameLabel" style="-fx-font-size: 48; -fx-font-weight: bold; -fx-font-family: 'Apple Chancery';"/>
+                <Label text="Espace étudiant - Suivi de votre parcours académique"
+                       wrapText="true" style="-fx-font-size: 20; -fx-text-fill: #6b7280; -fx-padding: 10 0 0 0;"/>
+            </VBox>
+
+            <!-- TODAY LABEL -->
+            <VBox alignment="CENTER" style="-fx-padding: 0 20;">
+                <Label text="TODAY"
+                       style="-fx-font-size: 24; -fx-text-fill: #6b7280; -fx-writing-mode: vertical-rl; -fx-rotate: 180;"/>
+            </VBox>
+
+            <!-- STATS CARDS -->
+            <HBox spacing="20" alignment="CENTER" style="-fx-padding: 100 40 0 0;">
+
+                <!-- NOTES MOYENNE CARD -->
+                <VBox prefWidth="224" prefHeight="256"
+                      style="-fx-background-color: #059669; -fx-background-radius: 30; -fx-padding: 12;">
+                    <Label text="01" style="-fx-text-fill: white; -fx-font-size: 18;"/>
+                    <Region VBox.vgrow="ALWAYS"/>
+                    <StackPane alignment="CENTER">
+                        <ImageView fitWidth="80" fitHeight="80">
+                            <image><Image url="@../../images/note.png"/></image>
+                        </ImageView>
+                    </StackPane>
+                    <Region VBox.vgrow="ALWAYS"/>
+                    <Label text="Moyenne" style="-fx-text-fill: white; -fx-font-size: 24; -fx-font-weight: bold;"/>
+                    <Label fx:id="moyenneLabel" text="0.00" style="-fx-text-fill: white; -fx-font-size: 18;"/>
+                </VBox>
+
+                <!-- EXAMENS CARD -->
+                <VBox prefWidth="224" prefHeight="256"
+                      style="-fx-background-color: #3730a3; -fx-background-radius: 30; -fx-padding: 12;">
+                    <Label text="02" style="-fx-text-fill: white; -fx-font-size: 18;"/>
+                    <Region VBox.vgrow="ALWAYS"/>
+                    <StackPane alignment="CENTER">
+                        <ImageView fitWidth="80" fitHeight="80">
+                            <image><Image url="@../../images/note.png"/></image>
+                        </ImageView>
+                    </StackPane>
+                    <Region VBox.vgrow="ALWAYS"/>
+                    <Label text="Examens" style="-fx-text-fill: white; -fx-font-size: 24; -fx-font-weight: bold;"/>
+                    <Label fx:id="examensCountLabel" text="0" style="-fx-text-fill: white; -fx-font-size: 18;"/>
+                </VBox>
+
+                <!-- MODULES CARD -->
+                <VBox prefWidth="224" prefHeight="256"
+                      style="-fx-background-color: #ef4444; -fx-background-radius: 30; -fx-padding: 12;">
+                    <Label text="03" style="-fx-text-fill: white; -fx-font-size: 18;"/>
+                    <Region VBox.vgrow="ALWAYS"/>
+                    <StackPane alignment="CENTER">
+                        <ImageView fitWidth="80" fitHeight="80">
+                            <image><Image url="@../../images/module.png"/></image>
+                        </ImageView>
+                    </StackPane>
+                    <Region VBox.vgrow="ALWAYS"/>
+                    <Label text="Modules" style="-fx-text-fill: white; -fx-font-size: 24; -fx-font-weight: bold;"/>
+                    <Label fx:id="modulesCountLabel" text="0" style="-fx-text-fill: white; -fx-font-size: 18;"/>
+                </VBox>
+            </HBox>
+        </HBox>
+
+        <!-- TABLEAU DE BORD ÉTUDIANT -->
+        <HBox style="-fx-padding: 40 40 40 165;" spacing="40">
+
+            <!-- NOTES RÉCENTES -->
+            <VBox prefWidth="800" style="-fx-background-color: white; -fx-background-radius: 30; -fx-padding: 24;">
+                <Label text="Mes Notes Récentes" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-padding: 0 0 20 0;"/>
+
+                <TableView fx:id="notesTable" prefHeight="300">
+                    <columns>
+                        <TableColumn text="Module" prefWidth="200" fx:id="moduleColumn"/>
+                        <TableColumn text="Note" prefWidth="100" fx:id="noteColumn"/>
+                        <TableColumn text="Date" prefWidth="150" fx:id="dateNoteColumn"/>
+                        <TableColumn text="Coefficient" prefWidth="100" fx:id="coefficientColumn"/>
+                    </columns>
+                </TableView>
+            </VBox>
+
+            <!-- CALENDRIER DES EXAMENS -->
+            <VBox prefWidth="490" style="-fx-background-color: white; -fx-background-radius: 30; -fx-padding: 20;">
+                <Label text="Prochains Examens" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-padding: 0 0 20 0;"/>
+
+                <ListView fx:id="examensListView" prefHeight="300">
+                    <!-- Les éléments seront ajoutés dynamiquement -->
+                </ListView>
+
+                <Label fx:id="aucunExamenLabel" text="Aucun examen à venir"
+                       style="-fx-text-fill: #6b7280; -fx-font-style: italic; -fx-padding: 20;"/>
+            </VBox>
+        </HBox>
+    </VBox>
+</AnchorPane>

@@ -38,7 +38,7 @@ public class FormateurDAO {
             stmt.setString(9, formateur.getEmail());
             stmt.setString(10, formateur.getPassword());
             stmt.setString(11, formateur.getProfilePicture());
-            stmt.setLong(12, formateur.getDirecteurId());
+            stmt.setInt(12, formateur.getDirecteurId());
 
             int affectedRows = stmt.executeUpdate();
 
@@ -56,11 +56,11 @@ public class FormateurDAO {
     }
 
     // Trouver par ID
-    public Optional<Formateur> findById(Long id) {
+    public Optional<Formateur> findById(int id) {
         String sql = "SELECT * FROM formateurs WHERE id = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setLong(1, id);
+            stmt.setInt(1, id);
 
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -141,12 +141,12 @@ public class FormateurDAO {
     }
 
     // Trouver par directeur
-    public List<Formateur> findByDirecteurId(Long directeurId) {
+    public List<Formateur> findByDirecteurId(int directeurId) {
         List<Formateur> formateurs = new ArrayList<>();
         String sql = "SELECT * FROM formateurs WHERE directeur_id = ? ORDER BY nom, prenom";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setLong(1, directeurId);
+            stmt.setInt(1, directeurId);
 
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
@@ -229,8 +229,8 @@ public class FormateurDAO {
             stmt.setString(9, formateur.getEmail());
             stmt.setString(10, formateur.getPassword());
             stmt.setString(11, formateur.getProfilePicture());
-            stmt.setLong(12, formateur.getDirecteurId());
-            stmt.setLong(13, formateur.getId());
+            stmt.setInt(12, formateur.getDirecteurId());
+            stmt.setInt(13, formateur.getId());
 
             int affectedRows = stmt.executeUpdate();
             return affectedRows > 0;
@@ -241,11 +241,11 @@ public class FormateurDAO {
     }
 
     // Supprimer un formateur
-    public boolean delete(Long id) {
+    public boolean delete(int id) {
         String sql = "DELETE FROM formateurs WHERE id = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setLong(1, id);
+            stmt.setInt(1, id);
 
             int affectedRows = stmt.executeUpdate();
             return affectedRows > 0;
@@ -280,7 +280,7 @@ public class FormateurDAO {
     // Méthode utilitaire pour mapper ResultSet à Formateur
     private Formateur mapResultSetToFormateur(ResultSet rs) throws SQLException {
         Formateur formateur = new Formateur();
-        formateur.setId(rs.getLong("id"));
+        formateur.setId(rs.getInt("id"));
 
         Timestamp createdAt = rs.getTimestamp("created_at");
         if (createdAt != null) {
@@ -313,7 +313,7 @@ public class FormateurDAO {
         formateur.setEmail(rs.getString("email"));
         formateur.setPassword(rs.getString("password"));
         formateur.setProfilePicture(rs.getString("profile_picture"));
-        formateur.setDirecteurId(rs.getLong("directeur_id"));
+        formateur.setDirecteurId(rs.getInt("directeur_id"));
 
         return formateur;
     }

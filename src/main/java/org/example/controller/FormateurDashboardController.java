@@ -123,9 +123,9 @@ public class FormateurDashboardController {
         nomFormateurLabel.setText(formateur.getNomComplet());
 
         // Récupérer et afficher le nom de l'école via le directeur
-        if (formateur.getDirecteurId() != null) {
+        if (formateur.getDirecteurId() > 0) {
             DirecteurDAO DirecteurDAO = new DirecteurDAO();
-            String nomEcole = DirecteurDAO.getNomEcoleByDirecteurId(formateur.getDirecteurId().intValue());
+            String nomEcole = DirecteurDAO.getNomEcoleByDirecteurId(formateur.getDirecteurId());
             nomEcoleLabel.setText(nomEcole);
         } else {
             nomEcoleLabel.setText("École non spécifiée");

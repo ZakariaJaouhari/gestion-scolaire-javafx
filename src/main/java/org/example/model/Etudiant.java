@@ -1,27 +1,22 @@
 package org.example.model;
 
-import org.example.util.SessionManager;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public class Formateur {
+public class Etudiant {
     private int id;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private String nom;
     private String prenom;
-    private String matricule;
-    private Sexe sexe;
     private LocalDate dateNaissance;
-    private Situation situation;
     private String cin;
-    private LocalDate dateRecrutement;
+    private Sexe sexe;
+    private int groupeId;
     private String email;
     private String password;
     private String profilePicture;
     private int directeurId;
-
 
     // Enums
     public enum Sexe {
@@ -48,45 +43,18 @@ public class Formateur {
         }
     }
 
-    public enum Situation {
-        MARIE("Marié(e)"),
-        CELIBATAIRE("Célibataire");
-
-        private final String valeur;
-
-        Situation(String valeur) {
-            this.valeur = valeur;
-        }
-
-        public String getValeur() {
-            return valeur;
-        }
-
-        public static Situation fromString(String text) {
-            for (Situation s : Situation.values()) {
-                if (s.valeur.equalsIgnoreCase(text)) {
-                    return s;
-                }
-            }
-            throw new IllegalArgumentException("Situation invalide: " + text);
-        }
-    }
-
     // Constructeurs
-    public Formateur() {}
+    public Etudiant() {}
 
-    public Formateur(String nom, String prenom, String matricule, Sexe sexe,
-                     LocalDate dateNaissance, Situation situation, String cin,
-                     LocalDate dateRecrutement, String email, String password,
-                     String profilePicture, int directeurId) {
+    public Etudiant(String nom, String prenom, LocalDate dateNaissance, String cin,
+                    Sexe sexe, int groupeId, String email, String password,
+                    String profilePicture, int directeurId) {
         this.nom = nom;
         this.prenom = prenom;
-        this.matricule = matricule;
-        this.sexe = sexe;
         this.dateNaissance = dateNaissance;
-        this.situation = situation;
         this.cin = cin;
-        this.dateRecrutement = dateRecrutement;
+        this.sexe = sexe;
+        this.groupeId = groupeId;
         this.email = email;
         this.password = password;
         this.profilePicture = profilePicture;
@@ -134,12 +102,20 @@ public class Formateur {
         this.prenom = prenom;
     }
 
-    public String getMatricule() {
-        return matricule;
+    public LocalDate getDateNaissance() {
+        return dateNaissance;
     }
 
-    public void setMatricule(String matricule) {
-        this.matricule = matricule;
+    public void setDateNaissance(LocalDate dateNaissance) {
+        this.dateNaissance = dateNaissance;
+    }
+
+    public String getCin() {
+        return cin;
+    }
+
+    public void setCin(String cin) {
+        this.cin = cin;
     }
 
     public Sexe getSexe() {
@@ -154,40 +130,12 @@ public class Formateur {
         this.sexe = Sexe.fromString(sexe);
     }
 
-    public LocalDate getDateNaissance() {
-        return dateNaissance;
+    public int getGroupeId() {
+        return groupeId;
     }
 
-    public void setDateNaissance(LocalDate dateNaissance) {
-        this.dateNaissance = dateNaissance;
-    }
-
-    public Situation getSituation() {
-        return situation;
-    }
-
-    public void setSituation(Situation situation) {
-        this.situation = situation;
-    }
-
-    public void setSituation(String situation) {
-        this.situation = Situation.fromString(situation);
-    }
-
-    public String getCin() {
-        return cin;
-    }
-
-    public void setCin(String cin) {
-        this.cin = cin;
-    }
-
-    public LocalDate getDateRecrutement() {
-        return dateRecrutement;
-    }
-
-    public void setDateRecrutement(LocalDate dateRecrutement) {
-        this.dateRecrutement = dateRecrutement;
+    public void setGroupeId(int groupeId) {
+        this.groupeId = groupeId;
     }
 
     public String getEmail() {
@@ -231,19 +179,23 @@ public class Formateur {
         return LocalDate.now().getYear() - dateNaissance.getYear();
     }
 
-    public int getAnciennete() {
-        return LocalDate.now().getYear() - dateRecrutement.getYear();
+    public String getInitiales() {
+        return (prenom.substring(0, 1) + nom.substring(0, 1)).toUpperCase();
+    }
+
+    public boolean estMajeur() {
+        return getAge() >= 18;
     }
 
     @Override
     public String toString() {
-        return "Formateur{" +
+        return "Etudiant{" +
                 "id=" + id +
                 ", nom='" + nom + '\'' +
                 ", prenom='" + prenom + '\'' +
-                ", matricule='" + matricule + '\'' +
-                ", sexe=" + sexe +
+                ", cin='" + cin + '\'' +
                 ", email='" + email + '\'' +
+                ", groupeId=" + groupeId +
                 '}';
     }
 }

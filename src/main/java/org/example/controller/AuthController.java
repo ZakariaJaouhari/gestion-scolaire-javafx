@@ -3,8 +3,10 @@ package org.example.controller;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import org.example.dao.DirecteurDAO;
+import org.example.dao.EtudiantDAO;
 import org.example.dao.FormateurDAO;
 import org.example.model.Directeur;
+import org.example.model.Etudiant;
 import org.example.model.Formateur;
 import org.example.util.SessionManager;
 import org.example.util.StageManager;
@@ -20,6 +22,7 @@ public class AuthController {
 
     private DirecteurDAO directeurDAO = new DirecteurDAO();
     private FormateurDAO formateurDAO = new FormateurDAO();
+    private EtudiantDAO etudiantDAO = new EtudiantDAO();
 
     @FXML
     private void login() {
@@ -50,6 +53,11 @@ public class AuthController {
                     SessionManager.getInstance().setCurrentDirecteur(directeur);
 
 
+                    // Afficher message de bienvenue
+                    showAlert("Succès", "Connexion réussie",
+                            "Bienvenue " + directeur.getNomDirecteur() + " !",
+                            Alert.AlertType.INFORMATION);
+
                     switchToDashboard();
                     return;
                 } else {
@@ -77,6 +85,26 @@ public class AuthController {
                 }
             }
 
+            // Si pas formateur ou mauvais mot de passe, essayer comme etudiant
+            Optional<Etudiant> etudiantOpt = etudiantDAO.findByEmail(email);
+
+            if (etudiantOpt.isPresent()) {
+                Etudiant etudiant = etudiantOpt.get();
+
+                if (etudiant.getPassword().equals(password)) {
+                    System.out.println("✅ Connexion FORMATEUR réussie pour: " + etudiant.getNomComplet());
+
+                    // Sauvegarder dans la session
+                    SessionManager.getInstance().setCurrentEtudiant(etudiant);
+
+                    // Rediriger vers dashboard formateur
+                    switchToEtudiantDashboard();
+                    return;
+                } else {
+                    System.out.println("❌ Mot de passe formateur incorrect");
+                }
+            }
+
             // Si on arrive ici, c'est que l'utilisateur n'existe pas ou mauvais mot de passe
             System.out.println("❌ Identifiants incorrects pour: " + email);
             showAlert("Erreur", "Identifiants incorrects",
@@ -92,6 +120,8 @@ public class AuthController {
             e.printStackTrace();
         }
     }
+
+
 
     @FXML
     public void switchToRegister() {
@@ -120,6 +150,16 @@ public class AuthController {
             StageManager.loadScene("/view/formateur/dashboardF.fxml", "/styles/dashboardF.css", "Tableau de bord Formateur - Gestion Scolaire");
         } catch (IOException e) {
             System.err.println("Erreur lors du chargement du dashboard formateur: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void switchToEtudiantDashboard() {
+        try {
+            // Charger le dashboard formateur
+            StageManager.loadScene("/view/etudiant/dashboardE.fxml", "/styles/dashboard.css", "Tableau de bord Etudiant - Gestion Scolaire");
+        } catch (IOException e) {
+            System.err.println("Erreur lors du chargement du dashboard etudiant: " + e.getMessage());
             e.printStackTrace();
         }
     }
