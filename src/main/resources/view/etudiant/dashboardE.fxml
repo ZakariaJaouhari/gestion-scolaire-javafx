@@ -36,7 +36,7 @@
                 <ImageView fitWidth="27" fitHeight="27">
                     <image><Image url="@../../images/Bhome-hover.png"/></image>
                 </ImageView>
-                <Label text="Accueil" style="-fx-text-fill: #43639a; -fx-font-size: 17;"/>
+                <Label text="Accueil" style="-fx-text-fill: #43639a; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
             </HBox>
 
             <!-- NOTES -->
@@ -44,41 +44,41 @@
                 <ImageView fitWidth="35" fitHeight="35">
                     <image><Image url="@../../images/note.png"/></image>
                 </ImageView>
-                <Label text="Mes Notes" style="-fx-text-fill: white; -fx-font-size: 17;"/>
+                <Label text="Notes" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 6;"/>
             </HBox>
 
             <!-- EMPLOI DU TEMPS -->
             <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 0 12 30;" onMouseClicked="#handleEmploiDuTemps">
                 <ImageView fitWidth="30" fitHeight="30">
-                    <image><Image url="@../../images/certificat.png"/></image>
+                    <image><Image url="@../../images/calendrier.png"/></image>
                 </ImageView>
-                <Label text="Emploi du temps" style="-fx-text-fill: white; -fx-font-size: 17;"/>
+                <Label text="Planning" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
             </HBox>
 
-            <!-- EXAMENS -->
-            <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 0 12 30;" onMouseClicked="#handleExamens">
+            <!-- Module -->
+            <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 0 12 30;" onMouseClicked="#handleModules">
                 <ImageView fitWidth="30" fitHeight="30">
-                    <image><Image url="@../../images/note.png"/></image>
+                    <image><Image url="@../../images/module.png"/></image>
                 </ImageView>
-                <Label text="Mes Examens" style="-fx-text-fill: white; -fx-font-size: 17;"/>
+                <Label text="Modules" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
             </HBox>
 
             <!-- PROFIL -->
             <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 0 12 30;" onMouseClicked="#handleProfil">
                 <ImageView fitWidth="30" fitHeight="30">
-                    <image><Image url="@../../images/profil.png"/></image>
+                    <image><Image url="@../../images/stagiaire.png"/></image>
                 </ImageView>
-                <Label text="Mon Profil" style="-fx-text-fill: white; -fx-font-size: 17;"/>
+                <Label text="Profil" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
             </HBox>
 
             <Region VBox.vgrow="ALWAYS"/>
 
             <!-- LOGOUT -->
-            <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 0 12 30;" onMouseClicked="#handleLogout">
+            <HBox alignment="CENTER_LEFT" style="-fx-padding: 450 0 12 30;" onMouseClicked="#handleLogout">
                 <ImageView fitWidth="30" fitHeight="30">
                     <image><Image url="@../../images/logout.png"/></image>
                 </ImageView>
-                <Label text="Déconnexion" style="-fx-text-fill: white; -fx-font-size: 17;"/>
+                <Label text="Déconnexion" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
             </HBox>
 
             <Region prefHeight="20"/>
@@ -92,31 +92,42 @@
         <HBox alignment="CENTER_LEFT" style="-fx-padding: 20 40 0 40;">
 
             <!-- LOGO -->
-            <ImageView fitWidth="130" fitHeight="130" preserveRatio="true">
-                <image><Image url="@../../images/notes 2.png"/></image>
-            </ImageView>
-
-            <Label text="V 0.1.0"
-                   style="-fx-background-color: #ef4444; -fx-padding: 2 8; -fx-background-radius: 10; -fx-text-fill: white;"/>
-
-            <Region HBox.hgrow="ALWAYS"/>
-
-            <!-- ECOLE -->
             <HBox alignment="CENTER_LEFT" spacing="5">
-                <ImageView fitWidth="48" fitHeight="40">
-                    <image><Image url="@../../images/ecole(1).png"/></image>
+                <ImageView fitWidth="130" fitHeight="137" preserveRatio="true" style="-fx-padding: 0 27 0 0;">
+                    <image><Image url="/images/notes 2.png"/></image>
                 </ImageView>
-                <Label fx:id="nomEcoleLabel" style="-fx-font-size: 24; -fx-font-weight: 600; -fx-font-family: 'Apple Chancery';"/>
+                <VBox alignment="CENTER_LEFT" spacing="4" style="-fx-padding: 2 0 0 0;">
+                    <Label fx:id="versionLabel" text="V 0.1.0"
+                           style="-fx-font-size: 10; -fx-background-color: #ef4444; -fx-padding: 2 8; -fx-background-radius: 10; -fx-text-fill: white;"/>
+                </VBox>
             </HBox>
 
             <Region HBox.hgrow="ALWAYS"/>
 
+            <!-- ECOLE -->
+            <HBox alignment="CENTER_LEFT" spacing="5" style="-fx-padding: 0 30 0 0">
+                <ImageView fitWidth="48" fitHeight="40">
+                    <image>
+                        <Image url="/images/ecole(1).png"/>
+                    </image>
+                </ImageView>
+                <VBox alignment="CENTER_LEFT" spacing="2">
+                    <Label text="École" style="-fx-font-size: 14; -fx-text-fill: #6b7280;"/>
+                    <Label fx:id="nomEcoleLabel" style="-fx-font-size: 18; -fx-font-weight: 600;"/>
+                </VBox>
+            </HBox>
+
             <!-- NOM ETUDIANT -->
             <HBox alignment="CENTER_LEFT" spacing="5">
                 <ImageView fitWidth="48" fitHeight="40">
-                    <image><Image url="@../../images/profil.png"/></image>
+                    <image>
+                        <Image url="@../../images/profil.png"/>
+                    </image>
                 </ImageView>
-                <Label fx:id="nomEtudiantLabel" style="-fx-font-size: 24; -fx-font-weight: 600; -fx-font-family: 'Apple Chancery';"/>
+                <VBox alignment="CENTER_LEFT" spacing="2">
+                    <Label text="Etudiant" style="-fx-font-size: 14; -fx-text-fill: #6b7280;"/>
+                    <Label fx:id="nomEtudiantLabel" style="-fx-font-size: 18; -fx-font-weight: 600;"/>
+                </VBox>
             </HBox>
         </HBox>
 
@@ -124,34 +135,39 @@
         <HBox style="-fx-padding: 0 0 0 44;">
 
             <!-- WELCOME TEXT -->
-            <VBox style="-fx-padding: 112 0 0 0;" prefWidth="600">
+            <VBox style="-fx-padding: 112 0 0 44;" prefWidth="500">
                 <Label text="Bonjour" style="-fx-font-size: 30; -fx-font-weight: 600; -fx-font-family: 'Apple Chancery';"/>
-                <Label fx:id="welcomeNameLabel" style="-fx-font-size: 48; -fx-font-weight: bold; -fx-font-family: 'Apple Chancery';"/>
-                <Label text="Espace étudiant - Suivi de votre parcours académique"
-                       wrapText="true" style="-fx-font-size: 20; -fx-text-fill: #6b7280; -fx-padding: 10 0 0 0;"/>
+                <Label fx:id="welcomeNameLabel" style="-fx-font-size: 48; -fx-font-weight: 900; -fx-font-family: 'Apple Chancery';-fx-padding: -35 0 10 0;"/>
+                <Label text="Un système d'information intégré qui permet la
+mise en place de nouvelles méthodes de gestion scolaire."
+                       wrapText="true" style="-fx-font-size: 20; -fx-text-fill: #6b7280;"/>
             </VBox>
 
+
             <!-- TODAY LABEL -->
-            <VBox alignment="CENTER" style="-fx-padding: 0 20;">
-                <Label text="TODAY"
-                       style="-fx-font-size: 24; -fx-text-fill: #6b7280; -fx-writing-mode: vertical-rl; -fx-rotate: 180;"/>
+            <VBox alignment="CENTER" prefWidth="40" prefHeight="200" style="-fx-padding: 85 30 0 150;">
+                <ImageView fitWidth="32" fitHeight="160">
+                    <image>
+                        <Image url="/images/today.png"/>
+                    </image>
+                </ImageView>
             </VBox>
 
             <!-- STATS CARDS -->
             <HBox spacing="20" alignment="CENTER" style="-fx-padding: 100 40 0 0;">
 
-                <!-- NOTES MOYENNE CARD -->
+                <!-- Group CARD -->
                 <VBox prefWidth="224" prefHeight="256"
                       style="-fx-background-color: #059669; -fx-background-radius: 30; -fx-padding: 12;">
                     <Label text="01" style="-fx-text-fill: white; -fx-font-size: 18;"/>
                     <Region VBox.vgrow="ALWAYS"/>
                     <StackPane alignment="CENTER">
                         <ImageView fitWidth="80" fitHeight="80">
-                            <image><Image url="@../../images/note.png"/></image>
+                            <image><Image url="@../../images/groupe.png"/></image>
                         </ImageView>
                     </StackPane>
                     <Region VBox.vgrow="ALWAYS"/>
-                    <Label text="Moyenne" style="-fx-text-fill: white; -fx-font-size: 24; -fx-font-weight: bold;"/>
+                    <Label text="Groupe" style="-fx-text-fill: white; -fx-font-size: 24; -fx-font-weight: bold;"/>
                     <Label fx:id="moyenneLabel" text="0.00" style="-fx-text-fill: white; -fx-font-size: 18;"/>
                 </VBox>
 
@@ -204,16 +220,28 @@
                 </TableView>
             </VBox>
 
-            <!-- CALENDRIER DES EXAMENS -->
+            <!-- CALENDRIER -->
             <VBox prefWidth="490" style="-fx-background-color: white; -fx-background-radius: 30; -fx-padding: 20;">
-                <Label text="Prochains Examens" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-padding: 0 0 20 0;"/>
 
-                <ListView fx:id="examensListView" prefHeight="300">
-                    <!-- Les éléments seront ajoutés dynamiquement -->
-                </ListView>
+                <HBox alignment="CENTER">
+                    <Button text="&lt;" onAction="#previousMonth" style="-fx-background-color: transparent; -fx-font-size: 20;"/>
+                    <Label fx:id="monthYearLabel" text="Février 2024" style="-fx-font-size: 25; -fx-font-weight: 600;">
+                        <HBox.hgrow>ALWAYS</HBox.hgrow>
+                    </Label>
+                    <Button text="&gt;" onAction="#nextMonth" style="-fx-background-color: transparent; -fx-font-size: 20;"/>
+                </HBox>
 
-                <Label fx:id="aucunExamenLabel" text="Aucun examen à venir"
-                       style="-fx-text-fill: #6b7280; -fx-font-style: italic; -fx-padding: 20;"/>
+                <GridPane fx:id="calendarGrid" hgap="2" vgap="2" style="-fx-padding: 10;">
+                    <columnConstraints>
+                        <ColumnConstraints percentWidth="14.28"/>
+                        <ColumnConstraints percentWidth="14.28"/>
+                        <ColumnConstraints percentWidth="14.28"/>
+                        <ColumnConstraints percentWidth="14.28"/>
+                        <ColumnConstraints percentWidth="14.28"/>
+                        <ColumnConstraints percentWidth="14.28"/>
+                        <ColumnConstraints percentWidth="14.28"/>
+                    </columnConstraints>
+                </GridPane>
             </VBox>
         </HBox>
     </VBox>

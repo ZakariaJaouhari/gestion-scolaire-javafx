@@ -37,7 +37,7 @@
                 <ImageView fitWidth="27" fitHeight="27">
                     <image><Image url="@../../images/Bhome-hover.png"/></image>
                 </ImageView>
-                <Label text="Home" style="-fx-text-fill: #43639a; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
+                <Label text="Accueil" style="-fx-text-fill: #43639a; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
             </HBox>
 
             <!-- PROFILE -->
@@ -45,7 +45,7 @@
                 <ImageView fitWidth="30" fitHeight="30">
                     <image><Image url="@../../images/prof.png"/></image>
                 </ImageView>
-                <Label text="Profile" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
+                <Label text="Profil" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
             </HBox>
 
             <!-- GROUPES -->
@@ -61,7 +61,7 @@
                 <ImageView fitWidth="27" fitHeight="27">
                     <image><Image url="@../../images/module.png"/></image>
                 </ImageView>
-                <Label text="Modules" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
+                <Label text="Modules" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 13;"/>
             </HBox>
 
             <!-- NOTES -->
@@ -69,17 +69,25 @@
                 <ImageView fitWidth="35" fitHeight="35">
                     <image><Image url="@../../images/note.png"/></image>
                 </ImageView>
-                <Label text="Notes" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 7;"/>
+                <Label text="Notes" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 5;"/>
             </HBox>
 
             <Region VBox.vgrow="ALWAYS"/>
+
+            <!-- EMPLOI DU TEMPS -->
+            <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 0 12 30;" onMouseClicked="#handleEmploiDuTemps">
+                <ImageView fitWidth="30" fitHeight="30">
+                    <image><Image url="@../../images/calendrier.png"/></image>
+                </ImageView>
+                <Label text="Planning" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
+            </HBox>
 
             <!-- LOGOUT -->
             <HBox alignment="CENTER_LEFT" style="-fx-padding: 350 0 12 30;" onMouseClicked="#handleLogout">
                 <ImageView fitWidth="30" fitHeight="30">
                     <image><Image url="@../../images/logout.png"/></image>
                 </ImageView>
-                <Label text="Log out" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
+                <Label text="Déconnexion" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
             </HBox>
 
             <Region prefHeight="20"/>

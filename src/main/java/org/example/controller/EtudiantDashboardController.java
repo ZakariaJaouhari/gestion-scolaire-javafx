@@ -7,6 +7,13 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import org.example.dao.DirecteurDAO;
 import org.example.dao.EtudiantDAO;
 import org.example.dao.GroupeDAO;
@@ -15,9 +22,14 @@ import org.example.util.SessionManager;
 import org.example.util.StageManager;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.TextStyle;
+import java.util.Locale;
 
 public class EtudiantDashboardController {
 
+    @FXML private Label versionLabel;
     @FXML private Label welcomeNameLabel;
     @FXML private Label nomEcoleLabel;
     @FXML private Label nomEtudiantLabel;
@@ -32,13 +44,21 @@ public class EtudiantDashboardController {
     @FXML private TableColumn<Note, String> dateNoteColumn;
     @FXML private TableColumn<Note, Integer> coefficientColumn;
 
-    @FXML private ListView<String> examensListView;
+    //@FXML private ListView<String> examensListView;
     @FXML private Label aucunExamenLabel;
+
+    @FXML private Label monthYearLabel;
+    @FXML private GridPane calendarGrid;
+
+    private LocalDate currentDate;
+    private YearMonth currentYearMonth;
 
     private EtudiantDAO etudiantDAO;
     private GroupeDAO groupeDAO;
     private DirecteurDAO directeurDAO;
     private ObservableList<Note> notesList;
+
+
 
     // Classe interne pour les notes
     public static class Note {
@@ -71,6 +91,9 @@ public class EtudiantDashboardController {
     public void initialize() {
         System.out.println("EtudiantDashboardController initialisé");
 
+        currentDate = LocalDate.now();
+        currentYearMonth = YearMonth.from(currentDate);
+
         // Vérifier la session
         SessionManager session = SessionManager.getInstance();
         if (!session.isLoggedIn()) {
@@ -100,12 +123,15 @@ public class EtudiantDashboardController {
         // Initialiser la table des notes
         initializeNotesTable();
 
+        // Initialiser le calendrier
+        updateCalendar();
+
         // Initialiser la liste des examens
-        initializeExamensList();
+        //initializeExamensList();
 
         // Charger les données
         loadNotes();
-        loadExamens();
+        //loadExamens();
     }
 
     private void updateUserInfo(Object currentUser) {
@@ -181,9 +207,9 @@ public class EtudiantDashboardController {
         });
     }
 
-    private void initializeExamensList() {
+    /*private void initializeExamensList() {
         examensListView.setItems(FXCollections.observableArrayList());
-    }
+    }*/
 
     private void loadNotes() {
         // Données d'exemple - À remplacer par des appels DAO réels
@@ -207,7 +233,7 @@ public class EtudiantDashboardController {
         }
     }
 
-    private void loadExamens() {
+    /*private void loadExamens() {
         // Données d'exemple - À remplacer par des appels DAO réels
         ObservableList<String> examens = FXCollections.observableArrayList(
                 "📝 Culture et techniques numérique - 2024-03-25 14:30",
@@ -220,6 +246,94 @@ public class EtudiantDashboardController {
 
         // Afficher/masquer le label "aucun examen"
         aucunExamenLabel.setVisible(examens.isEmpty());
+    }*/
+
+    // ========== CALENDRIER ==========
+    private void updateCalendar() {
+        try {
+            // Mettre à jour le label du mois/année
+            String month = currentYearMonth.getMonth().getDisplayName(TextStyle.FULL, Locale.FRENCH);
+            int year = currentYearMonth.getYear();
+            monthYearLabel.setText(month.substring(0, 1).toUpperCase() + month.substring(1) + " " + year);
+
+            // Nettoyer le grid
+            calendarGrid.getChildren().clear();
+
+            // Ajouter les jours de la semaine
+            String[] joursSemaine = {"Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"};
+            for (int i = 0; i < 7; i++) {
+                Label dayLabel = new Label(joursSemaine[i]);
+                dayLabel.setFont(Font.font("System", FontWeight.BOLD, 12));
+                dayLabel.setTextFill(Color.web("#6b7280"));
+                dayLabel.setStyle("-fx-padding: 10; -fx-alignment: center;");
+                calendarGrid.add(dayLabel, i, 0);
+            }
+
+            // Premier jour du mois
+            LocalDate firstDay = currentYearMonth.atDay(1);
+            int firstDayOfWeek = firstDay.getDayOfWeek().getValue() % 7; // Dimanche = 0
+
+            // Nombre de jours dans le mois
+            int daysInMonth = currentYearMonth.lengthOfMonth();
+
+            // Remplir les jours
+            int row = 1;
+            int col = firstDayOfWeek;
+
+            for (int day = 1; day <= daysInMonth; day++) {
+                StackPane dayCell = createDayCell(day);
+                calendarGrid.add(dayCell, col, row);
+
+                col++;
+                if (col > 6) {
+                    col = 0;
+                    row++;
+                }
+            }
+
+            System.out.println("✅ Calendrier mis à jour: " + month + " " + year);
+
+        } catch (Exception e) {
+            System.err.println("❌ Erreur mise à jour calendrier: " + e.getMessage());
+        }
+    }
+
+    private StackPane createDayCell(int day) {
+        StackPane cell = new StackPane();
+        cell.setPrefSize(50, 50);
+
+        // Vérifier si c'est aujourd'hui
+        boolean isToday = currentYearMonth.equals(YearMonth.from(LocalDate.now())) &&
+                day == LocalDate.now().getDayOfMonth();
+
+        // Cercle de fond pour aujourd'hui
+        if (isToday) {
+            Circle circle = new Circle(20);
+            circle.setFill(Color.web("#059669"));
+            cell.getChildren().add(circle);
+        }
+
+        // Label du jour
+        Label dayLabel = new Label(String.valueOf(day));
+        dayLabel.setFont(Font.font("System", FontWeight.NORMAL, 14));
+        dayLabel.setTextFill(isToday ? Color.WHITE : Color.BLACK);
+
+        cell.getChildren().add(dayLabel);
+
+        // Effet hover
+        cell.setOnMouseEntered(e -> {
+            if (!isToday) {
+                cell.setStyle("-fx-background-color: #f3f4f6; -fx-background-radius: 25;");
+            }
+        });
+
+        cell.setOnMouseExited(e -> {
+            if (!isToday) {
+                cell.setStyle("");
+            }
+        });
+
+        return cell;
     }
 
     // Méthodes de navigation
@@ -247,6 +361,24 @@ public class EtudiantDashboardController {
         System.out.println("Mes Examens clicked");
         // Rediriger vers la page des examens
         // StageManager.loadScene("/view/etudiant/examens.fxml", ...);
+    }
+
+    // ========== NAVIGATION CALENDRIER ==========
+    @FXML
+    private void previousMonth() {
+        currentYearMonth = currentYearMonth.minusMonths(1);
+        updateCalendar();
+    }
+
+    @FXML
+    private void nextMonth() {
+        currentYearMonth = currentYearMonth.plusMonths(1);
+        updateCalendar();
+    }
+
+
+    @FXML
+    public void handleModules(MouseEvent mouseEvent) {
     }
 
     @FXML
