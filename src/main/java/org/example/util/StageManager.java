@@ -36,5 +36,6 @@ public class StageManager {
         }
 
         primaryStage.setTitle(title);
+        primaryStage.show();
     }
 }

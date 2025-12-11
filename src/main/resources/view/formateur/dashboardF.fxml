@@ -146,12 +146,13 @@
 
             <!-- WELCOME TEXT -->
             <VBox style="-fx-padding: 112 0 0 44;" prefWidth="500">
-                <Label text="Bonjour" style="-fx-font-size: 30; -fx-font-weight: 600;"/>
-                <Label fx:id="welcomeNameLabel" style="-fx-font-size: 48; -fx-font-weight: bold;"/>
+                <Label text="Bonjour" style="-fx-font-size: 30; -fx-font-weight: 600; -fx-font-family: 'Apple Chancery';"/>
+                <Label fx:id="welcomeNameLabel" style="-fx-font-size: 48; -fx-font-weight: 900; -fx-font-family: 'Apple Chancery';-fx-padding: -35 0 10 0;"/>
                 <Label text="Un système d'information intégré qui permet la
 mise en place de nouvelles méthodes de gestion scolaire."
                        wrapText="true" style="-fx-font-size: 20; -fx-text-fill: #6b7280;"/>
             </VBox>
+
 
             <!-- TODAY LABEL -->
             <VBox alignment="CENTER" prefWidth="40" prefHeight="200" style="-fx-padding: 85 30 0 150;">

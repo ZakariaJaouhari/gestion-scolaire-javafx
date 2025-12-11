@@ -335,9 +335,11 @@ public class DashboardController {
 
     @FXML
     private void handleFormateurs() {
-        showAlert("Formateurs", "Gestion des formateurs",
-                "Cette fonctionnalité sera disponible prochainement.",
-                Alert.AlertType.INFORMATION);
+        try {
+            StageManager.loadScene("/view/directeur/gestionFormateurs.fxml", "/styles/gestionFormateurs.css", "gestF");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML

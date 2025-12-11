@@ -13,18 +13,17 @@
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="org.example.controller.DashboardController"
             style="-fx-background-color: #f5f5f4;">
-
     <VBox style="-fx-background-color: #142b77; -fx-background-radius: 0 40 40 0;"
           prefWidth="250"
           AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0">
 
         <Region prefHeight="120"/>
 
-        <VBox spacing="2">
+        <VBox spacing="2" style="-fx-padding: 50 0 0 20;">
 
             <!-- HOME -->
             <HBox alignment="CENTER_LEFT"
-                  style="-fx-background-color: #f5f5f4; -fx-background-radius: 0 30 30 0; -fx-padding: 12 0 12 30;"
+                  style="-fx-background-color: #f5f5f4; -fx-background-radius: 30 0 0 30; -fx-padding: 12 0 12 30;"
                   onMouseClicked="#handleHome">
 
                 <ImageView fitWidth="27" fitHeight="27">
@@ -130,57 +129,59 @@
     <!-- CONTENU PRINCIPAL -->
     <VBox AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="250" AnchorPane.rightAnchor="0">
 
-        <!-- HEADER -->
-        <HBox alignment="CENTER_LEFT" style="-fx-padding: 40 40 0 40;">
-            <HBox alignment="CENTER_LEFT" spacing="5">
-                <ImageView fitWidth="130" fitHeight="137" preserveRatio="true" style="-fx-padding: 0 27 0 0;">
-                    <image><Image url="/images/notes 2.png"/></image>
-                </ImageView>
-                <VBox alignment="CENTER_LEFT" spacing="4" style="-fx-padding: 2 0 0 0;">
-                    <Label fx:id="versionLabel" text="V 0.1.0"
-                           style="-fx-font-size: 10; -fx-background-color: #ef4444; -fx-padding: 2 8; -fx-background-radius: 10; -fx-text-fill: white;"/>
-                </VBox>
-            </HBox>
-            <!-- Espace central qui pousse le reste à droite -->
-            <Region HBox.hgrow="ALWAYS"/>
-
-            <!-- École -->
-            <HBox alignment="CENTER_LEFT" spacing="5" style="-fx-padding: 0 30 0 0">
-                <ImageView fitWidth="48" fitHeight="40">
-                    <image>
-                        <Image url="/images/ecole(1).png"/>
-                    </image>
-                </ImageView>
-                <VBox alignment="CENTER_LEFT" spacing="2">
-                    <Label text="École" style="-fx-font-size: 14; -fx-text-fill: #6b7280;"/>
-                    <Label fx:id="nomEcoleLabel" style="-fx-font-size: 18; -fx-font-weight: 600;"/>
-                </VBox>
-            </HBox>
-
-            <!-- Directeur -->
-            <HBox alignment="CENTER_LEFT" spacing="5">
-                <ImageView fitWidth="48" fitHeight="40">
-                    <image>
-                        <Image url="/images/profil.png"/>
-                    </image>
-                </ImageView>
-                <VBox alignment="CENTER_LEFT" spacing="2">
-                    <Label text="Directeur" style="-fx-font-size: 14; -fx-text-fill: #6b7280;"/>
-                    <Label fx:id="nomDirecteurLabel" style="-fx-font-size: 18; -fx-font-weight: 600;"/>
-                </VBox>
-            </HBox>
+    <!-- HEADER -->
+    <HBox alignment="CENTER_LEFT" style="-fx-padding: 40 40 0 40;">
+        <HBox alignment="CENTER_LEFT" spacing="5">
+            <ImageView fitWidth="130" fitHeight="137" preserveRatio="true" style="-fx-padding: 0 27 0 0;">
+                <image><Image url="/images/notes 2.png"/></image>
+            </ImageView>
+            <VBox alignment="CENTER_LEFT" spacing="4" style="-fx-padding: 2 0 0 0;">
+                <Label fx:id="versionLabel" text="V 0.1.0"
+                       style="-fx-font-size: 10; -fx-background-color: #ef4444; -fx-padding: 2 8; -fx-background-radius: 10; -fx-text-fill: white;"/>
+            </VBox>
         </HBox>
+        <!-- Espace central qui pousse le reste à droite -->
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <!-- École -->
+        <HBox alignment="CENTER_LEFT" spacing="5" style="-fx-padding: 0 30 0 0">
+            <ImageView fitWidth="48" fitHeight="40">
+                <image>
+                    <Image url="/images/ecole(1).png"/>
+                </image>
+            </ImageView>
+            <VBox alignment="CENTER_LEFT" spacing="2">
+                <Label text="École" style="-fx-font-size: 14; -fx-text-fill: #6b7280;"/>
+                <Label fx:id="nomEcoleLabel" style="-fx-font-size: 18; -fx-font-weight: 600;"/>
+            </VBox>
+        </HBox>
+
+        <!-- Directeur -->
+        <HBox alignment="CENTER_LEFT" spacing="5">
+            <ImageView fitWidth="48" fitHeight="40">
+                <image>
+                    <Image url="/images/profil.png"/>
+                </image>
+            </ImageView>
+            <VBox alignment="CENTER_LEFT" spacing="2">
+                <Label text="Directeur" style="-fx-font-size: 14; -fx-text-fill: #6b7280;"/>
+                <Label fx:id="nomDirecteurLabel" style="-fx-font-size: 18; -fx-font-weight: 600;"/>
+            </VBox>
+        </HBox>
+    </HBox>
+
 
         <!-- BIENVENUE -->
         <HBox style="-fx-padding: 0 0 0 28;">
 
             <VBox style="-fx-padding: 112 0 0 44;" prefWidth="500">
-                <Label text="Bonjour" style="-fx-font-size: 30; -fx-font-weight: 600;"/>
-                <Label fx:id="welcomeNameLabel" style="-fx-font-size: 48; -fx-font-weight: bold;"/>
+                <Label text="Bonjour" style="-fx-font-size: 30; -fx-font-weight: 600; -fx-font-family: 'Apple Chancery';"/>
+                <Label fx:id="welcomeNameLabel" style="-fx-font-size: 48; -fx-font-weight: 900; -fx-font-family: 'Apple Chancery';-fx-padding: -35 0 10 0;"/>
                 <Label text="Un système d'information intégré qui permet la
 mise en place de nouvelles méthodes de gestion scolaire."
                        wrapText="true" style="-fx-font-size: 20; -fx-text-fill: #6b7280;"/>
             </VBox>
+
 
             <!-- TODAY LABEL -->
             <VBox alignment="CENTER" prefWidth="40" prefHeight="200" style="-fx-padding: 85 30 0 150;">

@@ -137,7 +137,7 @@ public class AuthController {
     public void switchToDashboard() {
         try {
             // Charger le dashboard directeur
-            StageManager.loadScene("/view/dashboard.fxml", "/styles/dashboard.css", "Tableau de bord - Gestion Scolaire");
+            StageManager.loadScene("/view/directeur/dashboard.fxml", "/styles/dashboard.css", "Tableau de bord - Gestion Scolaire");
         } catch (IOException e) {
             System.err.println("Erreur lors du chargement du dashboard: " + e.getMessage());
             e.printStackTrace();
