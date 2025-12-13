@@ -133,14 +133,6 @@ public class FormateurDashboardController {
         }
 
 
-        // Charger la photo de profil si disponible
-        if (formateur.getProfilePicture() != null && !formateur.getProfilePicture().isEmpty()) {
-            try {
-                profileImageView.setImage(new Image("file:" + formateur.getProfilePicture()));
-            } catch (Exception e) {
-                System.err.println("Erreur chargement photo: " + e.getMessage());
-            }
-        }
     }
 
     private void loadStats() {

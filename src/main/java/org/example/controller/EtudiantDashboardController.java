@@ -152,14 +152,6 @@ public class EtudiantDashboardController {
                 nomEcoleLabel.setText("École non spécifiée");
             }
 
-            // Charger la photo de profil si disponible
-            if (etudiant.getProfilePicture() != null && !etudiant.getProfilePicture().isEmpty()) {
-                try {
-                    profileImageView.setImage(new Image("file:" + etudiant.getProfilePicture()));
-                } catch (Exception e) {
-                    System.err.println("Erreur chargement photo: " + e.getMessage());
-                }
-            }
         } else {
             // Si ce n'est pas un étudiant, rediriger
             System.err.println("❌ L'utilisateur n'est pas un étudiant");

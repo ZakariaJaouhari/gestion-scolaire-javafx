@@ -34,7 +34,6 @@ public class EtudiantDAO {
             stmt.setInt(6, etudiant.getGroupeId());
             stmt.setString(7, etudiant.getEmail());
             stmt.setString(8, etudiant.getPassword());
-            stmt.setString(9, etudiant.getProfilePicture());
             stmt.setInt(10, etudiant.getDirecteurId());
 
             int affectedRows = stmt.executeUpdate();
@@ -297,7 +296,6 @@ public class EtudiantDAO {
             stmt.setInt(6, etudiant.getGroupeId());
             stmt.setString(7, etudiant.getEmail());
             stmt.setString(8, etudiant.getPassword());
-            stmt.setString(9, etudiant.getProfilePicture());
             stmt.setInt(10, etudiant.getDirecteurId());
             stmt.setInt(11, etudiant.getId());
 
@@ -411,7 +409,6 @@ public class EtudiantDAO {
         etudiant.setGroupeId(rs.getInt("groupe_id"));
         etudiant.setEmail(rs.getString("email"));
         etudiant.setPassword(rs.getString("password"));
-        etudiant.setProfilePicture(rs.getString("profile_picture"));
         etudiant.setDirecteurId(rs.getInt("directeur_id"));
 
         return etudiant;

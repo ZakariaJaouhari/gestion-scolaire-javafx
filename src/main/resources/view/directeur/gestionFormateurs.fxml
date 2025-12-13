@@ -276,38 +276,43 @@
             </VBox>
 
             <!-- Tableau des Formateurs -->
-            <TableView fx:id="formateursTable" style="-fx-background-color: white; -fx-background-radius: 10;">
+            <TableView fx:id="formateursTable" styleClass="custom-table" stylesheets="@/styles/gestionFormateurs.css">
                 <columns>
-                    <TableColumn fx:id="nomColumn" text="Nom" prefWidth="250"/>
+                    <TableColumn fx:id="nomColumn" text="Nom" prefWidth="280"/>
 
-                    <TableColumn text="Matricule" prefWidth="120">
+                    <TableColumn text="Matricule" prefWidth="120" fx:id="matriculeColumn">
                         <cellValueFactory>
                             <PropertyValueFactory property="matricule"/>
                         </cellValueFactory>
                     </TableColumn>
-                    <TableColumn text="Sexe" prefWidth="80">
+
+                    <TableColumn text="Sexe" prefWidth="80" fx:id="sexeColumn">
                         <cellValueFactory>
                             <PropertyValueFactory property="sexe"/>
                         </cellValueFactory>
                     </TableColumn>
-                    <TableColumn text="Date naissance" prefWidth="120">
+
+                    <TableColumn text="Date naissance" prefWidth="130" fx:id="dateNaissanceColumn">
                         <cellValueFactory>
                             <PropertyValueFactory property="dateNaissance"/>
                         </cellValueFactory>
                     </TableColumn>
-                    <TableColumn text="Situation familiale" prefWidth="140">
+
+                    <TableColumn text="Situation familiale" prefWidth="150" fx:id="situationColumn">
                         <cellValueFactory>
                             <PropertyValueFactory property="situation"/>
                         </cellValueFactory>
                     </TableColumn>
-                    <TableColumn text="Date recrutement" prefWidth="130">
+
+                    <TableColumn text="Date recrutement" prefWidth="130" fx:id="dateRecrutementColumn">
                         <cellValueFactory>
                             <PropertyValueFactory property="dateRecrutement"/>
                         </cellValueFactory>
                     </TableColumn>
-                    <TableColumn fx:id="actionsColumn" text="Actions" prefWidth="80"/>
 
+                    <TableColumn fx:id="actionsColumn" text="" prefWidth="80"/>
                 </columns>
+
             </TableView>
         </VBox>
     </VBox>

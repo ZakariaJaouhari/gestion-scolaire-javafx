@@ -19,7 +19,6 @@ public class Formateur {
     private LocalDate dateRecrutement;
     private String email;
     private String password;
-    private String profilePicture;
     private int directeurId;
 
 
@@ -78,8 +77,7 @@ public class Formateur {
 
     public Formateur(String nom, String prenom, String matricule, Sexe sexe,
                      LocalDate dateNaissance, Situation situation, String cin,
-                     LocalDate dateRecrutement, String email, String password,
-                     String profilePicture, int directeurId) {
+                     LocalDate dateRecrutement, String email, String password, int directeurId) {
         this.nom = nom;
         this.prenom = prenom;
         this.matricule = matricule;
@@ -90,7 +88,6 @@ public class Formateur {
         this.dateRecrutement = dateRecrutement;
         this.email = email;
         this.password = password;
-        this.profilePicture = profilePicture;
         this.directeurId = directeurId;
     }
 
@@ -205,14 +202,6 @@ public class Formateur {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getProfilePicture() {
-        return profilePicture;
-    }
-
-    public void setProfilePicture(String profilePicture) {
-        this.profilePicture = profilePicture;
     }
 
     public int getDirecteurId() {

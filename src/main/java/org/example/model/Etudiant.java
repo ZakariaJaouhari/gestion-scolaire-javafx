@@ -15,7 +15,6 @@ public class Etudiant {
     private int groupeId;
     private String email;
     private String password;
-    private String profilePicture;
     private int directeurId;
 
     // Enums
@@ -47,8 +46,7 @@ public class Etudiant {
     public Etudiant() {}
 
     public Etudiant(String nom, String prenom, LocalDate dateNaissance, String cin,
-                    Sexe sexe, int groupeId, String email, String password,
-                    String profilePicture, int directeurId) {
+                    Sexe sexe, int groupeId, String email, String password, int directeurId) {
         this.nom = nom;
         this.prenom = prenom;
         this.dateNaissance = dateNaissance;
@@ -57,7 +55,6 @@ public class Etudiant {
         this.groupeId = groupeId;
         this.email = email;
         this.password = password;
-        this.profilePicture = profilePicture;
         this.directeurId = directeurId;
     }
 
@@ -152,14 +149,6 @@ public class Etudiant {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getProfilePicture() {
-        return profilePicture;
-    }
-
-    public void setProfilePicture(String profilePicture) {
-        this.profilePicture = profilePicture;
     }
 
     public int getDirecteurId() {

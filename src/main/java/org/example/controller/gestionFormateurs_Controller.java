@@ -5,15 +5,17 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.layout.Pane;
+import javafx.geometry.Pos;
+import javafx.util.Callback;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.beans.property.SimpleStringProperty;
 import org.example.dao.FormateurDAO;
 import org.example.model.Formateur;
 import org.example.util.SessionManager;
 import org.example.util.StageManager;
-
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.control.Button;
 
 import java.io.IOException;
 import java.util.List;
@@ -36,17 +38,19 @@ public class gestionFormateurs_Controller {
     // TABLE
     @FXML private TableView<Formateur> formateursTable;
     @FXML private TableColumn<Formateur, String> nomColumn;
-
+    @FXML private TableColumn<Formateur, String> matriculeColumn;
+    @FXML private TableColumn<Formateur, String> sexeColumn;
+    @FXML private TableColumn<Formateur, String> dateNaissanceColumn;
+    @FXML private TableColumn<Formateur, String> situationColumn;
+    @FXML private TableColumn<Formateur, String> dateRecrutementColumn;
     @FXML private TableColumn<Formateur, Void> actionsColumn;
-
 
     private FormateurDAO formateurDAO;
     private ObservableList<Formateur> formateursList = FXCollections.observableArrayList();
-
+    private ObservableList<Formateur> filteredList = FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
-
         formateurDAO = new FormateurDAO();
 
         // --- HEADER ----
@@ -57,80 +61,25 @@ public class gestionFormateurs_Controller {
         }
         versionLabel.setText("V 0.1.0");
 
-        // --- TABLE ----
-        nomColumn.setCellValueFactory(cellData ->
-                new javafx.beans.property.SimpleStringProperty(
-                        cellData.getValue().getNom() + " " + cellData.getValue().getPrenom()
-                )
-        );
-
-        loadFormateursFromDB();
+        // --- INITIALISATION DES COMBOBOXES ----
         loadComboBoxes();
 
-        // --- ACTION BUTTONS IN TABLE ---
-        actionsColumn.setCellFactory(column -> new TableCell<>() {
+        // --- CHARGEMENT DES DONNÉES ----
+        loadFormateursFromDB();
 
-            private final Button editBtn = new Button();
-            private final Button deleteBtn = new Button();
-            private final HBox container = new HBox(10);
+        // --- CONFIGURATION DE LA TABLE ----
+        configureTableColumns();
+        configureNomColumn();
+        configureActionsColumn();
 
-            {
-                // BOUTON MODIFIER
-                ImageView editIcon = new ImageView("/images/crayon.png");
-                editIcon.setFitWidth(20);
-                editIcon.setFitHeight(20);
-                editBtn.setGraphic(editIcon);
-                editBtn.setStyle("-fx-background-color: transparent;");
+        // --- GESTION DU FOCUS POUR LES LABELS FLOTTANTS ----
+        setupFloatingLabels();
 
-                editBtn.setOnAction(e -> {
-                    Formateur f = getTableView().getItems().get(getIndex());
-                    handleEdit(f);
-                });
-
-                // BOUTON SUPPRIMER
-                ImageView deleteIcon = new ImageView("/images/supprimer.png");
-                deleteIcon.setFitWidth(20);
-                deleteIcon.setFitHeight(20);
-                deleteBtn.setGraphic(deleteIcon);
-                deleteBtn.setStyle("-fx-background-color: transparent;");
-
-                deleteBtn.setOnAction(e -> {
-                    Formateur f = getTableView().getItems().get(getIndex());
-                    handleDelete(f);
-                });
-
-                container.getChildren().addAll(editBtn, deleteBtn);
-            }
-
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                setGraphic(empty ? null : container);
-            }
-        });
+        formateursTable.setColumnResizePolicy(
+                TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS
+        );
 
     }
-
-
-    private void handleEdit(Formateur f) {
-        System.out.println("Modifier : " + f.getNom());
-    }
-
-
-    private void handleDelete(Formateur f) {
-
-        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.setTitle("Supprimer formateur");
-        confirm.setHeaderText(null);
-        confirm.setContentText("Voulez-vous vraiment supprimer " + f.getNom() + " ?");
-
-        if (confirm.showAndWait().get() == ButtonType.OK) {
-            formateurDAO.delete(f.getId());
-            loadFormateursFromDB(); // rafraîchir la table
-        }
-    }
-
-
 
     // =====================================================================
     // ============= CHARGEMENT DES DONNÉES DEPUIS BD ======================
@@ -141,12 +90,235 @@ public class gestionFormateurs_Controller {
         );
 
         formateursList.setAll(list);
-        formateursTable.setItems(formateursList);
+        filteredList.setAll(formateursList);
+        formateursTable.setItems(filteredList);
     }
 
     private void loadComboBoxes() {
         sexeComboBox.getItems().setAll("Homme", "Femme");
         situationComboBox.getItems().setAll("Célibataire", "Marié(e)", "Divorcé(e)");
+
+        // Style pour les ComboBox
+        sexeComboBox.getStyleClass().add("float-text-field");
+        situationComboBox.getStyleClass().add("float-text-field");
+    }
+
+    // =====================================================================
+    // ============= CONFIGURATION DE LA TABLE =============================
+    // =====================================================================
+    private void configureTableColumns() {
+
+        nomColumn.setCellValueFactory(cellData ->
+                new SimpleStringProperty(
+                        cellData.getValue().getNom() + " " + cellData.getValue().getPrenom()
+                )
+        );
+
+        matriculeColumn.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getMatricule())
+        );
+
+        sexeColumn.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getSexe().getValeur())
+        );
+
+        dateNaissanceColumn.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getDateNaissance().toString())
+        );
+
+        situationColumn.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getSituation().getValeur())
+        );
+
+        dateRecrutementColumn.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getDateRecrutement().toString())
+        );
+
+        // 🔹 appliquer le style "other-column"
+        applyOtherColumnStyle(matriculeColumn);
+        applyOtherColumnStyle(sexeColumn);
+        applyOtherColumnStyle(dateNaissanceColumn);
+        applyOtherColumnStyle(situationColumn);
+        applyOtherColumnStyle(dateRecrutementColumn);
+    }
+
+    private <T> void applyOtherColumnStyle(TableColumn<Formateur, T> column) {
+        column.setCellFactory(col -> new TableCell<>() {
+            @Override
+            protected void updateItem(T item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty ? null : item.toString());
+                if (!empty) {
+                    getStyleClass().add("other-column");
+                }
+            }
+        });
+    }
+
+
+
+    private void configureNomColumn() {
+        nomColumn.setCellFactory(new Callback<TableColumn<Formateur, String>, TableCell<Formateur, String>>() {
+            @Override
+            public TableCell<Formateur, String> call(TableColumn<Formateur, String> param) {
+                return new TableCell<Formateur, String>() {
+                    private final VBox container = new VBox(2);
+                    private final Label nomLabel = new Label();
+                    private final Label emailLabel = new Label();
+
+                    {
+                        container.getStyleClass().add("nom-container");
+                        container.setAlignment(Pos.CENTER);
+                        nomLabel.getStyleClass().add("nom-text");
+                        emailLabel.getStyleClass().add("email-text");
+                        container.getChildren().addAll(nomLabel, emailLabel);
+                    }
+
+                    @Override
+                    protected void updateItem(String item, boolean empty) {
+                        super.updateItem(item, empty);
+
+                        if (empty || getTableRow() == null || getTableRow().getItem() == null) {
+                            setGraphic(null);
+                            setText(null);
+                            getStyleClass().remove("nom-cell");
+                        } else {
+                            Formateur formateur = getTableRow().getItem();
+                            nomLabel.setText(formateur.getPrenom() + " " + formateur.getNom());
+                            emailLabel.setText(formateur.getEmail());
+
+                            setGraphic(container);
+                            setText(null);
+                            getStyleClass().add("nom-cell");
+                            setAlignment(Pos.CENTER_LEFT);
+                        }
+                    }
+                };
+            }
+        });
+    }
+
+    private void configureActionsColumn() {
+        actionsColumn.setCellFactory(new Callback<TableColumn<Formateur, Void>, TableCell<Formateur, Void>>() {
+            @Override
+            public TableCell<Formateur, Void> call(final TableColumn<Formateur, Void> param) {
+                return new TableCell<Formateur, Void>() {
+                    private final HBox container = new HBox(12);
+                    private final Button editButton = new Button();
+                    private final Button deleteButton = new Button();
+
+                    {
+                        container.getStyleClass().add("actions-container");
+
+                        // Bouton modifier
+                        try {
+                            ImageView editIcon = new ImageView(new Image(getClass().getResourceAsStream("/images/crayon.png")));
+                            editIcon.setFitWidth(20);
+                            editIcon.setFitHeight(20);
+                            editButton.setGraphic(editIcon);
+                        } catch (Exception e) {
+                            editButton.setText("✏️");
+                        }
+                        editButton.getStyleClass().add("action-button");
+                        editButton.setOnAction(event -> {
+                            Formateur formateur = getTableView().getItems().get(getIndex());
+                            handleEdit(formateur);
+                        });
+
+                        // Bouton supprimer
+                        try {
+                            ImageView deleteIcon = new ImageView(new Image(getClass().getResourceAsStream("/images/supprimer.png")));
+                            deleteIcon.setFitWidth(20);
+                            deleteIcon.setFitHeight(20);
+                            deleteButton.setGraphic(deleteIcon);
+                        } catch (Exception e) {
+                            deleteButton.setText("🗑️");
+                        }
+                        deleteButton.getStyleClass().add("action-button");
+                        deleteButton.setOnAction(event -> {
+                            Formateur formateur = getTableView().getItems().get(getIndex());
+                            handleDelete(formateur);
+                        });
+
+                        container.getChildren().addAll(editButton, deleteButton);
+                    }
+
+                    @Override
+                    protected void updateItem(Void item, boolean empty) {
+                        super.updateItem(item, empty);
+
+                        if (empty) {
+                            setGraphic(null);
+                            getStyleClass().remove("actions-cell");
+                        } else {
+                            setGraphic(container);
+                            getStyleClass().setAll("table-cell", "actions-cell");
+                        }
+                    }
+
+                };
+            }
+        });
+    }
+
+
+
+    private void setupFloatingLabels() {
+        // Gestion des labels flottants pour les champs de filtrage
+        setupFloatingLabelForField(nomField, "Nom");
+        setupFloatingLabelForField(prenomField, "Prenom");
+        setupFloatingLabelForField(matriculeField, "Matricule");
+    }
+
+    private void setupFloatingLabelForField(TextField field, String labelText) {
+        // Cette logique serait mieux gérée dans le CSS avec des classes
+        // Ici, on ajoute juste les classes CSS appropriées
+        field.getStyleClass().add("float-text-field");
+        field.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal.isEmpty()) {
+                field.getStyleClass().add("has-text");
+            } else {
+                field.getStyleClass().remove("has-text");
+            }
+        });
+
+        field.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal || !field.getText().isEmpty()) {
+                field.getStyleClass().add("focused");
+            } else {
+                field.getStyleClass().remove("focused");
+            }
+        });
+    }
+
+    // =====================================================================
+    // ================ GESTION DES ACTIONS ================================
+    // =====================================================================
+    private void handleEdit(Formateur formateur) {
+
+    }
+
+    private void handleDelete(Formateur formateur) {
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Supprimer formateur");
+        confirm.setHeaderText("Confirmer la suppression");
+        confirm.setContentText("Voulez-vous vraiment supprimer " +
+                formateur.getPrenom() + " " + formateur.getNom() + " ?");
+
+        ButtonType buttonTypeYes = new ButtonType("Oui", ButtonBar.ButtonData.YES);
+        ButtonType buttonTypeNo = new ButtonType("Non", ButtonBar.ButtonData.NO);
+        confirm.getButtonTypes().setAll(buttonTypeYes, buttonTypeNo);
+
+        confirm.showAndWait().ifPresent(response -> {
+            if (response == buttonTypeYes) {
+                formateurDAO.delete(formateur.getId());
+                loadFormateursFromDB(); // rafraîchir la table
+
+                showAlert("Succès", "Formateur supprimé",
+                        formateur.getNomComplet() + " a été supprimé avec succès.",
+                        Alert.AlertType.INFORMATION);
+            }
+        });
     }
 
     // =====================================================================
@@ -154,17 +326,30 @@ public class gestionFormateurs_Controller {
     // =====================================================================
     @FXML
     private void filtrerFormateurs() {
+        String nom = nomField.getText().toLowerCase();
+        String prenom = prenomField.getText().toLowerCase();
+        String matricule = matriculeField.getText().toLowerCase();
+        String sexe = sexeComboBox.getValue();
+        String situation = situationComboBox.getValue();
+
         List<Formateur> filtered = formateursList.stream()
                 .filter(f ->
-                        (nomField.getText().isEmpty() || f.getNom().toLowerCase().contains(nomField.getText().toLowerCase())) &&
-                                (prenomField.getText().isEmpty() || f.getPrenom().toLowerCase().contains(prenomField.getText().toLowerCase())) &&
-                                (matriculeField.getText().isEmpty() || f.getMatricule().toLowerCase().contains(matriculeField.getText().toLowerCase())) &&
-                                (sexeComboBox.getValue() == null || f.getSexe().getValeur().equals(sexeComboBox.getValue())) &&
-                                (situationComboBox.getValue() == null || f.getSituation().getValeur().equals(situationComboBox.getValue()))
+                        (nom.isEmpty() || f.getNom().toLowerCase().contains(nom)) &&
+                                (prenom.isEmpty() || f.getPrenom().toLowerCase().contains(prenom)) &&
+                                (matricule.isEmpty() || f.getMatricule().toLowerCase().contains(matricule)) &&
+                                (sexe == null || f.getSexe().getValeur().equals(sexe)) &&
+                                (situation == null || f.getSituation().getValeur().equals(situation))
                 )
                 .collect(Collectors.toList());
 
-        formateursTable.setItems(FXCollections.observableArrayList(filtered));
+        filteredList.setAll(filtered);
+
+        if (filtered.isEmpty() && (!nom.isEmpty() || !prenom.isEmpty() || !matricule.isEmpty() ||
+                sexe != null || situation != null)) {
+            showAlert("Information", "Aucun résultat",
+                    "Aucun formateur ne correspond aux critères de recherche.",
+                    Alert.AlertType.INFORMATION);
+        }
     }
 
     // =====================================================================
@@ -178,7 +363,18 @@ public class gestionFormateurs_Controller {
         sexeComboBox.setValue(null);
         situationComboBox.setValue(null);
 
-        formateursTable.setItems(formateursList);
+        // Réinitialiser les styles des champs
+        nomField.getStyleClass().removeAll("has-text", "focused");
+        prenomField.getStyleClass().removeAll("has-text", "focused");
+        matriculeField.getStyleClass().removeAll("has-text", "focused");
+
+        filteredList.setAll(formateursList);
+    }
+
+    @FXML
+    private void rafraichirDonnees() {
+        loadFormateursFromDB();
+        reinitialiserFiltres();
     }
 
     // =====================================================================
@@ -186,9 +382,77 @@ public class gestionFormateurs_Controller {
     // =====================================================================
     @FXML
     private void ajouterFormateur() {
+
+    }
+
+    // =====================================================================
+    // ======================= NAVIGATION MENU =============================
+    // =====================================================================
+    @FXML
+    private void handleHome() {
         try {
-            StageManager.loadScene("/view/directeur/ajouterFormateur.fxml",
-                    "/styles/ajouterFormateur.css", "Ajouter formateur");
+            StageManager.loadScene("/view/directeur/dashboard.fxml", "/styles/dashboard.css", "Dashboard");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleFormateurs() {
+        // On est déjà sur cette page, on rafraîchit juste les données
+        rafraichirDonnees();
+    }
+
+    @FXML
+    private void handleStagiaires() {
+        try {
+            StageManager.loadScene("/view/directeur/gestionStagiaires.fxml", "/styles/gestionStagiaires.css", "Stagiaires");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleGroupes() {
+        try {
+            StageManager.loadScene("/view/directeur/gestionGroupes.fxml", "/styles/gestionGroupes.css", "Groupes");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleModules() {
+        try {
+            StageManager.loadScene("/view/directeur/gestionModules.fxml", "/styles/gestionModules.css", "Modules");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleNotes() {
+        try {
+            StageManager.loadScene("/view/directeur/gestionNotes.fxml", "/styles/gestionNotes.css", "Notes");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleCertificats() {
+        try {
+            StageManager.loadScene("/view/directeur/gestionCertificats.fxml", "/styles/gestionCertificats.css", "Certificats");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleLogout() {
+        SessionManager.getInstance().clearSession();
+        try {
+            StageManager.loadScene("/view/login_register.fxml", "/styles/auth.css", "Connexion");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -196,55 +460,11 @@ public class gestionFormateurs_Controller {
 
 
 
-
-    // =====================================================================
-    // ======================= NAVIGATION MENU =============================
-    // =====================================================================
-
-    @FXML private void handleHome() {
-        try {
-            StageManager.loadScene("/view/directeur/dashboard.fxml", "/styles/dashboard.css", "Dashboard");
-        } catch (IOException e) { e.printStackTrace(); }
-    }
-
-    @FXML private void handleFormateurs() {
-        try {
-            StageManager.loadScene("/view/directeur/gestionFormateurs.fxml", "/styles/gestionFormateurs.css", "Formateurs");
-        } catch (IOException e) { e.printStackTrace(); }
-    }
-
-    @FXML private void handleStagiaires() {
-        showAlert("Stagiaires", "Fonctionnalité bientôt disponible.");
-    }
-
-    @FXML private void handleGroupes() {
-        showAlert("Groupes", "Fonctionnalité bientôt disponible.");
-    }
-
-    @FXML private void handleModules() {
-        showAlert("Modules", "Fonctionnalité bientôt disponible.");
-    }
-
-    @FXML private void handleNotes() {
-        showAlert("Notes", "Fonctionnalité bientôt disponible.");
-    }
-
-    @FXML private void handleCertificats() {
-        showAlert("Planning", "Fonctionnalité bientôt disponible.");
-    }
-
-    @FXML private void handleLogout() {
-        SessionManager.getInstance().clearSession();
-        try {
-            StageManager.loadScene("/view/login_register.fxml", "/styles/auth.css", "Connexion");
-        } catch (IOException e) { e.printStackTrace(); }
-    }
-
-    private void showAlert(String titre, String msg) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(titre);
-        alert.setHeaderText(null);
-        alert.setContentText(msg);
+    private void showAlert(String title, String header, String content, Alert.AlertType type) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
         alert.showAndWait();
     }
 }

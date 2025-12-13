@@ -48,14 +48,196 @@
 }
 
 /* Effet de focus sur le label */
-.float-text-field:focused + .float-label,
-.float-text-field:not(:empty) + .float-label {
+.float-label.focused,
+.float-label.has-text {
     -fx-text-fill: #111827;
     -fx-font-size: 12px;
     -fx-translate-y: -5px;
 }
 
-/* Animation pour le label */
-.float-label {
-    -fx-transition: all 0.3s ease;
+
+
+
+
+
+
+
+
+
+/* Table personnalisée */
+.custom-table {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+    -fx-effect: none;
+    -fx-padding: 0;
+    -fx-font-size: 14px;
+    -fx-table-cell-border-color: transparent;
+    -fx-table-header-border-color: transparent;
 }
+
+/* En-têtes de colonnes */
+.custom-table .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: #d1d5db;
+    -fx-border-width: 0 0 1px 0;
+    -fx-padding: 12px 8px;
+    -fx-font-weight: 900;
+    -fx-text-fill: #000000;
+    -fx-font-size: 16px;
+}
+
+.custom-table .column-header .label {
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 0 0 0 8px;
+}
+
+
+.custom-table .column-header-background {
+    -fx-background-color: transparent;
+}
+
+.custom-table .filler {
+    -fx-background-color: transparent;
+}
+
+/* Cellules de données */
+.custom-table .table-row-cell {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-table-cell-border-color: transparent;
+    -fx-padding: 0;
+    -fx-cell-size: 60px;
+}
+
+.custom-table .table-row-cell:empty {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+/* Cellules individuelles */
+.custom-table .table-cell {
+    -fx-border-color: transparent;
+    -fx-padding: 0 8px;
+    -fx-text-fill: #374151;
+    -fx-alignment: CENTER_LEFT;
+}
+
+/* Colonne Nom - style personnalisé */
+.nom-cell {
+    -fx-padding: 12px 8px 12px 0;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.nom-container {
+    -fx-spacing: 0;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.nom-text {
+    -fx-font-weight: 700;
+    -fx-font-size: 14px;
+    -fx-text-fill: #000000;
+}
+
+.email-text {
+    -fx-font-size: 12px;
+    -fx-text-fill: #48484b;
+    -fx-opacity: 0.7;
+}
+
+/* Autres colonnes */
+.other-column {
+    -fx-font-weight: normal;
+    -fx-text-fill: #000000;
+}
+
+/* Ligne de séparation */
+.separator-row {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.separator-cell {
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+}
+
+.horizontal-separator {
+    -fx-background-color: #d1d5db;
+    -fx-pref-height: 1px;
+    -fx-min-height: 1px;
+    -fx-max-height: 1px;
+    -fx-padding: 8 0 8 0;
+}
+
+/* Colonne Actions */
+.actions-cell {
+    -fx-padding: 0;
+    -fx-alignment: CENTER;
+}
+
+.actions-container {
+    -fx-spacing: 12px;
+    -fx-alignment: CENTER;
+}
+
+.action-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+    -fx-cursor: hand;
+}
+
+.action-button:hover {
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
+}
+
+/* Effet de survol sur la ligne */
+.custom-table .table-row-cell:filled:hover {
+    -fx-background-color: #f9fafb;
+}
+
+/* Pas de sélection visible */
+.custom-table .table-row-cell:filled:selected {
+    -fx-background-color: transparent;
+    -fx-text-fill: #374151;
+}
+
+/* Ajustement des largeurs de colonnes */
+.custom-table .column-header .label {
+    -fx-padding: 0 0 0 8px;
+}
+
+/* Scrollbar minimaliste */
+.custom-table .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-pref-width: 8px;
+}
+
+.custom-table .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+    -fx-pref-height: 0;
+    -fx-opacity: 0;
+}
+
+.custom-table .scroll-bar .thumb {
+    -fx-background-color: #9ca3af;
+    -fx-background-radius: 4px;
+}
+
+.custom-table .scroll-bar .thumb:hover {
+    -fx-background-color: #6b7280;
+}
+
+/* Pour éviter les bordures de focus */
+.custom-table:focused .table-row-cell:filled:focused:selected {
+    -fx-background-color: transparent;
+    -fx-table-cell-border-color: transparent;
+}
+
+.custom-table .table-row-cell {
+    -fx-border-width: 0 0 1 0;
+    -fx-border-color: #e5e7eb;
+}
+

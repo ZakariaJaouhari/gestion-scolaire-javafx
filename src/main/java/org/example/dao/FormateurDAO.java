@@ -37,7 +37,6 @@ public class FormateurDAO {
             stmt.setDate(8, Date.valueOf(formateur.getDateRecrutement()));
             stmt.setString(9, formateur.getEmail());
             stmt.setString(10, formateur.getPassword());
-            stmt.setString(11, formateur.getProfilePicture());
             stmt.setInt(12, formateur.getDirecteurId());
 
             int affectedRows = stmt.executeUpdate();
@@ -228,7 +227,6 @@ public class FormateurDAO {
             stmt.setDate(8, Date.valueOf(formateur.getDateRecrutement()));
             stmt.setString(9, formateur.getEmail());
             stmt.setString(10, formateur.getPassword());
-            stmt.setString(11, formateur.getProfilePicture());
             stmt.setInt(12, formateur.getDirecteurId());
             stmt.setInt(13, formateur.getId());
 
@@ -312,7 +310,6 @@ public class FormateurDAO {
 
         formateur.setEmail(rs.getString("email"));
         formateur.setPassword(rs.getString("password"));
-        formateur.setProfilePicture(rs.getString("profile_picture"));
         formateur.setDirecteurId(rs.getInt("directeur_id"));
 
         return formateur;
