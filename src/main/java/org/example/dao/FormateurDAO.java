@@ -23,8 +23,8 @@ public class FormateurDAO {
     // Créer un formateur
     public Long create(Formateur formateur) {
         String sql = "INSERT INTO formateurs (nom, prenom, matricule, sexe, date_naissance, " +
-                "situation, CIN, date_recrutement, email, password, profile_picture, directeur_id) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "situation, CIN, date_recrutement, email, password, directeur_id) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, formateur.getNom());
@@ -37,7 +37,7 @@ public class FormateurDAO {
             stmt.setDate(8, Date.valueOf(formateur.getDateRecrutement()));
             stmt.setString(9, formateur.getEmail());
             stmt.setString(10, formateur.getPassword());
-            stmt.setInt(12, formateur.getDirecteurId());
+            stmt.setInt(11, formateur.getDirecteurId());
 
             int affectedRows = stmt.executeUpdate();
 
@@ -213,10 +213,11 @@ public class FormateurDAO {
         String sql = "UPDATE formateurs SET nom = ?, prenom = ?, matricule = ?, " +
                 "sexe = ?, date_naissance = ?, situation = ?, CIN = ?, " +
                 "date_recrutement = ?, email = ?, password = ?, " +
-                "profile_picture = ?, directeur_id = ?, updated_at = NOW() " +
+                "directeur_id = ?, updated_at = NOW() " +
                 "WHERE id = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+
             stmt.setString(1, formateur.getNom());
             stmt.setString(2, formateur.getPrenom());
             stmt.setString(3, formateur.getMatricule());
@@ -227,16 +228,18 @@ public class FormateurDAO {
             stmt.setDate(8, Date.valueOf(formateur.getDateRecrutement()));
             stmt.setString(9, formateur.getEmail());
             stmt.setString(10, formateur.getPassword());
-            stmt.setInt(12, formateur.getDirecteurId());
-            stmt.setInt(13, formateur.getId());
+            stmt.setInt(11, formateur.getDirecteurId());
+            stmt.setInt(12, formateur.getId());
 
             int affectedRows = stmt.executeUpdate();
             return affectedRows > 0;
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
     }
+
 
     // Supprimer un formateur
     public boolean delete(int id) {

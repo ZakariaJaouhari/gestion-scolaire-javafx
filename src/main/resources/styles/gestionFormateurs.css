@@ -241,3 +241,51 @@
     -fx-border-color: #e5e7eb;
 }
 
+
+
+
+
+
+
+/* Ajoutstyle.css */
+.text-field-styled {
+    -fx-font-family: 'sans-serif';
+    -fx-font-size: 14px;
+    -fx-text-fill: #374151;
+    -fx-background-color: transparent;
+    -fx-border-color: #1a202c;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 16 0 6 0;
+}
+
+.text-field-styled:focused {
+    -fx-border-color: #10B981;
+    -fx-border-width: 0 0 2 0;
+}
+
+.combo-box-styled {
+    -fx-font-family: 'sans-serif';
+    -fx-font-size: 14px;
+    -fx-text-fill: #374151;
+    -fx-background-color: transparent;
+    -fx-border-color: #1a202c;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 8 12 8 12;
+}
+
+.combo-box-styled:focused {
+    -fx-border-color: #10B981;
+    -fx-border-width: 0 0 2 0;
+}
+
+.label-styled {
+    -fx-font-family: 'sans-serif';
+    -fx-font-size: 14px;
+    -fx-text-fill: #1a202c;
+}
+
+.error-label {
+    -fx-text-fill: #ef4444;
+    -fx-font-size: 12px;
+    -fx-font-family: 'sans-serif';
+}

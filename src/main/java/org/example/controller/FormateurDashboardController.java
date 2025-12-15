@@ -14,6 +14,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.example.dao.DirecteurDAO;
 import org.example.dao.FormateurDAO;
 import org.example.model.Formateur;
@@ -422,15 +424,24 @@ public class FormateurDashboardController {
         }
     }
 
-    private void showAlert(String title, String header, String content) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    private void showAlert(
+            String title,
+            String header,
+            String content,
+            Alert.AlertType type
+    ) {
+        Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(header);
         alert.setContentText(content);
-        alert.showAndWait();
+
+        Stage stage = (Stage) nomEcoleLabel.getScene().getWindow(); // n'importe quel champ
+        alert.initOwner(stage);
+        alert.initModality(Modality.WINDOW_MODAL);
+
     }
 
 
-    public void handleEmploiDuTemps(MouseEvent mouseEvent) {
+        public void handleEmploiDuTemps(MouseEvent mouseEvent) {
     }
 }

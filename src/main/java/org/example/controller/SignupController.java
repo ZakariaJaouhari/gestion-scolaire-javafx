@@ -2,6 +2,8 @@ package org.example.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.example.dao.DirecteurDAO;
 import org.example.model.Directeur;
 import org.example.util.SessionManager;
@@ -15,7 +17,9 @@ public class SignupController {
     @FXML private TextField nomEcoleField;
     @FXML private TextField emailField;
     @FXML private PasswordField passwordField;
-    @FXML private PasswordField confirmPasswordField;
+    @FXML private TextField annee;
+    @FXML private TextField academie;
+    @FXML private TextField direction;
     @FXML private Button loginButton;
 
     private DirecteurDAO directeurDAO = new DirecteurDAO();
@@ -28,24 +32,26 @@ public class SignupController {
         String nomEcole = nomEcoleField.getText().trim();
         String email = emailField.getText().trim();
         String password = passwordField.getText();
-        String confirmPassword = confirmPasswordField.getText();
+        String anneeScolaire = annee.getText().trim();
+        String academieValue = academie.getText().trim();
+        String directionValue = direction.getText().trim();
+
 
         // Validation
-        if (nomDirecteur.isEmpty() || nomEcole.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+        if (nomDirecteur.isEmpty() || nomEcole.isEmpty() || email.isEmpty() || password.isEmpty()) {
             showAlert("Erreur", "Champs manquants",
                     "Veuillez remplir tous les champs.",
                     Alert.AlertType.WARNING);
             return;
         }
-
-        if (!password.equals(confirmPassword)) {
-            showAlert("Erreur", "Mots de passe différents",
-                    "Les mots de passe ne correspondent pas.",
-                    Alert.AlertType.ERROR);
-            passwordField.clear();
-            confirmPasswordField.clear();
+        if (anneeScolaire.isEmpty() || academieValue.isEmpty() || directionValue.isEmpty()) {
+            showAlert("Erreur", "Champs manquants",
+                    "Veuillez remplir toutes les informations de l'école.",
+                    Alert.AlertType.WARNING);
             return;
         }
+
+
 
         if (password.length() < 6) {
             showAlert("Erreur", "Mot de passe trop court",
@@ -63,14 +69,31 @@ public class SignupController {
         }
 
         try {
+
+            // Validation minimale pour les nouveaux champs
+            if (anneeScolaire.isEmpty() || academieValue.isEmpty() || directionValue.isEmpty()) {
+                showAlert("Erreur", "Champs manquants",
+                        "Veuillez remplir toutes les informations de l'école.",
+                        Alert.AlertType.WARNING);
+                return;
+            }
+
             // Créer le directeur
             Directeur directeur = new Directeur();
             directeur.setNomDirecteur(nomDirecteur);
             directeur.setNomEcole(nomEcole);
             directeur.setEmail(email);
-            directeur.setPassword(password); // Dans une vraie app, il faudrait hasher
 
-            // CORRECTION ICI : La méthode create() retourne un int (ID), pas un boolean
+            // 🔒 Hasher le mot de passe avant stockage
+            String hashedPassword = org.apache.commons.codec.digest.DigestUtils.sha256Hex(password);
+            directeur.setPassword(hashedPassword);
+
+            // Ajouter les champs supplémentaires
+            directeur.setAnnee(anneeScolaire);
+            directeur.setAcademie(academieValue);
+            directeur.setDirection(directionValue);
+
+            // CORRECTION: create() retourne l'ID du directeur
             int directeurId = directeurDAO.create(directeur);
 
             if (directeurId > 0) {
@@ -105,12 +128,13 @@ public class SignupController {
                     Alert.AlertType.ERROR);
             e.printStackTrace();
         }
+
     }
 
     @FXML
     private void switchToLogin() {
         try {
-            StageManager.loadScene("/view/login.fxml", "/styles/auth.css", "Connexion - Gestion Scolaire");
+            StageManager.loadScene("/view/login_register.fxml", "/styles/auth.css", "Connexion - Gestion Scolaire");
         } catch (IOException e) {
             System.err.println("Erreur lors de la navigation vers la connexion: " + e.getMessage());
             e.printStackTrace();
@@ -120,27 +144,35 @@ public class SignupController {
     @FXML
     private void switchToDashboard() {
         try {
-            StageManager.loadScene("/view/dashboard.fxml", "/styles/dashboard.css", "Tableau de bord - Gestion Scolaire");
+            StageManager.loadScene("/view/directeur/dashboard.fxml", "/styles/dashboard.css", "Dashboard");
         } catch (IOException e) {
             System.err.println("Erreur lors du chargement du dashboard: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    private void showAlert(String title, String header, String content, Alert.AlertType type) {
+    private void showAlert(
+            String title,
+            String header,
+            String content,
+            Alert.AlertType type
+    ) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(header);
         alert.setContentText(content);
-        alert.showAndWait();
+
+        Stage stage = (Stage) nomEcoleField.getScene().getWindow(); // n'importe quel champ
+        alert.initOwner(stage);
+        alert.initModality(Modality.WINDOW_MODAL);
+
+
     }
 
     @FXML
     private void initialize() {
         System.out.println("SignupController initialisé");
 
-        // Optionnel: Entrée sur le champ de confirmation pour register
-        confirmPasswordField.setOnAction(event -> register());
 
         // Optionnel: Focus automatique
         nomDirecteurField.requestFocus();

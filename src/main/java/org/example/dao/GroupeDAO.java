@@ -93,12 +93,12 @@ public class GroupeDAO {
     }
 
     // Trouver par directeur
-    public List<Groupe> findByDirecteurId(Long directeurId) {
+    public List<Groupe> findByDirecteurId(int directeurId) {
         List<Groupe> groupes = new ArrayList<>();
         String sql = "SELECT * FROM groupes WHERE directeur_id = ? ORDER BY matricule";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setLong(1, directeurId);
+            stmt.setInt(1, directeurId);
 
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {

@@ -3,21 +3,21 @@ package org.example.controller;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.geometry.Pos;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.beans.property.SimpleStringProperty;
-import org.example.dao.FormateurDAO;
-import org.example.model.Formateur;
+import org.example.dao.EtudiantDAO;
+import org.example.dao.GroupeDAO;
+import org.example.model.Directeur;
+import org.example.model.Etudiant;
+import org.example.model.Groupe;
 import org.example.util.SessionManager;
 import org.example.util.StageManager;
 
@@ -25,7 +25,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class gestionFormateurs_Controller {
+
+public class gestionEtudiant_Controller {
+
 
     // HEADER
     @FXML private Label nomEcoleLabel;
@@ -35,27 +37,29 @@ public class gestionFormateurs_Controller {
     // FILTRES
     @FXML private TextField nomField;
     @FXML private TextField prenomField;
-    @FXML private TextField matriculeField;
+    @FXML private TextField cinField;
     @FXML private ComboBox<String> sexeComboBox;
-    @FXML private ComboBox<String> situationComboBox;
+    @FXML private ComboBox<String> groupeComboBox;
 
     // TABLE
-    @FXML private TableView<Formateur> formateursTable;
-    @FXML private TableColumn<Formateur, String> nomColumn;
-    @FXML private TableColumn<Formateur, String> matriculeColumn;
-    @FXML private TableColumn<Formateur, String> sexeColumn;
-    @FXML private TableColumn<Formateur, String> dateNaissanceColumn;
-    @FXML private TableColumn<Formateur, String> situationColumn;
-    @FXML private TableColumn<Formateur, String> dateRecrutementColumn;
-    @FXML private TableColumn<Formateur, Void> actionsColumn;
+    @FXML private TableView<Etudiant> etudiantsTable;
+    @FXML private TableColumn<Etudiant, String> nomColumn;
+    @FXML private TableColumn<Etudiant, String> sexeColumn;
+    @FXML private TableColumn<Etudiant, String> dateNaissanceColumn;
+    @FXML private TableColumn<Etudiant, String> cinColumn;
+    @FXML private TableColumn<Etudiant, String> groupeColumn;
+    @FXML private TableColumn<Etudiant, Void> actionsColumn;
 
-    private FormateurDAO formateurDAO;
-    private ObservableList<Formateur> formateursList = FXCollections.observableArrayList();
-    private ObservableList<Formateur> filteredList = FXCollections.observableArrayList();
+    private final GroupeDAO groupeDAO = new GroupeDAO();
+
+    private EtudiantDAO etudiantDAO;
+    private ObservableList<Etudiant> etudiantList = FXCollections.observableArrayList();
+    private ObservableList<Etudiant> filteredList = FXCollections.observableArrayList();
+
 
     @FXML
     public void initialize() {
-        formateurDAO = new FormateurDAO();
+        etudiantDAO = new EtudiantDAO();
 
         // --- HEADER ----
         SessionManager session = SessionManager.getInstance();
@@ -69,7 +73,7 @@ public class gestionFormateurs_Controller {
         loadComboBoxes();
 
         // --- CHARGEMENT DES DONNÉES ----
-        loadFormateursFromDB();
+        loadEtudiantsFromDB();
 
         // --- CONFIGURATION DE LA TABLE ----
         configureTableColumns();
@@ -79,33 +83,51 @@ public class gestionFormateurs_Controller {
         // --- GESTION DU FOCUS POUR LES LABELS FLOTTANTS ----
         setupFloatingLabels();
 
-        formateursTable.setColumnResizePolicy(
+        etudiantsTable.setColumnResizePolicy(
                 TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS
         );
 
     }
 
+
     // =====================================================================
     // ============= CHARGEMENT DES DONNÉES DEPUIS BD ======================
     // =====================================================================
-    private void loadFormateursFromDB() {
-        List<Formateur> list = formateurDAO.findByDirecteurId(
+    private void loadEtudiantsFromDB() {
+        List<Etudiant> list = etudiantDAO.findByDirecteurId(
                 SessionManager.getInstance().getUserId()
         );
 
-        formateursList.setAll(list);
-        filteredList.setAll(formateursList);
-        formateursTable.setItems(filteredList);
+        etudiantList.setAll(list);
+        filteredList.setAll(etudiantList);
+        etudiantsTable.setItems(filteredList);
     }
 
     private void loadComboBoxes() {
-        sexeComboBox.getItems().setAll("Homme", "Femme");
-        situationComboBox.getItems().setAll("Célibataire", "Marié(e)", "Divorcé(e)");
 
-        // Style pour les ComboBox
+        // 🔹 Sexe
+        sexeComboBox.getItems().setAll("Homme", "Femme");
+
+        // 🔹 Groupes (matricules)
+        Directeur directeur = SessionManager.getInstance().getCurrentDirecteur();
+        int directeurId = directeur.getId();
+
+
+        List<Groupe> groupes = groupeDAO.findByDirecteurId((int) directeurId);
+
+        List<String> matricules = groupes.stream()
+                .map(Groupe::getMatricule)
+                .toList();
+
+        groupeComboBox.getItems().clear();
+        groupeComboBox.getItems().addAll(matricules);
+
+        // 🔹 Style
         sexeComboBox.getStyleClass().add("float-text-field");
-        situationComboBox.getStyleClass().add("float-text-field");
+        groupeComboBox.getStyleClass().add("float-text-field");
     }
+
+
 
     // =====================================================================
     // ============= CONFIGURATION DE LA TABLE =============================
@@ -118,10 +140,6 @@ public class gestionFormateurs_Controller {
                 )
         );
 
-        matriculeColumn.setCellValueFactory(cellData ->
-                new SimpleStringProperty(cellData.getValue().getMatricule())
-        );
-
         sexeColumn.setCellValueFactory(cellData ->
                 new SimpleStringProperty(cellData.getValue().getSexe().getValeur())
         );
@@ -130,23 +148,24 @@ public class gestionFormateurs_Controller {
                 new SimpleStringProperty(cellData.getValue().getDateNaissance().toString())
         );
 
-        situationColumn.setCellValueFactory(cellData ->
-                new SimpleStringProperty(cellData.getValue().getSituation().getValeur())
+        cinColumn.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getCin())
         );
 
-        dateRecrutementColumn.setCellValueFactory(cellData ->
-                new SimpleStringProperty(cellData.getValue().getDateRecrutement().toString())
+        groupeColumn.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getGroupe().getMatricule())
         );
+
 
         // 🔹 appliquer le style "other-column"
-        applyOtherColumnStyle(matriculeColumn);
         applyOtherColumnStyle(sexeColumn);
         applyOtherColumnStyle(dateNaissanceColumn);
-        applyOtherColumnStyle(situationColumn);
-        applyOtherColumnStyle(dateRecrutementColumn);
+        applyOtherColumnStyle(cinColumn);
+        applyOtherColumnStyle(groupeColumn);
     }
 
-    private <T> void applyOtherColumnStyle(TableColumn<Formateur, T> column) {
+
+    private <T> void applyOtherColumnStyle(TableColumn<Etudiant, T> column) {
         column.setCellFactory(col -> new TableCell<>() {
             @Override
             protected void updateItem(T item, boolean empty) {
@@ -159,13 +178,11 @@ public class gestionFormateurs_Controller {
         });
     }
 
-
-
     private void configureNomColumn() {
-        nomColumn.setCellFactory(new Callback<TableColumn<Formateur, String>, TableCell<Formateur, String>>() {
+        nomColumn.setCellFactory(new Callback<TableColumn<Etudiant, String>, TableCell<Etudiant, String>>() {
             @Override
-            public TableCell<Formateur, String> call(TableColumn<Formateur, String> param) {
-                return new TableCell<Formateur, String>() {
+            public TableCell<Etudiant, String> call(TableColumn<Etudiant, String> param) {
+                return new TableCell<Etudiant, String>() {
                     private final VBox container = new VBox(2);
                     private final Label nomLabel = new Label();
                     private final Label emailLabel = new Label();
@@ -187,9 +204,9 @@ public class gestionFormateurs_Controller {
                             setText(null);
                             getStyleClass().remove("nom-cell");
                         } else {
-                            Formateur formateur = getTableRow().getItem();
-                            nomLabel.setText(formateur.getPrenom() + " " + formateur.getNom());
-                            emailLabel.setText(formateur.getEmail());
+                            Etudiant etudiant = getTableRow().getItem();
+                            nomLabel.setText(etudiant.getPrenom() + " " + etudiant.getNom());
+                            emailLabel.setText(etudiant.getEmail());
 
                             setGraphic(container);
                             setText(null);
@@ -202,11 +219,12 @@ public class gestionFormateurs_Controller {
         });
     }
 
+
     private void configureActionsColumn() {
-        actionsColumn.setCellFactory(new Callback<TableColumn<Formateur, Void>, TableCell<Formateur, Void>>() {
+        actionsColumn.setCellFactory(new Callback<TableColumn<Etudiant, Void>, TableCell<Etudiant, Void>>() {
             @Override
-            public TableCell<Formateur, Void> call(final TableColumn<Formateur, Void> param) {
-                return new TableCell<Formateur, Void>() {
+            public TableCell<Etudiant, Void> call(final TableColumn<Etudiant, Void> param) {
+                return new TableCell<Etudiant, Void>() {
                     private final HBox container = new HBox(12);
                     private final Button editButton = new Button();
                     private final Button deleteButton = new Button();
@@ -225,8 +243,8 @@ public class gestionFormateurs_Controller {
                         }
                         editButton.getStyleClass().add("action-button");
                         editButton.setOnAction(event -> {
-                            Formateur formateur = getTableView().getItems().get(getIndex());
-                            handleEdit(formateur);
+                            Etudiant etudiant = getTableView().getItems().get(getIndex());
+                            handleEdit(etudiant);
                         });
 
                         // Bouton supprimer
@@ -240,8 +258,8 @@ public class gestionFormateurs_Controller {
                         }
                         deleteButton.getStyleClass().add("action-button");
                         deleteButton.setOnAction(event -> {
-                            Formateur formateur = getTableView().getItems().get(getIndex());
-                            handleDelete(formateur);
+                            Etudiant etudiant = getTableView().getItems().get(getIndex());
+                            handleDelete(etudiant);
                         });
 
                         container.getChildren().addAll(editButton, deleteButton);
@@ -266,12 +284,11 @@ public class gestionFormateurs_Controller {
     }
 
 
-
     private void setupFloatingLabels() {
         // Gestion des labels flottants pour les champs de filtrage
         setupFloatingLabelForField(nomField, "Nom");
         setupFloatingLabelForField(prenomField, "Prenom");
-        setupFloatingLabelForField(matriculeField, "Matricule");
+        setupFloatingLabelForField(cinField, "CIN");
     }
 
     private void setupFloatingLabelForField(TextField field, String labelText) {
@@ -295,67 +312,28 @@ public class gestionFormateurs_Controller {
         });
     }
 
+
+
     // =====================================================================
     // ================ GESTION DES ACTIONS ================================
     // =====================================================================
-    @FXML
-    private void handleEdit(Formateur formateur) {
-        try {
-            // Charger le FXML
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/view/directeur/Gestion Formateurs/Modifier_Formateur.fxml")
-            );
-            Parent root = loader.load();
+    private void handleEdit(Etudiant etudiant) {
 
-            // Récupérer le controller de modification
-            Modifier_Formateur_Controller controller = loader.getController();
-            controller.setFormateurToEdit(formateur);
-
-            // Récupérer la fenêtre principale
-            Stage stage = StageManager.getPrimaryStage();
-            Scene scene = stage.getScene();
-
-            if (scene == null) {
-                // Si pas de scène existante, créer une nouvelle
-                scene = new Scene(root);
-                stage.setScene(scene);
-            } else {
-                // Sinon remplacer le root de la scène actuelle → Garde la taille
-                scene.setRoot(root);
-            }
-
-            // Charger le CSS
-            scene.getStylesheets().clear();
-            scene.getStylesheets().add(
-                    getClass().getResource("/styles/gestionFormateurs.css").toExternalForm()
-            );
-
-            // Mettre le titre
-            stage.setTitle("Modifier Formateur");
-            stage.show();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
+    private void handleDelete(Etudiant etudiant) {
 
-
-
-
-    private void handleDelete(Formateur formateur) {
-
-        Stage stage = (Stage) nomEcoleLabel.getScene().getWindow(); // 🔑 fenêtre courante
+        Stage stage = (Stage) nomEcoleLabel.getScene().getWindow(); // ⭐ fenêtre courante
 
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
-        confirm.initOwner(stage);                 // ✅ OBLIGATOIRE
+        confirm.initOwner(stage);                 // 🔑 IMPORTANT
         confirm.initModality(Modality.WINDOW_MODAL);
 
-        confirm.setTitle("Supprimer formateur");
+        confirm.setTitle("Supprimer étudiant");
         confirm.setHeaderText("Confirmer la suppression");
         confirm.setContentText(
                 "Voulez-vous vraiment supprimer "
-                        + formateur.getPrenom() + " " + formateur.getNom() + " ?"
+                        + etudiant.getPrenom() + " " + etudiant.getNom() + " ?"
         );
 
         ButtonType buttonTypeYes = new ButtonType("Oui", ButtonBar.ButtonData.YES);
@@ -365,13 +343,13 @@ public class gestionFormateurs_Controller {
         confirm.showAndWait().ifPresent(response -> {
             if (response == buttonTypeYes) {
 
-                formateurDAO.delete(formateur.getId());
-                loadFormateursFromDB();
+                etudiantDAO.delete(etudiant.getId());
+                loadEtudiantsFromDB(); // rafraîchir la table
 
                 showAlert(
                         "Succès",
-                        "Formateur supprimé",
-                        formateur.getNomComplet() + " a été supprimé avec succès.",
+                        "Étudiant supprimé",
+                        etudiant.getNomComplet() + " a été supprimé avec succès.",
                         Alert.AlertType.INFORMATION
                 );
             }
@@ -379,33 +357,35 @@ public class gestionFormateurs_Controller {
     }
 
 
+
+
     // =====================================================================
     // ================ BOUTON : FILTRER ===================================
     // =====================================================================
     @FXML
-    private void filtrerFormateurs() {
+    private void filtrerEtudiants() {
         String nom = nomField.getText().toLowerCase();
         String prenom = prenomField.getText().toLowerCase();
-        String matricule = matriculeField.getText().toLowerCase();
+        String cin = cinField.getText().toLowerCase();
         String sexe = sexeComboBox.getValue();
-        String situation = situationComboBox.getValue();
+        String groupe = groupeComboBox.getValue();
 
-        List<Formateur> filtered = formateursList.stream()
+        List<Etudiant> filtered = etudiantList.stream()
                 .filter(f ->
                         (nom.isEmpty() || f.getNom().toLowerCase().contains(nom)) &&
                                 (prenom.isEmpty() || f.getPrenom().toLowerCase().contains(prenom)) &&
-                                (matricule.isEmpty() || f.getMatricule().toLowerCase().contains(matricule)) &&
+                                (cin.isEmpty() || f.getCin().toLowerCase().contains(cin)) &&
                                 (sexe == null || f.getSexe().getValeur().equals(sexe)) &&
-                                (situation == null || f.getSituation().getValeur().equals(situation))
+                                (groupe == null || f.getGroupe().getMatricule().equals(groupe))
                 )
                 .collect(Collectors.toList());
 
         filteredList.setAll(filtered);
 
-        if (filtered.isEmpty() && (!nom.isEmpty() || !prenom.isEmpty() || !matricule.isEmpty() ||
-                sexe != null || situation != null)) {
+        if (filtered.isEmpty() && (!nom.isEmpty() || !prenom.isEmpty() || !cin.isEmpty() ||
+                sexe != null || groupe != null)) {
             showAlert("Information", "Aucun résultat",
-                    "Aucun formateur ne correspond aux critères de recherche.",
+                    "Aucun etudiant ne correspond aux critères de recherche.",
                     Alert.AlertType.INFORMATION);
         }
     }
@@ -417,35 +397,39 @@ public class gestionFormateurs_Controller {
     private void reinitialiserFiltres() {
         nomField.clear();
         prenomField.clear();
-        matriculeField.clear();
+        cinField.clear();
         sexeComboBox.setValue(null);
-        situationComboBox.setValue(null);
+        groupeComboBox.setValue(null);
 
         // Réinitialiser les styles des champs
         nomField.getStyleClass().removeAll("has-text", "focused");
         prenomField.getStyleClass().removeAll("has-text", "focused");
-        matriculeField.getStyleClass().removeAll("has-text", "focused");
+        cinField.getStyleClass().removeAll("has-text", "focused");
 
-        filteredList.setAll(formateursList);
+        filteredList.setAll(etudiantList);
     }
 
     @FXML
     private void rafraichirDonnees() {
-        loadFormateursFromDB();
+        loadEtudiantsFromDB();
         reinitialiserFiltres();
     }
 
+
     // =====================================================================
-    // ================ BOUTON : AJOUTER FORMATEUR =========================
+    // ================ BOUTON : AJOUTER ETUDIANT =========================
     // =====================================================================
     @FXML
-    private void ajouterFormateur() {
+    private void ajouterEtudiant() {
         try {
-            StageManager.loadScene("/view/directeur/Gestion Formateurs/Ajouter_Formateur.fxml", "/styles/gestionFormateurs.css", "Ajouter Formateur");
+            StageManager.loadScene("/view/directeur/Ajouter_Etudiant.fxml", "/styles/gestionFormateurs.css", "Ajouter Etudiant");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+
+
 
     // =====================================================================
     // ======================= NAVIGATION MENU =============================
@@ -461,17 +445,17 @@ public class gestionFormateurs_Controller {
 
     @FXML
     private void handleFormateurs() {
-        // On est déjà sur cette page, on rafraîchit juste les données
-        rafraichirDonnees();
-    }
-
-    @FXML
-    private void handleEtudiants() {
         try {
-            StageManager.loadScene("/view/directeur/gestionEtudiants.fxml", "/styles/gestionFormateurs.css", "Etufiants");
+            StageManager.loadScene("/view/directeur/Gestion Formateurs/gestionFormateurs.fxml", "/styles/gestionFormateurs.css", "Formateurs");
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    private void handleStagiaires() {
+        // On est déjà sur cette page, on rafraîchit juste les données
+        rafraichirDonnees();
     }
 
     @FXML
@@ -537,6 +521,6 @@ public class gestionFormateurs_Controller {
         alert.initOwner(stage);
         alert.initModality(Modality.WINDOW_MODAL);
 
-
     }
 }
+

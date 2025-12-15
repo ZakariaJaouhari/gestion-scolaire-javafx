@@ -16,6 +16,7 @@ public class Etudiant {
     private String email;
     private String password;
     private int directeurId;
+    private Groupe groupe;
 
     // Enums
     public enum Sexe {
@@ -168,12 +169,12 @@ public class Etudiant {
         return LocalDate.now().getYear() - dateNaissance.getYear();
     }
 
-    public String getInitiales() {
-        return (prenom.substring(0, 1) + nom.substring(0, 1)).toUpperCase();
+    public Groupe getGroupe() {
+        return groupe;
     }
 
-    public boolean estMajeur() {
-        return getAge() >= 18;
+    public void setGroupe(Groupe groupe) {
+        this.groupe = groupe;
     }
 
     @Override

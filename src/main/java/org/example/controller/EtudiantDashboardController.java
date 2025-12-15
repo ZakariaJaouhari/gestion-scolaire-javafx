@@ -14,6 +14,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.example.dao.DirecteurDAO;
 import org.example.dao.EtudiantDAO;
 import org.example.dao.GroupeDAO;
@@ -29,26 +31,42 @@ import java.util.Locale;
 
 public class EtudiantDashboardController {
 
-    @FXML private Label versionLabel;
-    @FXML private Label welcomeNameLabel;
-    @FXML private Label nomEcoleLabel;
-    @FXML private Label nomEtudiantLabel;
-    @FXML private Label moyenneLabel;
-    @FXML private Label examensCountLabel;
-    @FXML private Label modulesCountLabel;
-    @FXML private ImageView profileImageView;
+    @FXML
+    private Label versionLabel;
+    @FXML
+    private Label welcomeNameLabel;
+    @FXML
+    private Label nomEcoleLabel;
+    @FXML
+    private Label nomEtudiantLabel;
+    @FXML
+    private Label moyenneLabel;
+    @FXML
+    private Label examensCountLabel;
+    @FXML
+    private Label modulesCountLabel;
+    @FXML
+    private ImageView profileImageView;
 
-    @FXML private TableView<Note> notesTable;
-    @FXML private TableColumn<Note, String> moduleColumn;
-    @FXML private TableColumn<Note, Double> noteColumn;
-    @FXML private TableColumn<Note, String> dateNoteColumn;
-    @FXML private TableColumn<Note, Integer> coefficientColumn;
+    @FXML
+    private TableView<Note> notesTable;
+    @FXML
+    private TableColumn<Note, String> moduleColumn;
+    @FXML
+    private TableColumn<Note, Double> noteColumn;
+    @FXML
+    private TableColumn<Note, String> dateNoteColumn;
+    @FXML
+    private TableColumn<Note, Integer> coefficientColumn;
 
     //@FXML private ListView<String> examensListView;
-    @FXML private Label aucunExamenLabel;
+    @FXML
+    private Label aucunExamenLabel;
 
-    @FXML private Label monthYearLabel;
-    @FXML private GridPane calendarGrid;
+    @FXML
+    private Label monthYearLabel;
+    @FXML
+    private GridPane calendarGrid;
 
     private LocalDate currentDate;
     private YearMonth currentYearMonth;
@@ -57,7 +75,6 @@ public class EtudiantDashboardController {
     private GroupeDAO groupeDAO;
     private DirecteurDAO directeurDAO;
     private ObservableList<Note> notesList;
-
 
 
     // Classe interne pour les notes
@@ -74,17 +91,37 @@ public class EtudiantDashboardController {
             this.coefficient = coefficient;
         }
 
-        public String getModule() { return module; }
-        public void setModule(String module) { this.module = module; }
+        public String getModule() {
+            return module;
+        }
 
-        public double getNote() { return note; }
-        public void setNote(double note) { this.note = note; }
+        public void setModule(String module) {
+            this.module = module;
+        }
 
-        public String getDate() { return date; }
-        public void setDate(String date) { this.date = date; }
+        public double getNote() {
+            return note;
+        }
 
-        public int getCoefficient() { return coefficient; }
-        public void setCoefficient(int coefficient) { this.coefficient = coefficient; }
+        public void setNote(double note) {
+            this.note = note;
+        }
+
+        public String getDate() {
+            return date;
+        }
+
+        public void setDate(String date) {
+            this.date = date;
+        }
+
+        public int getCoefficient() {
+            return coefficient;
+        }
+
+        public void setCoefficient(int coefficient) {
+            this.coefficient = coefficient;
+        }
     }
 
     @FXML
@@ -393,5 +430,24 @@ public class EtudiantDashboardController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+
+    private void showAlert(
+            String title,
+            String header,
+            String content,
+            Alert.AlertType type
+    ) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+
+        Stage stage = (Stage) nomEcoleLabel.getScene().getWindow(); // n'importe quel champ
+        alert.initOwner(stage);
+        alert.initModality(Modality.WINDOW_MODAL);
+
+
     }
 }

@@ -18,13 +18,16 @@ public class DirecteurDAO {
 
     // Créer un directeur
     public int create(Directeur directeur) {
-        String sql = "INSERT INTO directeurs (nom_directeur, nom_ecole, email, password) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO directeurs (nom_directeur, nom_ecole, email, password, annee, academie, direction) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, directeur.getNomDirecteur());
             stmt.setString(2, directeur.getNomEcole());
             stmt.setString(3, directeur.getEmail());
             stmt.setString(4, directeur.getPassword());
+            stmt.setString(5, directeur.getAnnee());
+            stmt.setString(6, directeur.getAcademie());
+            stmt.setString(7, directeur.getDirection());
 
             int affectedRows = stmt.executeUpdate();
 

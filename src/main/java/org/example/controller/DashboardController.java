@@ -18,6 +18,8 @@ import java.time.format.TextStyle;
 import java.util.Locale;
 import java.io.IOException;
 
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.example.util.SessionManager;
 import org.example.util.StageManager;
 
@@ -336,7 +338,7 @@ public class DashboardController {
     @FXML
     private void handleFormateurs() {
         try {
-            StageManager.loadScene("/view/directeur/gestionFormateurs.fxml", "/styles/gestionFormateurs.css", "gestF");
+            StageManager.loadScene("/view/directeur/Gestion Formateurs/gestionFormateurs.fxml", "/styles/gestionFormateurs.css", "gesttion des Formateurs");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -344,9 +346,11 @@ public class DashboardController {
 
     @FXML
     private void handleStagiaires() {
-        showAlert("Stagiaires", "Gestion des stagiaires",
-                "Cette fonctionnalité sera disponible prochainement.",
-                Alert.AlertType.INFORMATION);
+        try {
+            StageManager.loadScene("/view/directeur/gestionEtudiants.fxml", "/styles/gestionFormateurs.css", "gestion des Etudiants");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -392,11 +396,21 @@ public class DashboardController {
         }
     }
 
-    private void showAlert(String title, String header, String content, Alert.AlertType type) {
+    private void showAlert(
+            String title,
+            String header,
+            String content,
+            Alert.AlertType type
+    ) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(header);
         alert.setContentText(content);
+
+        Stage stage = (Stage) nomEcoleLabel.getScene().getWindow(); // n'importe quel champ
+        alert.initOwner(stage);
+        alert.initModality(Modality.WINDOW_MODAL);
+
         alert.showAndWait();
     }
 }

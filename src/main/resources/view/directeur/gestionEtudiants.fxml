@@ -1,36 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.Circle?>
-<?import javafx.scene.text.Font?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.TableCell?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.RowConstraints?>
 
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.controller.gestionFormateurs_Controller"
-            prefHeight="600.0" prefWidth="900.0">
+            fx:controller="org.example.controller.gestionEtudiant_Controller"
+            prefHeight="400.0" prefWidth="600.0">
+
+
 
     <VBox style="-fx-background-color: #142b77; -fx-background-radius: 0 40 40 0;"
           prefWidth="250"
@@ -57,29 +41,29 @@
 
             <!-- FORMATEURS -->
             <HBox alignment="CENTER_LEFT"
-                  style="-fx-background-color: #f5f5f4; -fx-background-radius: 30 0 0 30; -fx-padding: 12 0 12 30;"
+                  style=" -fx-padding: 12 0 12 30;"
                   onMouseClicked="#handleFormateurs">
 
                 <ImageView fitWidth="30" fitHeight="30">
                     <image>
-                        <Image url="/images/prof-hover.png"/>
+                        <Image url="/images/prof.png"/>
                     </image>
                 </ImageView>
 
                 <Label text="Formateurs"
-                       style="-fx-text-fill: #43639a; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
+                       style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
             </HBox>
 
-            <!-- STAGIAIRES -->
-            <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 0 12 30;" onMouseClicked="#handleStagiaires">
+            <!-- ETUDIANTS -->
+            <HBox alignment="CENTER_LEFT" style="-fx-background-color: #f5f5f4; -fx-background-radius: 30 0 0 30; -fx-padding: 12 0 12 30;" onMouseClicked="#handleStagiaires">
 
                 <ImageView fitWidth="30" fitHeight="30">
                     <image>
-                        <Image url="/images/stagiaire.png"/>
+                        <Image url="/images/stagiaire-hover.png"/>
                     </image>
                 </ImageView>
 
-                <Label text="Etudiants" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
+                <Label text="Etudiants" style="-fx-text-fill: #43639a; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
             </HBox>
 
             <!-- GROUPES -->
@@ -196,12 +180,12 @@
             </HBox>
         </HBox>
 
-        <!-- CONTENU SPÉCIFIQUE AUX FORMATEURS -->
+        <!-- CONTENU SPÉCIFIQUE AUX ETUDIANTS -->
         <VBox style="-fx-padding: 40 40;" spacing="20">
             <HBox spacing="20" alignment="CENTER_LEFT">
                 <VBox spacing="5">
                     <HBox spacing="10" alignment="CENTER_LEFT">
-                        <Label text="Gestion des Formateurs"
+                        <Label text="Gestion des Etudiants"
                                style="-fx-font-size: 46px; -fx-font-weight: bold; -fx-font-family: 'Apple Chancery';"/>
                     </HBox>
                     <Label text="Utilisez le filtre pour effectuer une recherche plus rapide."
@@ -210,11 +194,11 @@
 
                 <Region HBox.hgrow="ALWAYS"/>
 
-                <!-- Bouton Ajouter formateur à droite -->
-                <Button text="+ Ajouter formateur"
+                <!-- Bouton Ajouter etudiant à droite -->
+                <Button text="+ Ajouter etudiant"
                         style="-fx-background-color: #059669; -fx-text-fill: white; -fx-font-weight: bold;
                        -fx-font-size: 14px; -fx-padding: 12 24; -fx-background-radius: 5;"
-                        onAction="#ajouterFormateur"/>
+                        onAction="#ajouterEtudiant"/>
             </HBox>
 
             <!-- Formulaire de Filtrage -->
@@ -236,8 +220,8 @@
                     </VBox>
 
                     <VBox styleClass="float-input-container" prefWidth="300">
-                        <Label text="Matricule" styleClass="float-label"/>
-                        <TextField fx:id="matriculeField"
+                        <Label text="CIN" styleClass="float-label"/>
+                        <TextField fx:id="cinField"
                                    styleClass="float-text-field"
                                    prefHeight="35"/>
                     </VBox>
@@ -256,8 +240,8 @@
                     </VBox>
 
                     <VBox styleClass="float-input-container" prefWidth="300">
-                        <Label text="Situation familiale" styleClass="float-label"/>
-                        <ComboBox fx:id="situationComboBox"
+                        <Label text="Groupe" styleClass="float-label"/>
+                        <ComboBox fx:id="groupeComboBox"
                                   prefWidth="300" prefHeight="35"
                                   styleClass="float-text-field"/>
                     </VBox>
@@ -271,18 +255,18 @@
                     <Button text="Filtrer"
                             style="-fx-background-color: #4f46e5; -fx-text-fill: white; -fx-font-weight: bold;
                            -fx-padding: 10 20; -fx-background-radius: 5;"
-                            onAction="#filtrerFormateurs"/>
+                            onAction="#filtrerEtudiants"/>
                 </HBox>
             </VBox>
 
-            <!-- Tableau des Formateurs -->
-            <TableView fx:id="formateursTable" styleClass="custom-table" stylesheets="@/styles/gestionFormateurs.css">
+            <!-- Tableau des Etudiants -->
+            <TableView fx:id="etudiantsTable" styleClass="custom-table" stylesheets="@/styles/gestionFormateurs.css">
                 <columns>
                     <TableColumn fx:id="nomColumn" text="Nom" prefWidth="280"/>
 
-                    <TableColumn text="Matricule" prefWidth="120" fx:id="matriculeColumn">
+                    <TableColumn text="CIN" prefWidth="120" fx:id="cinColumn">
                         <cellValueFactory>
-                            <PropertyValueFactory property="matricule"/>
+                            <PropertyValueFactory property="cin"/>
                         </cellValueFactory>
                     </TableColumn>
 
@@ -298,17 +282,12 @@
                         </cellValueFactory>
                     </TableColumn>
 
-                    <TableColumn text="Situation familiale" prefWidth="150" fx:id="situationColumn">
+                    <TableColumn text="Groupe" prefWidth="150" fx:id="groupeColumn">
                         <cellValueFactory>
-                            <PropertyValueFactory property="situation"/>
+                            <PropertyValueFactory property="groupe"/>
                         </cellValueFactory>
                     </TableColumn>
 
-                    <TableColumn text="Date recrutement" prefWidth="130" fx:id="dateRecrutementColumn">
-                        <cellValueFactory>
-                            <PropertyValueFactory property="dateRecrutement"/>
-                        </cellValueFactory>
-                    </TableColumn>
 
                     <TableColumn fx:id="actionsColumn" text="" prefWidth="80"/>
                 </columns>

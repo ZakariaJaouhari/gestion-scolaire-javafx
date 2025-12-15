@@ -2,6 +2,8 @@ package org.example.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import org.example.dao.DirecteurDAO;
 import org.example.dao.EtudiantDAO;
 import org.example.dao.FormateurDAO;
@@ -10,6 +12,8 @@ import org.example.model.Etudiant;
 import org.example.model.Formateur;
 import org.example.util.SessionManager;
 import org.example.util.StageManager;
+import org.apache.commons.codec.digest.DigestUtils;
+
 
 import java.io.IOException;
 import java.util.Optional;
@@ -46,24 +50,18 @@ public class AuthController {
             if (directeurOpt.isPresent()) {
                 Directeur directeur = directeurOpt.get();
 
-                if (directeur.getPassword().equals(password)) {
+                String hashedInputPassword =
+                        org.apache.commons.codec.digest.DigestUtils.sha256Hex(password);
+
+                if (directeur.getPassword().equals(hashedInputPassword)) {
                     System.out.println("✅ Connexion DIRECTEUR réussie pour: " + directeur.getNomDirecteur());
 
-                    // Sauvegarder dans la session
                     SessionManager.getInstance().setCurrentDirecteur(directeur);
-
-
-                    // Afficher message de bienvenue
-                    showAlert("Succès", "Connexion réussie",
-                            "Bienvenue " + directeur.getNomDirecteur() + " !",
-                            Alert.AlertType.INFORMATION);
-
                     switchToDashboard();
                     return;
-                } else {
-                    System.out.println("❌ Mot de passe directeur incorrect");
                 }
             }
+
 
             // Si pas directeur ou mauvais mot de passe, essayer comme FORMATEUR
             Optional<Formateur> formateurOpt = formateurDAO.findByEmail(email);
@@ -71,7 +69,10 @@ public class AuthController {
             if (formateurOpt.isPresent()) {
                 Formateur formateur = formateurOpt.get();
 
-                if (formateur.getPassword().equals(password)) {
+                String hashedInputPassword = DigestUtils.sha256Hex(password);
+
+                if (formateur.getPassword().equals(hashedInputPassword)) {
+
                     System.out.println("✅ Connexion FORMATEUR réussie pour: " + formateur.getNomComplet());
 
                     // Sauvegarder dans la session
@@ -90,8 +91,9 @@ public class AuthController {
 
             if (etudiantOpt.isPresent()) {
                 Etudiant etudiant = etudiantOpt.get();
+                String hashedInputPassword = DigestUtils.sha256Hex(password);
 
-                if (etudiant.getPassword().equals(password)) {
+                if (etudiant.getPassword().equals(hashedInputPassword)) {
                     System.out.println("✅ Connexion FORMATEUR réussie pour: " + etudiant.getNomComplet());
 
                     // Sauvegarder dans la session
@@ -164,11 +166,21 @@ public class AuthController {
         }
     }
 
-    private void showAlert(String title, String header, String content, Alert.AlertType type) {
+    private void showAlert(
+            String title,
+            String header,
+            String content,
+            Alert.AlertType type
+    ) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(header);
         alert.setContentText(content);
+
+        Stage stage = (Stage) loginEmail.getScene().getWindow(); // n'importe quel champ
+        alert.initOwner(stage);
+        alert.initModality(Modality.WINDOW_MODAL);
+
         alert.showAndWait();
     }
 

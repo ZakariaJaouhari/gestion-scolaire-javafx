@@ -1,6 +1,7 @@
 package org.example.dao;
 
 import org.example.model.Etudiant;
+import org.example.model.Groupe;
 import org.example.util.DatabaseConnection;
 
 import java.sql.*;
@@ -22,8 +23,8 @@ public class EtudiantDAO {
     // Créer un étudiant
     public Long create(Etudiant etudiant) {
         String sql = "INSERT INTO etudiant (nom, prenom, date_naissance, CIN, sexe, " +
-                "groupe_id, email, password, profile_picture, directeur_id) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                "groupe_id, email, password, directeur_id) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, etudiant.getNom());
@@ -34,7 +35,7 @@ public class EtudiantDAO {
             stmt.setInt(6, etudiant.getGroupeId());
             stmt.setString(7, etudiant.getEmail());
             stmt.setString(8, etudiant.getPassword());
-            stmt.setInt(10, etudiant.getDirecteurId());
+            stmt.setInt(9, etudiant.getDirecteurId());
 
             int affectedRows = stmt.executeUpdate();
 
@@ -140,7 +141,9 @@ public class EtudiantDAO {
     // Trouver par directeur
     public List<Etudiant> findByDirecteurId(int directeurId) {
         List<Etudiant> etudiants = new ArrayList<>();
-        String sql = "SELECT * FROM etudiant WHERE directeur_id = ? ORDER BY nom, prenom";
+        String sql = "SELECT e.*, g.id As g_id, g.matricule AS g_matricule, g.niveau AS g_niveau, g.directeur_id AS g_directeur_id" +
+                " from etudiant e JOIN groupes g ON e.groupe_id = g.id" +
+                " WHERE e.directeur_id = ? ORDER BY e.nom, e.prenom";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, directeurId);
@@ -410,6 +413,14 @@ public class EtudiantDAO {
         etudiant.setEmail(rs.getString("email"));
         etudiant.setPassword(rs.getString("password"));
         etudiant.setDirecteurId(rs.getInt("directeur_id"));
+
+        Groupe groupe = new Groupe();
+        groupe.setId(rs.getInt("g_id"));
+        groupe.setMatricule(rs.getString("g_matricule"));
+        groupe.setNiveau(Groupe.Niveau.fromString(rs.getString("g_niveau")));
+        groupe.setDirecteurId(rs.getInt("g_directeur_id"));
+
+        etudiant.setGroupe(groupe);
 
         return etudiant;
     }

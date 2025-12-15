@@ -45,16 +45,16 @@
 
                         <!-- Ligne 1: Nom d'école + Nom directeur -->
                         <HBox spacing="10" alignment="CENTER">
-                            <TextField fx:id="nomEcole" promptText="Nom d'école" styleClass="input-field-half-width"/>
-                            <TextField fx:id="nomDirecteur" promptText="Nom directeur" styleClass="input-field-half-width"/>
+                            <TextField fx:id="nomEcoleField" promptText="Nom d'école" styleClass="input-field-half-width"/>
+                            <TextField fx:id="nomDirecteurField" promptText="Nom directeur" styleClass="input-field-half-width"/>
                         </HBox>
 
                         <!-- Ligne 2: Email -->
-                        <TextField fx:id="email" promptText="Adresse email" styleClass="input-field-full-width"/>
+                        <TextField fx:id="emailField" promptText="Adresse email" styleClass="input-field-full-width"/>
 
                         <!-- Ligne 3: Mot de passe + Année scolaire -->
                         <HBox spacing="10" alignment="CENTER">
-                            <PasswordField fx:id="password" promptText="Mot de passe" styleClass="input-field-half-width"/>
+                            <PasswordField fx:id="passwordField" promptText="Mot de passe" styleClass="input-field-half-width"/>
                             <TextField fx:id="annee" promptText="Année scolaire" styleClass="input-field-half-width"/>
                         </HBox>
 
