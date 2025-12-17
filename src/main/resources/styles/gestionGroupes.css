@@ -1,0 +1,39 @@
+/* gestionGroupes.css */
+.table-view {
+    -fx-background-color: white;
+    -fx-border-color: #e5e7eb;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+}
+
+.table-view .column-header {
+    -fx-background-color: #f9fafb;
+    -fx-border-color: #e5e7eb;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 10 5;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #374151;
+}
+
+.table-view .table-cell {
+    -fx-padding: 12 10;
+    -fx-border-color: transparent;
+    -fx-text-fill: #4b5563;
+    -fx-font-size: 14px;
+}
+
+.table-row-cell {
+    -fx-background-color: white;
+    -fx-border-color: #e5e7eb;
+    -fx-border-width: 0 0 1 0;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #f9fafb;
+}
+
+.table-row-cell:hover {
+    -fx-background-color: #f3f4f6;
+}

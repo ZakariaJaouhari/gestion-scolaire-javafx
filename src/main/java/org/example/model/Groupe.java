@@ -1,6 +1,7 @@
 package org.example.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class Groupe {
     private int id;
@@ -10,6 +11,8 @@ public class Groupe {
     private Niveau niveau;
     private int directeurId;
 
+    // Relation avec les modules
+    private List<Module> modules;
     // Enum pour le niveau
     public enum Niveau {
         PREMIERE_ANNEE("1ér année"),
@@ -107,6 +110,26 @@ public class Groupe {
 
     public String getDescription() {
         return matricule + " - " + niveau.getValeur();
+    }
+
+    public List<Module> getModules() {
+        return modules;
+    }
+
+    public void setModules(List<Module> modules) {
+        this.modules = modules;
+    }
+
+    // Méthode utilitaire pour avoir le nom complet du formateur
+    public String getFormateurNomComplet() {
+        if (modules != null && !modules.isEmpty()) {
+            Module module = modules.get(0);
+            Formateur formateur = module.getFormateur();
+            if (formateur != null) {
+                return formateur.getNom() + " " + formateur.getPrenom();
+            }
+        }
+        return "Non attribué";
     }
 
     @Override

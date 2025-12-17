@@ -303,7 +303,7 @@ public class gestionFormateurs_Controller {
         try {
             // Charger le FXML
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/view/directeur/Gestion Formateurs/Modifier_Formateur.fxml")
+                    getClass().getResource("/view/directeur/Gestion_Formateurs/Modifier_Formateur.fxml")
             );
             Parent root = loader.load();
 
@@ -441,7 +441,7 @@ public class gestionFormateurs_Controller {
     @FXML
     private void ajouterFormateur() {
         try {
-            StageManager.loadScene("/view/directeur/Gestion Formateurs/Ajouter_Formateur.fxml", "/styles/gestionFormateurs.css", "Ajouter Formateur");
+            StageManager.loadScene("/view/directeur/Gestion_Formateurs/Ajouter_Formateur.fxml", "/styles/gestionFormateurs.css", "Ajouter Formateur");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -468,7 +468,7 @@ public class gestionFormateurs_Controller {
     @FXML
     private void handleEtudiants() {
         try {
-            StageManager.loadScene("/view/directeur/gestionEtudiants.fxml", "/styles/gestionFormateurs.css", "Etufiants");
+            StageManager.loadScene("/view/directeur/Gestion_Etudiants/gestionEtudiants.fxml", "/styles/gestionFormateurs.css", "Etufiants");
         } catch (IOException e) {
             e.printStackTrace();
         }

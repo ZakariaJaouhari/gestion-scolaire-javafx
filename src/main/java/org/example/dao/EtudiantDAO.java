@@ -287,7 +287,7 @@ public class EtudiantDAO {
     public boolean update(Etudiant etudiant) {
         String sql = "UPDATE etudiant SET nom = ?, prenom = ?, date_naissance = ?, " +
                 "CIN = ?, sexe = ?, groupe_id = ?, email = ?, password = ?, " +
-                "profile_picture = ?, directeur_id = ?, updated_at = NOW() " +
+                "directeur_id = ?, updated_at = NOW() " +
                 "WHERE id = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -299,8 +299,8 @@ public class EtudiantDAO {
             stmt.setInt(6, etudiant.getGroupeId());
             stmt.setString(7, etudiant.getEmail());
             stmt.setString(8, etudiant.getPassword());
-            stmt.setInt(10, etudiant.getDirecteurId());
-            stmt.setInt(11, etudiant.getId());
+            stmt.setInt(9, etudiant.getDirecteurId());
+            stmt.setInt(10, etudiant.getId());
 
             int affectedRows = stmt.executeUpdate();
             return affectedRows > 0;
@@ -387,18 +387,8 @@ public class EtudiantDAO {
     // Méthode utilitaire pour mapper ResultSet à Etudiant
     private Etudiant mapResultSetToEtudiant(ResultSet rs) throws SQLException {
         Etudiant etudiant = new Etudiant();
+
         etudiant.setId(rs.getInt("id"));
-
-        Timestamp createdAt = rs.getTimestamp("created_at");
-        if (createdAt != null) {
-            etudiant.setCreatedAt(createdAt.toLocalDateTime());
-        }
-
-        Timestamp updatedAt = rs.getTimestamp("updated_at");
-        if (updatedAt != null) {
-            etudiant.setUpdatedAt(updatedAt.toLocalDateTime());
-        }
-
         etudiant.setNom(rs.getString("nom"));
         etudiant.setPrenom(rs.getString("prenom"));
 
@@ -414,14 +404,24 @@ public class EtudiantDAO {
         etudiant.setPassword(rs.getString("password"));
         etudiant.setDirecteurId(rs.getInt("directeur_id"));
 
-        Groupe groupe = new Groupe();
-        groupe.setId(rs.getInt("g_id"));
-        groupe.setMatricule(rs.getString("g_matricule"));
-        groupe.setNiveau(Groupe.Niveau.fromString(rs.getString("g_niveau")));
-        groupe.setDirecteurId(rs.getInt("g_directeur_id"));
+        // 🔐 Mapper le groupe UNIQUEMENT si jointure présente
+        try {
+            rs.findColumn("g_id");
 
-        etudiant.setGroupe(groupe);
+            Groupe groupe = new Groupe();
+            groupe.setId(rs.getInt("g_id"));
+            groupe.setMatricule(rs.getString("g_matricule"));
+            groupe.setNiveau(Groupe.Niveau.fromString(rs.getString("g_niveau")));
+            groupe.setDirecteurId(rs.getInt("g_directeur_id"));
+
+            etudiant.setGroupe(groupe);
+
+        } catch (SQLException ignored) {
+            // Aucun JOIN groupe → normal (login, findByEmail, etc.)
+            etudiant.setGroupe(null);
+        }
 
         return etudiant;
     }
+
 }

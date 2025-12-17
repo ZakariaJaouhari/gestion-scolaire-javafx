@@ -338,7 +338,7 @@ public class DashboardController {
     @FXML
     private void handleFormateurs() {
         try {
-            StageManager.loadScene("/view/directeur/Gestion Formateurs/gestionFormateurs.fxml", "/styles/gestionFormateurs.css", "gesttion des Formateurs");
+            StageManager.loadScene("/view/directeur/Gestion_Formateurs/gestionFormateurs.fxml", "/styles/gestionFormateurs.css", "gesttion des Formateurs");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -347,7 +347,7 @@ public class DashboardController {
     @FXML
     private void handleStagiaires() {
         try {
-            StageManager.loadScene("/view/directeur/gestionEtudiants.fxml", "/styles/gestionFormateurs.css", "gestion des Etudiants");
+            StageManager.loadScene("/view/directeur/Gestion_Etudiants/gestionEtudiants.fxml", "/styles/gestionFormateurs.css", "gestion des Etudiants");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -355,9 +355,11 @@ public class DashboardController {
 
     @FXML
     private void handleGroupes() {
-        showAlert("Groupes", "Gestion des groupes",
-                "Cette fonctionnalité sera disponible prochainement.",
-                Alert.AlertType.INFORMATION);
+        try {
+            StageManager.loadScene("/view/directeur/Gestion_Groupes/gestionGroupes.fxml", "/styles/gestionFormateurs.css", "gestion des Groupes");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML

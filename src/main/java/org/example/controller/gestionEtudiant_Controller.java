@@ -3,6 +3,9 @@ package org.example.controller;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -317,8 +320,45 @@ public class gestionEtudiant_Controller {
     // =====================================================================
     // ================ GESTION DES ACTIONS ================================
     // =====================================================================
+    @FXML
     private void handleEdit(Etudiant etudiant) {
+        try {
+            // Charger le FXML
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/view/directeur/Gestion_Etudiants/Modifier_Etudiant.fxml")
+            );
+            Parent root = loader.load();
 
+            // Récupérer le controller de modification
+            Modifier_Etudiant_Controller controller = loader.getController();
+            controller.setEtudiantToEdit(etudiant);
+
+            // Récupérer la fenêtre principale
+            Stage stage = StageManager.getPrimaryStage();
+            Scene scene = stage.getScene();
+
+            if (scene == null) {
+                // Si pas de scène existante, créer une nouvelle
+                scene = new Scene(root);
+                stage.setScene(scene);
+            } else {
+                // Sinon remplacer le root de la scène actuelle → Garde la taille
+                scene.setRoot(root);
+            }
+
+            // Charger le CSS
+            scene.getStylesheets().clear();
+            scene.getStylesheets().add(
+                    getClass().getResource("/styles/gestionFormateurs.css").toExternalForm()
+            );
+
+            // Mettre le titre
+            stage.setTitle("Modifier Etudiant");
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void handleDelete(Etudiant etudiant) {
@@ -422,7 +462,7 @@ public class gestionEtudiant_Controller {
     @FXML
     private void ajouterEtudiant() {
         try {
-            StageManager.loadScene("/view/directeur/Ajouter_Etudiant.fxml", "/styles/gestionFormateurs.css", "Ajouter Etudiant");
+            StageManager.loadScene("/view/directeur/Gestion_Etudiants/Ajouter_Etudiant.fxml", "/styles/gestionFormateurs.css", "Ajouter Etudiant");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -446,7 +486,7 @@ public class gestionEtudiant_Controller {
     @FXML
     private void handleFormateurs() {
         try {
-            StageManager.loadScene("/view/directeur/Gestion Formateurs/gestionFormateurs.fxml", "/styles/gestionFormateurs.css", "Formateurs");
+            StageManager.loadScene("/view/directeur/Gestion_Formateurs/gestionFormateurs.fxml", "/styles/gestionFormateurs.css", "Formateurs");
         } catch (IOException e) {
             e.printStackTrace();
         }

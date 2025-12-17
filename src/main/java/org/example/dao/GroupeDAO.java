@@ -110,6 +110,31 @@ public class GroupeDAO {
         return groupes;
     }
 
+    // Méthode pour charger un groupe avec ses modules
+    public Optional<Groupe> findByIdWithModules(int id) {
+        String sql = "SELECT * FROM groupes WHERE id = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                Groupe groupe = mapResultSetToGroupe(rs);
+
+                // Charger les modules via ModuleDAO
+                ModuleDAO moduleDAO = new ModuleDAO();
+                List<org.example.model.Module> modules = moduleDAO.findByGroupeId(id);
+                groupe.setModules(modules);
+
+                return Optional.of(groupe);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
+    }
+
+
     // Trouver par niveau
     public List<Groupe> findByNiveau(Groupe.Niveau niveau) {
         List<Groupe> groupes = new ArrayList<>();
@@ -216,7 +241,7 @@ public class GroupeDAO {
     }
 
     // Supprimer un groupe
-    public boolean delete(Long id) {
+    public boolean delete(int id) {
         String sql = "DELETE FROM groupes WHERE id = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {

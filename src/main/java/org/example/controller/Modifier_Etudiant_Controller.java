@@ -4,17 +4,21 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.example.dao.FormateurDAO;
-import org.example.model.Formateur;
+import org.example.dao.EtudiantDAO;
+import org.example.model.Etudiant;
 import org.example.util.SessionManager;
 import org.example.util.StageManager;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import org.example.dao.GroupeDAO;
+import org.example.model.Groupe;
+import javafx.util.StringConverter;
+
 
 import java.io.IOException;
 import java.time.LocalDate;
 
-public class Modifier_Formateur_Controller {
+public class Modifier_Etudiant_Controller {
 
     // HEADER
     @FXML private Label nomEcoleLabel;
@@ -26,27 +30,25 @@ public class Modifier_Formateur_Controller {
 
     @FXML private TextField nomField;
     @FXML private TextField prenomField;
-    @FXML private TextField matriculeField;
     @FXML private TextField cinField;
     @FXML private ComboBox<String> sexeComboBox;
-    @FXML private ComboBox<String> situationComboBox;
     @FXML private ComboBox<String> dayComboBox;
     @FXML private ComboBox<String> monthComboBox;
     @FXML private ComboBox<String> yearComboBox;
-    @FXML private ComboBox<String> dayRComboBox;
-    @FXML private ComboBox<String> monthRComboBox;
-    @FXML private ComboBox<String> yearRComboBox;
     @FXML private TextField emailField;
     @FXML private TextField passwordField;
+    @FXML private ComboBox<Groupe> groupeComboBox;
 
+    private GroupeDAO groupeDAO;
 
-    private Formateur formateurToEdit;
-    private FormateurDAO formateurDAO = new FormateurDAO();
+    private Etudiant etudiantToEdit;
+    private EtudiantDAO EtudiantDAO = new EtudiantDAO();
 
 
     @FXML
     public void initialize() {
-        formateurDAO = new FormateurDAO();
+        EtudiantDAO = new EtudiantDAO();
+        groupeDAO = new GroupeDAO();
 
         // --- HEADER ----
         SessionManager session = SessionManager.getInstance();
@@ -57,66 +59,71 @@ public class Modifier_Formateur_Controller {
         versionLabel.setText("V 0.1.0");
 
         populateDateComboBoxes();
+        loadGroupes();
 
     }
 
-    public void setFormateurToEdit(Formateur formateur) {
-        this.formateurToEdit = formateur;
+    public void setEtudiantToEdit(Etudiant etudiant) {
+        this.etudiantToEdit = etudiant;
 
-        nomField.setText(formateur.getNom());
-        prenomField.setText(formateur.getPrenom());
-        matriculeField.setText(formateur.getMatricule());
-        cinField.setText(formateur.getCin());
-        sexeComboBox.setValue(formateur.getSexe().getValeur());
-        situationComboBox.setValue(formateur.getSituation().getValeur());
+        nomField.setText(etudiant.getNom());
+        prenomField.setText(etudiant.getPrenom());
+        cinField.setText(etudiant.getCin());
+        sexeComboBox.setValue(etudiant.getSexe().getValeur());
 
-        if (formateur.getDateNaissance() != null) {
-            dayComboBox.setValue(String.valueOf(formateur.getDateNaissance().getDayOfMonth()));
-            monthComboBox.setValue(String.valueOf(formateur.getDateNaissance().getMonthValue()));
-            yearComboBox.setValue(String.valueOf(formateur.getDateNaissance().getYear()));
+        if (etudiant.getDateNaissance() != null) {
+            dayComboBox.setValue(String.valueOf(etudiant.getDateNaissance().getDayOfMonth()));
+            monthComboBox.setValue(String.valueOf(etudiant.getDateNaissance().getMonthValue()));
+            yearComboBox.setValue(String.valueOf(etudiant.getDateNaissance().getYear()));
+        }
+        // Sélectionner le groupe actuel
+        for (Groupe g : groupeComboBox.getItems()) {
+            if (g.getId() == etudiant.getGroupeId()) {
+                groupeComboBox.setValue(g);
+                break;
+            }
         }
 
-        if (formateur.getDateRecrutement() != null) {
-            dayRComboBox.setValue(String.valueOf(formateur.getDateRecrutement().getDayOfMonth()));
-            monthRComboBox.setValue(String.valueOf(formateur.getDateRecrutement().getMonthValue()));
-            yearRComboBox.setValue(String.valueOf(formateur.getDateRecrutement().getYear()));
-        }
 
-        emailField.setText(formateur.getEmail());
+        emailField.setText(etudiant.getEmail());
     }
 
     @FXML
-    private void saveFormateur() {
-        if (formateurToEdit != null) {
-            formateurToEdit.setNom(nomField.getText());
-            formateurToEdit.setPrenom(prenomField.getText());
-            formateurToEdit.setMatricule(matriculeField.getText());
-            formateurToEdit.setCin(cinField.getText());
-            formateurToEdit.setSexe(Formateur.Sexe.fromString(sexeComboBox.getValue()));
-            formateurToEdit.setSituation(Formateur.Situation.fromString(situationComboBox.getValue()));
+    private void saveEtudiant() {
+        if (etudiantToEdit != null) {
+            etudiantToEdit.setNom(nomField.getText());
+            etudiantToEdit.setPrenom(prenomField.getText());
+            etudiantToEdit.setCin(cinField.getText());
+            etudiantToEdit.setSexe(Etudiant.Sexe.fromString(sexeComboBox.getValue()));
 
             // Convertir ComboBox en LocalDate
             LocalDate dateNaissance = getDateFromComboBoxes(
                     dayComboBox, monthComboBox, yearComboBox
             );
 
-            LocalDate dateRecrutement = getDateFromComboBoxes(
-                    dayRComboBox, monthRComboBox, yearRComboBox
-            );
-
             // Si l'utilisateur n'a pas modifié → garder l'ancienne date
             if (dateNaissance == null) {
-                dateNaissance = formateurToEdit.getDateNaissance();
+                dateNaissance = etudiantToEdit.getDateNaissance();
             }
 
-            if (dateRecrutement == null) {
-                dateRecrutement = formateurToEdit.getDateRecrutement();
+            etudiantToEdit.setDateNaissance(dateNaissance);
+            Groupe selectedGroupe = groupeComboBox.getValue();
+
+            if (selectedGroupe == null) {
+                showAlert(
+                        "Erreur",
+                        "Groupe manquant",
+                        "Veuillez sélectionner un groupe.",
+                        Alert.AlertType.ERROR
+                );
+                return;
             }
 
-            formateurToEdit.setDateNaissance(dateNaissance);
-            formateurToEdit.setDateRecrutement(dateRecrutement);
+            // ✅ Mise à jour du groupe
+            etudiantToEdit.setGroupeId(selectedGroupe.getId());
 
-            formateurToEdit.setEmail(emailField.getText());
+
+            etudiantToEdit.setEmail(emailField.getText());
             String newPassword = passwordField.getText();
 
             // Si l'utilisateur a saisi un nouveau password
@@ -134,21 +141,44 @@ public class Modifier_Formateur_Controller {
                 }
 
                 String hashedPassword = hashPassword(newPassword);
-                formateurToEdit.setPassword(hashedPassword);
+                etudiantToEdit.setPassword(hashedPassword);
 
             }
 
 
-            formateurDAO.update(formateurToEdit);
+            EtudiantDAO.update(etudiantToEdit);
 
             try {
-                StageManager.loadScene("/view/directeur/Gestion_Formateurs/gestionFormateurs.fxml", "/styles/gestionFormateurs.css", "Formateurs");
+                StageManager.loadScene("/view/directeur/Gestion_Etudiants/gestionEtudiants.fxml", "/styles/gestionFormateurs.css", "Etudiants");
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
         }
     }
+
+    private void loadGroupes() {
+        int directeurId = SessionManager.getInstance().getUserId();
+
+        groupeComboBox.getItems().setAll(
+                groupeDAO.findByDirecteurId(directeurId)
+        );
+
+        // Affichage lisible
+        groupeComboBox.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(Groupe groupe) {
+                if (groupe == null) return "";
+                return groupe.getMatricule() + " - " + groupe.getNiveau().getValeur();
+            }
+
+            @Override
+            public Groupe fromString(String string) {
+                return null;
+            }
+        });
+    }
+
 
     private LocalDate getDateFromComboBoxes(
             ComboBox<String> day,
@@ -182,7 +212,6 @@ public class Modifier_Formateur_Controller {
         for (int i = 1; i <= 31; i++) {
             String day = String.format("%02d", i);
             dayComboBox.getItems().add(day);
-            dayRComboBox.getItems().add(day);
         }
 
         // Remplir les mois avec format "MM - NomMois"
@@ -192,7 +221,6 @@ public class Modifier_Formateur_Controller {
         for (int i = 0; i < months.length; i++) {
             String monthDisplay = monthValues[i] + " - " + months[i];
             monthComboBox.getItems().add(monthDisplay);
-            monthRComboBox.getItems().add(monthDisplay);
         }
 
         // Remplir les années (de l'année actuelle à 1905)
@@ -200,7 +228,6 @@ public class Modifier_Formateur_Controller {
         for (int i = currentYear; i >= 1905; i--) {
             String year = String.valueOf(i);
             yearComboBox.getItems().add(year);
-            yearRComboBox.getItems().add(year);
         }
 
         // Sélectionner les valeurs par défaut
@@ -214,25 +241,6 @@ public class Modifier_Formateur_Controller {
         String dayToday = String.format("%02d", today.getDayOfMonth());
         String monthToday = String.format("%02d", today.getMonthValue());
         String yearToday = String.valueOf(today.getYear());
-
-        // Trouver et sélectionner le jour d'aujourd'hui
-        int dayIndex = dayRComboBox.getItems().indexOf(dayToday);
-        if (dayIndex >= 0) {
-            dayRComboBox.getSelectionModel().select(dayIndex);
-        }
-
-        // Trouver et sélectionner le mois d'aujourd'hui
-        String monthDisplayToday = monthToday + " - " + getMonthName(today.getMonthValue());
-        int monthIndex = monthRComboBox.getItems().indexOf(monthDisplayToday);
-        if (monthIndex >= 0) {
-            monthRComboBox.getSelectionModel().select(monthIndex);
-        }
-
-        // Trouver et sélectionner l'année d'aujourd'hui
-        int yearIndex = yearRComboBox.getItems().indexOf(yearToday);
-        if (yearIndex >= 0) {
-            yearRComboBox.getSelectionModel().select(yearIndex);
-        }
 
     }
 
@@ -350,7 +358,7 @@ public class Modifier_Formateur_Controller {
     @FXML
     private void handleEtudiants() {
         try {
-            StageManager.loadScene("/view/directeur/Gestion_Etudiants/gestionEtudiants.fxml", "/styles/gestionFormateurs.css", "Etufiants");
+            StageManager.loadScene("/view/directeur/Gestion_Etudiants/gestionEtudiants.fxml", "/styles/gestionFormateurs.css", "Etudiants");
         } catch (IOException e) {
             e.printStackTrace();
         }

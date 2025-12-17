@@ -385,7 +385,7 @@ public class Ajouter_Etudiant_Controller {
     // Méthode pour retourner à la page gestionFormateurs
     private void returnToGestionEtudiants() {
         try {
-            StageManager.loadScene("/view/directeur/gestionEtudiants.fxml",
+            StageManager.loadScene("/view/directeur/Gestion_Etudiants/gestionEtudiants.fxml",
                     "/styles/gestionFormateurs.css", "Etudiants");
         } catch (IOException e) {
             e.printStackTrace();
@@ -498,7 +498,7 @@ public class Ajouter_Etudiant_Controller {
     @FXML
     private void handleFormateurs() {
         try {
-            StageManager.loadScene("/view/directeur/Gestion Formateurs/gestionFormateurs.fxml",
+            StageManager.loadScene("/view/directeur/Gestion_Formateurs/gestionFormateurs.fxml",
                     "/styles/gestionFormateurs.css", "Formateurs");
         } catch (IOException e) {
             e.printStackTrace();
