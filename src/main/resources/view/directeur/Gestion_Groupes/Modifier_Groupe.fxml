@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
 
-<?import javafx.util.Callback?>
-<?import java.lang.String?>
-<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.geometry.Insets?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.controller.gestionGroupes_Controller"
-            prefHeight="600.0" prefWidth="900.0">
+            fx:controller="org.example.controller.Modifier_Groupe_Controller"
+            prefHeight="400.0" prefWidth="600.0">
+
 
     <VBox style="-fx-background-color: #142b77; -fx-background-radius: 0 40 40 0;"
           prefWidth="250"
@@ -74,7 +75,7 @@
                     </image>
                 </ImageView>
 
-                <Label text="Groupes" style="-fx-text-fill: #43639a;  -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
+                <Label text="Groupes" style="-fx-text-fill: #43639a; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
             </HBox>
 
             <!-- MODULES -->
@@ -178,81 +179,118 @@
                 </VBox>
             </HBox>
         </HBox>
+
         <!-- CONTENU SPÉCIFIQUE AUX FORMATEURS -->
         <VBox style="-fx-padding: 40 40;" spacing="20">
             <HBox spacing="20" alignment="CENTER_LEFT">
                 <VBox spacing="5">
                     <HBox spacing="10" alignment="CENTER_LEFT">
-                        <Label text="Gestion des Groupes"
+                        <Label text="Ajouter un Groupe"
                                style="-fx-font-size: 46px; -fx-font-weight: bold; -fx-font-family: 'Apple Chancery';"/>
                     </HBox>
-                    <Label text="Utilisez le filtre pour effectuer une recherche plus rapide."
-                           style="-fx-text-fill: #666; -fx-padding: 0 0 0 30"/>
                 </VBox>
-
-                <Region HBox.hgrow="ALWAYS"/>
-
-                <!-- Bouton Ajouter groupe à droite -->
-                <Button text="+ Ajouter groupe"
-                        style="-fx-background-color: #059669; -fx-text-fill: white; -fx-font-weight: bold;
-                       -fx-font-size: 14px; -fx-padding: 12 24; -fx-background-radius: 5;"
-                        onAction="#ajouterGroupe"/>
             </HBox>
+            <VBox alignment="CENTER" layoutX="50" layoutY="80" spacing="15" AnchorPane.leftAnchor="50" AnchorPane.rightAnchor="50">
+                <children>
+                    <!-- matriculr / niveau -->
+                    <HBox spacing="20" alignment="CENTER">
+                        <VBox prefWidth="400">
+                            <Label text="Matricule"
+                                   style="-fx-font-family: 'sans-serif'; -fx-font-size: 14px; -fx-text-fill: #1a202c;"/>
+                            <TextField fx:id="matriculeField"
+                                       style="
+                           -fx-font-family: 'sans-serif';
+                           -fx-font-size: 14px;
+                           -fx-text-fill: #374151;
+                           -fx-background-color: transparent;
+                           -fx-border-color: #1a202c;
+                           -fx-border-width: 0 0 1 0;
+                           -fx-padding: 16 0 6 0;
+                           -fx-border-insets: 16 0 6 0;
+                           -fx-background-insets: 16 0 6 0;
+                           "/>
+                        </VBox>
+                        <VBox >
+                            <Label text="Niveau"
+                                   style="-fx-font-family: 'sans-serif'; -fx-font-size: 14px; -fx-text-fill: #1a202c;"/>
+                            <ComboBox fx:id="niveauComboBox" prefWidth="400"
+                                      style="
+                          -fx-font-family: 'sans-serif';
+                          -fx-font-size: 14px;
+                          -fx-text-fill: #374151;
+                          -fx-background-color: transparent;
+                          -fx-border-color: #1a202c;
+                          -fx-border-width: 0 0 1 0;
+                          -fx-padding: 8 12 8 12;
+                          -fx-border-insets: 8 0 8 0;
+                          -fx-background-insets: 8 0 8 0;
+                          ">
+                                <items>
+                                    <FXCollections fx:factory="observableArrayList">
+                                        <String fx:value="" />
+                                        <String fx:value="1ér année" />
+                                        <String fx:value="2éme année" />
+                                        <String fx:value="3éme année" />
+                                        <String fx:value="4éme année" />
+                                        <String fx:value="5éme année" />
+                                    </FXCollections>
+                                </items>
+                            </ComboBox>
+                        </VBox>
+                    </HBox>
 
-            <!-- Formulaire de Filtrage -->
-            <VBox spacing="15" alignment="CENTER">
-                <!-- Première ligne du filtre -->
-                <HBox spacing="20" alignment="CENTER">
-                    <VBox styleClass="float-input-container" prefWidth="300">
-                        <Label text="Matricule" styleClass="float-label"/>
-                        <TextField fx:id="matriculeField"
-                                   styleClass="float-text-field"
-                                   prefHeight="35"/>
+                    <!-- Modules -->
+                    <VBox alignment="CENTER" prefWidth="400">
+                        <Label text="Modules"
+                               style="-fx-font-family: 'sans-serif'; -fx-font-size: 14px; -fx-text-fill: #1a202c; -fx-padding: 0 0 5 0;"/>
+                        <ListView fx:id="modulesListView" prefWidth="400" prefHeight="150"
+                                  style="
+          -fx-font-family: 'sans-serif';
+          -fx-font-size: 14px;
+          -fx-text-fill: #374151;
+          -fx-background-color: transparent;
+          -fx-border-color: #1a202c;
+          -fx-border-width: 0 0 1 0;
+          -fx-border-insets: 8 0 8 0;
+          -fx-background-insets: 8 0 8 0;
+          " />
                     </VBox>
 
-                    <VBox styleClass="float-input-container" prefWidth="300">
-                        <Label text="Niveau" styleClass="float-label"/>
-                        <ComboBox fx:id="niveauComboBox"
-                                  prefWidth="300" prefHeight="35"
-                                  styleClass="float-text-field"/>
-                    </VBox>
-                </HBox>
-
-                <!-- Boutons du filtre centrés -->
-                <HBox spacing="10" alignment="CENTER_RIGHT">
-                    <Button text="Réinitialiser"
-                            style="-fx-text-fill: #666; -fx-background-color: transparent;"
-                            onAction="#reinitialiserFiltres"/>
-                    <Button text="Filtrer"
-                            style="-fx-background-color: #4f46e5; -fx-text-fill: white; -fx-font-weight: bold;
-                           -fx-padding: 10 20; -fx-background-radius: 5;"
-                            onAction="#filtrerGroupes"/>
-                </HBox>
+                    <!-- Boutons -->
+                    <HBox spacing="20" style="-fx-alignment: center-right; -fx-padding: 20 0 0 0;">
+                        <Button text="Annuler" fx:id="annulerButton"
+                                style="
+                    -fx-font-family: 'sans-serif';
+                    -fx-font-size: 14px;
+                    -fx-font-weight: bold;
+                    -fx-text-fill: #1a202c;
+                    -fx-background-color: transparent;
+                    -fx-border-color: transparent;
+                    -fx-cursor: hand;
+                    "/>
+                        <Button text="Modifier" fx:id="modifierButton"
+                                style="
+                    -fx-font-family: 'sans-serif';
+                    -fx-font-size: 14px;
+                    -fx-font-weight: bold;
+                    -fx-text-fill: white;
+                    -fx-background-color: #10B981;
+                    -fx-background-radius: 6;
+                    -fx-padding: 8 24;
+                    -fx-cursor: hand;
+                    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);
+                    "
+                                onMouseEntered="#onHoverButton"
+                                onMouseExited="#onExitButton"/>
+                    </HBox>
+                </children>
+                <padding>
+                    <Insets top="20" right="20" bottom="20" left="20"/>
+                </padding>
             </VBox>
-            <!-- TABLEAU DES GROUPES -->
-            <VBox style="-fx-padding: 20 0 0 0;">
 
-                <!-- Tableau principal -->
-                <TableView fx:id="groupesTable" prefHeight="400" styleClass="custom-table"
-                           VBox.vgrow="ALWAYS" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
-                    <columns>
-                        <TableColumn text="Matricule" fx:id="matriculeColumn" prefWidth="100"/>
-                        <TableColumn text="Niveau" fx:id="niveauColumn" prefWidth="120"/>
-                        <TableColumn fx:id="modulesColumn" text="Modules" />
-                        <TableColumn fx:id="actionsColumn" text="" prefWidth="80"/>
-                    </columns>
-                    <columnResizePolicy>
-                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
-                    </columnResizePolicy>
-                </TableView>
-
-                <!-- Message si pas de données -->
-                <Label fx:id="noDataLabel" text="Aucun groupe trouvé"
-                       style="-fx-text-fill: #9ca3af; -fx-font-size: 14px; -fx-padding: 20;"
-                       visible="false"/>
-            </VBox>
 
         </VBox>
-
     </VBox>
+
 </AnchorPane>

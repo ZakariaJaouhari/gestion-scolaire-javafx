@@ -4,6 +4,9 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -14,6 +17,7 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import org.example.dao.GroupeDAO;
 import org.example.dao.ModuleDAO;
+import org.example.model.Formateur;
 import org.example.model.Groupe;
 import org.example.util.SessionManager;
 import org.example.util.StageManager;
@@ -98,44 +102,115 @@ public class gestionGroupes_Controller {
     private void configureTableColumns() {
         // Colonne Matricule
         matriculeColumn.setCellValueFactory(cellData ->
-                new SimpleStringProperty(cellData.getValue().getMatricule()));
-
-        matriculeColumn.setCellFactory(new Callback<TableColumn<Groupe, String>, TableCell<Groupe, String>>() {
+                new SimpleStringProperty(cellData.getValue().getMatricule())
+        );
+        matriculeColumn.setCellFactory(col -> new TableCell<Groupe, String>() {
             @Override
-            public TableCell<Groupe, String> call(TableColumn<Groupe, String> param) {
-                return new TableCell<Groupe, String>() {
-                    @Override
-                    protected void updateItem(String item, boolean empty) {
-                        super.updateItem(item, empty);
-                        if (empty || item == null) {
-                            setText(null);
-                            setGraphic(null);
-                        } else {
-                            HBox hbox = new HBox(10);
-                            hbox.setStyle("-fx-alignment: center-left; -fx-padding: 0 0 0 30;");
-
-                            Label labelMatricule = new Label("Matricule:");
-                            labelMatricule.setStyle("-fx-font-weight: bold; -fx-text-fill: #374151;");
-
-                            Label valueMatricule = new Label(item);
-                            valueMatricule.setStyle("-fx-text-fill: #4b5563;");
-
-                            hbox.getChildren().addAll(labelMatricule, valueMatricule);
-                            setGraphic(hbox);
-                        }
-                    }
-                };
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    setText(item);
+                    // Style comme sur la capture d'écran
+                    setStyle("""
+                    -fx-padding: 15px 8px;
+                    -fx-font-size: 16px;
+                    -fx-font-weight: normal;
+                    -fx-text-fill: #000000;
+                    -fx-alignment: CENTER_LEFT;
+                    -fx-border-color: transparent;
+                """);
+                }
             }
         });
 
         // Colonne Niveau
         niveauColumn.setCellValueFactory(cellData ->
-                new SimpleStringProperty(cellData.getValue().getNiveau().getValeur()));
-
-        niveauColumn.setCellFactory(new Callback<TableColumn<Groupe, String>, TableCell<Groupe, String>>() {
+                new SimpleStringProperty(cellData.getValue().getNiveau().getValeur())
+        );
+        niveauColumn.setCellFactory(col -> new TableCell<Groupe, String>() {
             @Override
-            public TableCell<Groupe, String> call(TableColumn<Groupe, String> param) {
-                return new TableCell<Groupe, String>() {
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    setText(item);
+                    // Style comme sur la capture d'écran
+                    setStyle("""
+                    -fx-padding: 15px 8px;
+                    -fx-font-size: 16px;
+                    -fx-font-weight: normal;
+                    -fx-text-fill: #000000;
+                    -fx-alignment: CENTER_LEFT;
+                    -fx-border-color: transparent;
+                """);
+                }
+            }
+        });
+
+        // Colonne Modules (imbriquée)
+        modulesColumn.setCellFactory(column -> new TableCell<Groupe, Void>() {
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+
+                // Nettoyage
+                setGraphic(null);
+                setText(null);
+
+                if (!empty && getTableRow() != null && getTableRow().getItem() != null) {
+                    Groupe groupe = getTableRow().getItem();
+
+                    VBox container = new VBox(0);
+                    container.setStyle("-fx-padding: 0px;");
+
+                    // Vérifier si le groupe a des modules
+                    if (groupe.getModules() == null || groupe.getModules().isEmpty()) {
+                        Label noModulesLabel = new Label("Aucun module associé");
+                        noModulesLabel.setStyle("""
+                        -fx-text-fill: #9ca3af;
+                        -fx-font-style: italic;
+                        -fx-font-size: 14px;
+                        -fx-padding: 15px 8px;
+                    """);
+                        container.getChildren().add(noModulesLabel);
+                    } else {
+                        // Créer le tableau imbriqué pour les modules
+                        TableView<ModuleTableData> modulesTable = createModulesTableView(groupe);
+                        container.getChildren().add(modulesTable);
+                    }
+
+                    setGraphic(container);
+                }
+            }
+
+            private TableView<ModuleTableData> createModulesTableView(Groupe groupe) {
+                TableView<ModuleTableData> table = new TableView<>();
+
+                // Style minimal pour le tableau imbriqué
+                table.setStyle("""
+                -fx-background-color: transparent;
+                -fx-border-color: transparent;
+                -fx-padding: 0;
+                -fx-table-cell-border-color: transparent;
+                -fx-table-header-border-color: transparent;
+            """);
+
+                // Enlever toutes les classes de style pour éviter les conflits
+                table.getStyleClass().clear();
+                table.getStyleClass().add("modules-subtable");
+                modulesColumn.getStyleClass().add("modules-column");
+
+                // Colonne Nom module
+                TableColumn<ModuleTableData, String> nomModuleCol = new TableColumn<>("Nom module");
+                nomModuleCol.setPrefWidth(250);
+                nomModuleCol.setCellValueFactory(cellData ->
+                        new SimpleStringProperty(cellData.getValue().getNomModule()));
+                nomModuleCol.setCellFactory(col -> new TableCell<ModuleTableData, String>() {
                     @Override
                     protected void updateItem(String item, boolean empty) {
                         super.updateItem(item, empty);
@@ -143,120 +218,141 @@ public class gestionGroupes_Controller {
                             setText(null);
                             setGraphic(null);
                         } else {
-                            HBox hbox = new HBox(10);
-                            hbox.setStyle("-fx-alignment: center-left; -fx-padding: 0 0 0 50;");
-
-                            Label labelNiveau = new Label("Niveau:");
-                            labelNiveau.setStyle("-fx-font-weight: bold; -fx-text-fill: #374151;");
-
-                            Label valueNiveau = new Label(item);
-                            valueNiveau.setStyle("-fx-text-fill: #4b5563;");
-
-                            hbox.getChildren().addAll(labelNiveau, valueNiveau);
-                            setGraphic(hbox);
+                            setText(item);
+                            // Style comme sur la capture d'écran - texte noir simple
+                            setStyle("""
+                            -fx-padding: 12px 8px;
+                            -fx-font-size: 15px;
+                            -fx-font-weight: normal;
+                            -fx-text-fill: #000000;
+                            -fx-background-color: transparent;
+                            -fx-border-color: transparent;
+                            -fx-alignment: CENTER;
+                        """);
                         }
                     }
-                };
-            }
-        });
+                });
 
-        // Colonne Modules (imbriquée)
-        modulesColumn.setCellFactory(new Callback<TableColumn<Groupe, Void>, TableCell<Groupe, Void>>() {
-            @Override
-            public TableCell<Groupe, Void> call(TableColumn<Groupe, Void> param) {
-                return new TableCell<Groupe, Void>() {
+                // Colonne Matricule module
+                TableColumn<ModuleTableData, String> matriculeModuleCol = new TableColumn<>("Matricule module");
+                matriculeModuleCol.setPrefWidth(150);
+                matriculeModuleCol.setCellValueFactory(cellData ->
+                        new SimpleStringProperty(cellData.getValue().getMatriculeModule()));
+                matriculeModuleCol.setCellFactory(col -> new TableCell<ModuleTableData, String>() {
                     @Override
-                    protected void updateItem(Void item, boolean empty) {
+                    protected void updateItem(String item, boolean empty) {
                         super.updateItem(item, empty);
-                        if (empty) {
+                        if (empty || item == null) {
+                            setText(null);
                             setGraphic(null);
                         } else {
-                            Groupe groupe = getTableView().getItems().get(getIndex());
-
-                            VBox container = new VBox(5);
-                            container.setStyle("-fx-padding: 0 0 0 80;");
-
-                            // Vérifier si le groupe a des modules
-                            if (groupe.getModules() == null || groupe.getModules().isEmpty()) {
-                                Label noModulesLabel = new Label("Aucun module associé");
-                                noModulesLabel.setStyle("-fx-text-fill: #9ca3af; -fx-font-style: italic;");
-                                container.getChildren().add(noModulesLabel);
-                            } else {
-                                // Créer le tableau imbriqué pour les modules
-                                TableView<ModuleTableData> modulesTable = createModulesTableView(groupe);
-                                container.getChildren().add(modulesTable);
-                            }
-
-                            setGraphic(container);
+                            setText(item);
+                            // Style comme sur la capture d'écran
+                            setStyle("""
+                            -fx-padding: 12px 8px;
+                            -fx-font-size: 15px;
+                            -fx-font-weight: normal;
+                            -fx-text-fill: #000000;
+                            -fx-background-color: transparent;
+                            -fx-border-color: transparent;
+                            -fx-alignment: CENTER;
+                        """);
                         }
                     }
+                });
 
-                    private TableView<ModuleTableData> createModulesTableView(Groupe groupe) {
-                        TableView<ModuleTableData> table = new TableView<>();
+                // Colonne Formateur
+                TableColumn<ModuleTableData, String> formateurCol = new TableColumn<>("Formateur");
+                formateurCol.setPrefWidth(200);
+                formateurCol.setCellValueFactory(cellData ->
+                        new SimpleStringProperty(cellData.getValue().getFormateurNom()));
+                formateurCol.setCellFactory(col -> new TableCell<ModuleTableData, String>() {
+                    @Override
+                    protected void updateItem(String item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty || item == null) {
+                            setText(null);
+                            setGraphic(null);
+                        } else {
+                            setText(item);
+                            // Style comme sur la capture d'écran
+                            setStyle("""
+                            -fx-padding: 12px 8px;
+                            -fx-font-size: 15px;
+                            -fx-font-weight: normal;
+                            -fx-text-fill: #000000;
+                            -fx-background-color: transparent;
+                            -fx-border-color: transparent;
+                            -fx-alignment: CENTER;
+                        """);
+                        }
+                    }
+                });
 
-                        // Colonne Nom module
-                        TableColumn<ModuleTableData, String> nomModuleCol = new TableColumn<>("Nom module");
-                        nomModuleCol.setPrefWidth(250);
-                        nomModuleCol.setCellValueFactory(cellData ->
-                                new SimpleStringProperty(cellData.getValue().getNomModule()));
-                        nomModuleCol.setStyle("-fx-border-color: #d1d5db; -fx-border-width: 0 0 1 0;");
+                // Ajouter les colonnes
+                table.getColumns().addAll(nomModuleCol, matriculeModuleCol, formateurCol);
 
-                        // Colonne Matricule module
-                        TableColumn<ModuleTableData, String> matriculeModuleCol = new TableColumn<>("Matricule module");
-                        matriculeModuleCol.setPrefWidth(150);
-                        matriculeModuleCol.setCellValueFactory(cellData ->
-                                new SimpleStringProperty(cellData.getValue().getMatriculeModule()));
-                        matriculeModuleCol.setStyle("-fx-border-color: #d1d5db; -fx-border-width: 0 0 1 0;");
+                // Supprimer le style d'en-tête du tableau imbriqué pour plus de propreté
+                for (TableColumn<ModuleTableData, ?> column : table.getColumns()) {
+                    column.setStyle("-fx-font-size: 15px; -fx-font-weight: normal;");
+                    column.setReorderable(false);
+                    column.setResizable(true);
+                }
 
-                        // Colonne Formateur
-                        TableColumn<ModuleTableData, String> formateurCol = new TableColumn<>("Formateur");
-                        formateurCol.setPrefWidth(200);
-                        formateurCol.setCellValueFactory(cellData ->
-                                new SimpleStringProperty(cellData.getValue().getFormateurNom()));
-                        formateurCol.setStyle("-fx-border-color: #d1d5db; -fx-border-width: 0 0 1 0 1;");
+                // Charger les données
+                ObservableList<ModuleTableData> modulesData = FXCollections.observableArrayList();
 
-                        // Ajouter les colonnes
-                        table.getColumns().addAll(nomModuleCol, matriculeModuleCol, formateurCol);
-
-                        // Configurer le style
-                        table.setStyle("-fx-background-color: transparent; " +
-                                "-fx-table-cell-border-color: #d1d5db; " +
-                                "-fx-border-color: #d1d5db; " +
-                                "-fx-border-width: 1; " +
-                                "-fx-border-radius: 3;");
-
-                        // Charger les données
-                        ObservableList<ModuleTableData> modulesData = FXCollections.observableArrayList();
-
-                        for (org.example.model.Module module : groupe.getModules()) {
-                            String formateurNom = "Non attribué";
-                            if (module.getFormateur() != null) {
-                                formateurNom = module.getFormateur().getNom() + " " +
-                                        module.getFormateur().getPrenom();
-                            }
-
-                            modulesData.add(new ModuleTableData(
-                                    module.getNom(),
-                                    module.getMatricule(),
-                                    formateurNom
-                            ));
+                if (groupe.getModules() != null) {
+                    for (org.example.model.Module module : groupe.getModules()) {
+                        String formateurNom = "Non attribué";
+                        if (module.getFormateur() != null) {
+                            formateurNom = module.getFormateur().getNom() + " " +
+                                    module.getFormateur().getPrenom();
                         }
 
-                        table.setItems(modulesData);
-
-                        // Ajuster la hauteur en fonction du nombre de lignes
-                        int rowHeight = 35; // Hauteur estimée par ligne
-                        int headerHeight = 30; // Hauteur de l'en-tête
-                        table.setPrefHeight(modulesData.size() * rowHeight + headerHeight + 10);
-
-                        return table;
+                        modulesData.add(new ModuleTableData(
+                                module.getNom(),
+                                module.getMatricule(),
+                                formateurNom
+                        ));
                     }
-                };
+                }
+
+                table.setItems(modulesData);
+
+                // Ajuster la hauteur pour afficher toutes les lignes
+                int rowHeight = 40; // Hauteur de ligne plus grande comme sur la capture
+                int headerHeight = 35;
+                table.setPrefHeight(modulesData.size() * rowHeight + headerHeight);
+
+                // Pas de sélection de ligne
+                table.setSelectionModel(null);
+
+                return table;
             }
         });
 
         // Colonne Actions
         configureActionsColumn();
+        groupesTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+    }
+
+    // Méthode pour appliquer le style "other-column" comme dans le tableau des formateurs
+    private <T> void applyOtherColumnStyle(TableColumn<Groupe, T> column) {
+        column.setCellFactory(col -> new TableCell<Groupe, T>() {
+            @Override
+            protected void updateItem(T item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    setText(item.toString());
+                    setStyle("-fx-padding: 12px 8px; -fx-font-weight: normal; -fx-text-fill: #374151;");
+                    getStyleClass().add("other-column");
+                }
+            }
+        });
     }
 
 
@@ -270,16 +366,22 @@ public class gestionGroupes_Controller {
             int directeurId = SessionManager.getInstance().getUserId();
             List<Groupe> groupes = groupeDAO.findByDirecteurId(directeurId);
 
-            // Pour chaque groupe, charger ses modules via ModuleDAO
             ModuleDAO moduleDAO = new ModuleDAO();
             for (Groupe groupe : groupes) {
                 List<org.example.model.Module> modules = moduleDAO.findByGroupeId(groupe.getId());
                 groupe.setModules(modules);
+
+                // DEBUG
+                System.out.println("Groupe: " + groupe.getMatricule() +
+                        " | Modules: " + (modules != null ? modules.size() : 0));
             }
 
             groupeList.setAll(groupes);
             filteredList.setAll(groupeList);
             groupesTable.setItems(filteredList);
+
+            // Rafraîchir le tableau
+            groupesTable.refresh();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -358,8 +460,8 @@ public class gestionGroupes_Controller {
                         // Bouton modifier
                         try {
                             ImageView editIcon = new ImageView(new Image(getClass().getResourceAsStream("/images/crayon.png")));
-                            editIcon.setFitWidth(20);
-                            editIcon.setFitHeight(20);
+                            editIcon.setFitWidth(18);
+                            editIcon.setFitHeight(18);
                             editButton.setGraphic(editIcon);
                         } catch (Exception e) {
                             editButton.setText("✏️");
@@ -373,8 +475,8 @@ public class gestionGroupes_Controller {
                         // Bouton supprimer
                         try {
                             ImageView deleteIcon = new ImageView(new Image(getClass().getResourceAsStream("/images/supprimer.png")));
-                            deleteIcon.setFitWidth(20);
-                            deleteIcon.setFitHeight(20);
+                            deleteIcon.setFitWidth(18);
+                            deleteIcon.setFitHeight(18);
                             deleteButton.setGraphic(deleteIcon);
                         } catch (Exception e) {
                             deleteButton.setText("🗑️");
@@ -391,7 +493,6 @@ public class gestionGroupes_Controller {
                     @Override
                     protected void updateItem(Void item, boolean empty) {
                         super.updateItem(item, empty);
-
                         if (empty) {
                             setGraphic(null);
                             getStyleClass().remove("actions-cell");
@@ -400,7 +501,6 @@ public class gestionGroupes_Controller {
                             getStyleClass().setAll("table-cell", "actions-cell");
                         }
                     }
-
                 };
             }
         });
@@ -414,7 +514,43 @@ public class gestionGroupes_Controller {
     // =====================================================================
     @FXML
     private void handleEdit(Groupe groupe) {
+        try {
+            // Charger le FXML
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/view/directeur/Gestion_Groupes/Modifier_Groupe.fxml")
+            );
+            Parent root = loader.load();
 
+            // Récupérer le controller de modification
+            Modifier_Groupe_Controller controller = loader.getController();
+            controller.initData(groupe);
+
+            // Récupérer la fenêtre principale
+            Stage stage = StageManager.getPrimaryStage();
+            Scene scene = stage.getScene();
+
+            if (scene == null) {
+                // Si pas de scène existante, créer une nouvelle
+                scene = new Scene(root);
+                stage.setScene(scene);
+            } else {
+                // Sinon remplacer le root de la scène actuelle → Garde la taille
+                scene.setRoot(root);
+            }
+
+            // Charger le CSS
+            scene.getStylesheets().clear();
+            scene.getStylesheets().add(
+                    getClass().getResource("/styles/gestionFormateurs.css").toExternalForm()
+            );
+
+            // Mettre le titre
+            stage.setTitle("Modifier Groupe");
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -464,9 +600,9 @@ public class gestionGroupes_Controller {
     // ================ BOUTON : AJOUTER FORMATEUR =========================
     // =====================================================================
     @FXML
-    private void ajouterFormateur() {
+    private void ajouterGroupe() {
         try {
-            StageManager.loadScene("/view/directeur/Gestion_Formateurs/Ajouter_Formateur.fxml", "/styles/gestionFormateurs.css", "Ajouter Formateur");
+            StageManager.loadScene("/view/directeur/Gestion_Groupes/Ajouter_Groupe.fxml", "/styles/gestionFormateurs.css", "Ajouter Groupe");
         } catch (IOException e) {
             e.printStackTrace();
         }

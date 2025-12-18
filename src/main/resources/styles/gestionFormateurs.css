@@ -74,8 +74,8 @@
     -fx-font-size: 14px;
     -fx-table-cell-border-color: transparent;
     -fx-table-header-border-color: transparent;
+    -fx-max-width: Infinity;
 }
-
 /* En-têtes de colonnes */
 .custom-table .column-header {
     -fx-background-color: transparent;
@@ -240,6 +240,95 @@
     -fx-border-width: 0 0 1 0;
     -fx-border-color: #e5e7eb;
 }
+
+
+
+
+/* Style pour le tableau imbriqué des modules */
+.custom-table .table-view {
+    -fx-background-color: #f9fafb;
+    -fx-border-color: #e5e7eb;
+    -fx-border-width: 1;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-table-cell-border-color: transparent;
+}
+
+.custom-table .table-view .column-header {
+    -fx-background-color: #f3f4f6;
+    -fx-border-color: #d1d5db;
+    -fx-border-width: 0 0 1px 0;
+    -fx-padding: 8px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #374151;
+    -fx-font-size: 12px;
+}
+
+.custom-table .table-view .table-row-cell {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-cell-size: 32px;
+}
+
+.custom-table .table-view .table-row-cell:odd {
+    -fx-background-color: #f9fafb;
+}
+
+.custom-table .table-view .table-cell {
+    -fx-padding: 8px;
+    -fx-font-size: 12px;
+    -fx-text-fill: #4b5563;
+    -fx-border-color: transparent;
+}
+
+/* Style pour la cellule de modules dans le tableau principal */
+.modules-cell {
+    -fx-padding: 12px 8px;
+    -fx-background-color: transparent;
+}
+
+/* Séparateur entre les groupes */
+.groupe-separator {
+    -fx-background-color: #e5e7eb;
+    -fx-pref-height: 1px;
+    -fx-min-height: 1px;
+    -fx-max-height: 1px;
+    -fx-padding: 0;
+}
+
+/* Pour aligner le texte dans les colonnes matricule et niveau */
+.matricule-cell, .niveau-cell {
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 12px 8px;
+}
+
+/* Style pour le label "Aucun module associé" */
+.no-modules-label {
+    -fx-text-fill: #9ca3af;
+    -fx-font-style: italic;
+    -fx-font-size: 13px;
+    -fx-padding: 8px 0;
+}
+/* Colonne Modules avec en-tête centré */
+.modules-column .column-header {
+    -fx-alignment: CENTER;
+}
+
+.modules-column .column-header .label {
+    -fx-alignment: CENTER;
+    -fx-text-alignment: CENTER;
+    -fx-padding: 0;
+}
+.table-view .column-header > .label[text="Modules"],
+#modulesColumn .column-header > .label {
+    -fx-alignment: CENTER !important;
+    -fx-text-alignment: CENTER !important;
+    -fx-padding: 0 8px !important;
+    -fx-translate-x: 0 !important;
+}
+
+
+
 
 
 

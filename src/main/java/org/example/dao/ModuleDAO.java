@@ -202,4 +202,35 @@ public class ModuleDAO {
 
         return module;
     }
+
+
+    // Dans ModuleDAO.java
+    public List<Module> findByDirecteurId(int directeurId) {
+        List<Module> modules = new ArrayList<>();
+        String sql = "SELECT m.*, f.nom as formateur_nom, f.prenom as formateur_prenom " +
+                "FROM modules m " +
+                "LEFT JOIN formateurs f ON m.formateur_id = f.id " +
+                "WHERE m.directeur_id = ? " +
+                "ORDER BY m.matricule";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, directeurId);
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Module module = mapResultSetToModule(rs);
+
+                // Ajouter les infos du formateur
+                Formateur formateur = new Formateur();
+                formateur.setNom(rs.getString("formateur_nom"));
+                formateur.setPrenom(rs.getString("formateur_prenom"));
+                module.setFormateur(formateur);
+
+                modules.add(module);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return modules;
+    }
 }
