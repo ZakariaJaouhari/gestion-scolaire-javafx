@@ -19,7 +19,7 @@ public class ModuleDAO {
     }
 
     // Créer un module
-    public Integer create(Module module) {
+    public Long create(Module module) {
         String sql = "INSERT INTO modules (nom, matricule, date_D, date_F, heures_P, coefficient, formateur_id, directeur_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -35,7 +35,7 @@ public class ModuleDAO {
             int affectedRows = stmt.executeUpdate();
             if (affectedRows > 0) {
                 try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-                    if (generatedKeys.next()) return generatedKeys.getInt(1);
+                    if (generatedKeys.next()) return generatedKeys.getLong(1);
                 }
             }
         } catch (SQLException e) {
@@ -232,5 +232,21 @@ public class ModuleDAO {
             e.printStackTrace();
         }
         return modules;
+    }
+
+
+    // Supprimer un module
+    public boolean delete(int id) {
+        String sql = "DELETE FROM modules WHERE id = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+
+            int affectedRows = stmt.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

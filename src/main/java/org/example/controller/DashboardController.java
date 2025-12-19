@@ -364,9 +364,11 @@ public class DashboardController {
 
     @FXML
     private void handleModules() {
-        showAlert("Modules", "Gestion des modules",
-                "Cette fonctionnalité sera disponible prochainement.",
-                Alert.AlertType.INFORMATION);
+        try {
+            StageManager.loadScene("/view/directeur/Gestion_Modules/gestionModules.fxml", "/styles/gestionFormateurs.css", "gestion des Modules");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML

@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.controller.gestionModules_Controller"
+            prefHeight="400.0" prefWidth="600.0">
+
+
+
+    <VBox style="-fx-background-color: #142b77; -fx-background-radius: 0 40 40 0;"
+          prefWidth="250"
+          AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0">
+
+        <Region prefHeight="120"/>
+
+        <VBox spacing="2" style="-fx-padding: 50 0 0 20;">
+
+            <!-- HOME -->
+            <HBox alignment="CENTER_LEFT"
+                  style="-fx-padding: 12 0 12 30;"
+                  onMouseClicked="#handleHome">
+
+                <ImageView fitWidth="27" fitHeight="27">
+                    <image>
+                        <Image url="/images/Bhome.png"/>
+                    </image>
+                </ImageView>
+
+                <Label text="Accueil"
+                       style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
+            </HBox>
+
+            <!-- FORMATEURS -->
+            <HBox alignment="CENTER_LEFT"
+                  style=" -fx-padding: 12 0 12 30;"
+                  onMouseClicked="#handleFormateurs">
+
+                <ImageView fitWidth="30" fitHeight="30">
+                    <image>
+                        <Image url="/images/prof.png"/>
+                    </image>
+                </ImageView>
+
+                <Label text="Formateurs"
+                       style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
+            </HBox>
+
+            <!-- ETUDIANTS -->
+            <HBox alignment="CENTER_LEFT" style=" -fx-padding: 12 0 12 30;" onMouseClicked="#handleStagiaires">
+
+                <ImageView fitWidth="30" fitHeight="30">
+                    <image>
+                        <Image url="/images/stagiaire.png"/>
+                    </image>
+                </ImageView>
+
+                <Label text="Etudiants" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
+            </HBox>
+
+            <!-- GROUPES -->
+            <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 0 12 30;" onMouseClicked="#handleGroupes">
+
+                <ImageView fitWidth="30" fitHeight="30">
+                    <image>
+                        <Image url="/images/groupe.png"/>
+                    </image>
+                </ImageView>
+
+                <Label text="Groupes" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
+            </HBox>
+
+            <!-- MODULES -->
+            <HBox alignment="CENTER_LEFT" style="-fx-background-color: #f5f5f4; -fx-background-radius: 30 0 0 30; -fx-padding: 12 0 12 30;" onMouseClicked="#handleModules">
+
+                <ImageView fitWidth="27" fitHeight="27">
+                    <image>
+                        <Image url="/images/module-hover.png"/>
+                    </image>
+                </ImageView>
+
+                <Label text="Modules" style="-fx-text-fill: #43639a; -fx-font-size: 17;-fx-padding: 0 0 0 15;"/>
+            </HBox>
+
+            <!-- NOTES -->
+            <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 0 12 30;" onMouseClicked="#handleNotes">
+
+                <ImageView fitWidth="35" fitHeight="35">
+                    <image>
+                        <Image url="/images/note.png"/>
+                    </image>
+                </ImageView>
+
+                <Label text="Notes" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 7;"/>
+            </HBox>
+
+            <!-- Planning -->
+            <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 0 12 30;" onMouseClicked="#handleCertificats">
+
+                <ImageView fitWidth="35" fitHeight="35">
+                    <image>
+                        <Image url="/images/calendrier.png"/>
+                    </image>
+                </ImageView>
+
+                <Label text="Planning" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 7;"/>
+            </HBox>
+
+            <Region VBox.vgrow="ALWAYS"/>
+
+            <!-- LOGOUT -->
+            <HBox alignment="CENTER_LEFT" style="-fx-padding: 400 0 12 30;" onMouseClicked="#handleLogout">
+
+                <ImageView fitWidth="30" fitHeight="30">
+                    <image>
+                        <Image url="/images/logout.png"/>
+                    </image>
+                </ImageView>
+
+                <Label text="Déconnexion" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
+            </HBox>
+
+            <Region prefHeight="20"/>
+        </VBox>
+
+    </VBox>
+
+    <!-- CONTENU PRINCIPAL -->
+    <VBox AnchorPane.topAnchor="0"
+          AnchorPane.bottomAnchor="0"
+          AnchorPane.leftAnchor="250"
+          AnchorPane.rightAnchor="0">
+
+        <!-- HEADER -->
+        <HBox alignment="CENTER_LEFT" style="-fx-padding: 40 40 0 40;">
+            <HBox alignment="CENTER_LEFT" spacing="5">
+                <ImageView fitWidth="130" fitHeight="137" preserveRatio="true" style="-fx-padding: 0 27 0 0;">
+                    <image><Image url="/images/notes 2.png"/></image>
+                </ImageView>
+                <VBox alignment="CENTER_LEFT" spacing="4" style="-fx-padding: 2 0 0 0;">
+                    <Label fx:id="versionLabel" text="V 0.1.0"
+                           style="-fx-font-size: 10; -fx-background-color: #ef4444; -fx-padding: 2 8; -fx-background-radius: 10; -fx-text-fill: white;"/>
+                </VBox>
+            </HBox>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <!-- École -->
+            <HBox alignment="CENTER_LEFT" spacing="5" style="-fx-padding: 0 30 0 0">
+                <ImageView fitWidth="48" fitHeight="40">
+                    <image>
+                        <Image url="/images/ecole(1).png"/>
+                    </image>
+                </ImageView>
+                <VBox alignment="CENTER_LEFT" spacing="2">
+                    <Label text="École" style="-fx-font-size: 14; -fx-text-fill: #6b7280;"/>
+                    <Label fx:id="nomEcoleLabel" style="-fx-font-size: 18; -fx-font-weight: 600;"/>
+                </VBox>
+            </HBox>
+
+            <!-- Directeur -->
+            <HBox alignment="CENTER_LEFT" spacing="5">
+                <ImageView fitWidth="48" fitHeight="40">
+                    <image>
+                        <Image url="/images/profil.png"/>
+                    </image>
+                </ImageView>
+                <VBox alignment="CENTER_LEFT" spacing="2">
+                    <Label text="Directeur" style="-fx-font-size: 14; -fx-text-fill: #6b7280;"/>
+                    <Label fx:id="nomDirecteurLabel" style="-fx-font-size: 18; -fx-font-weight: 600;"/>
+                </VBox>
+            </HBox>
+        </HBox>
+
+        <!-- CONTENU SPÉCIFIQUE AUX ETUDIANTS -->
+        <VBox style="-fx-padding: 40 40;" spacing="20">
+            <HBox spacing="20" alignment="CENTER_LEFT">
+                <VBox spacing="5">
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="Gestion des Modules"
+                               style="-fx-font-size: 46px; -fx-font-weight: bold; -fx-font-family: 'Apple Chancery';"/>
+                    </HBox>
+                    <Label text="Utilisez le filtre pour effectuer une recherche plus rapide."
+                           style="-fx-text-fill: #666; -fx-padding: 0 0 0 30"/>
+                </VBox>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <!-- Bouton Ajouter etudiant à droite -->
+                <Button text="+ Ajouter module"
+                        style="-fx-background-color: #059669; -fx-text-fill: white; -fx-font-weight: bold;
+                       -fx-font-size: 14px; -fx-padding: 12 24; -fx-background-radius: 5;"
+                        onAction="#ajouterModule"/>
+            </HBox>
+
+            <!-- Formulaire de Filtrage -->
+            <VBox spacing="15" alignment="CENTER">
+                <!-- Première ligne du filtre -->
+                <HBox spacing="20" alignment="CENTER">
+                    <VBox styleClass="float-input-container" prefWidth="300">
+                        <Label text="Nom" styleClass="float-label"/>
+                        <TextField fx:id="nomField"
+                                   styleClass="float-text-field"
+                                   prefHeight="35"/>
+                    </VBox>
+
+                    <VBox styleClass="float-input-container" prefWidth="300">
+                        <Label text="Matricule" styleClass="float-label"/>
+                        <TextField fx:id="matriculeField"
+                                   styleClass="float-text-field"
+                                   prefHeight="35"/>
+                    </VBox>
+
+                    <VBox styleClass="float-input-container" prefWidth="300">
+                        <Label text="Formateur" styleClass="float-label"/>
+                        <ComboBox fx:id="formateurComboBox"
+                                  prefWidth="300" prefHeight="35"
+                                  styleClass="float-text-field"/>
+                    </VBox>
+                </HBox>
+
+                <!-- Boutons du filtre centrés -->
+                <HBox spacing="10" alignment="CENTER_RIGHT">
+                    <Button text="Réinitialiser"
+                            style="-fx-text-fill: #666; -fx-background-color: transparent;"
+                            onAction="#reinitialiserFiltres"/>
+                    <Button text="Filtrer"
+                            style="-fx-background-color: #4f46e5; -fx-text-fill: white; -fx-font-weight: bold;
+                           -fx-padding: 10 20; -fx-background-radius: 5;"
+                            onAction="#filtrerModules"/>
+                </HBox>
+            </VBox>
+
+            <!-- Tableau des Etudiants -->
+            <TableView fx:id="modulesTable" styleClass="custom-table" stylesheets="@/styles/gestionFormateurs.css">
+                <columns>
+
+                    <TableColumn text="Nom" prefWidth="120" fx:id="nomColumn">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="cin"/>
+                        </cellValueFactory>
+                    </TableColumn>
+
+                    <TableColumn text="Matricule" prefWidth="80" fx:id="matriculeColumn">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="matricule"/>
+                        </cellValueFactory>
+                    </TableColumn>
+
+                    <TableColumn text="Date debut" prefWidth="130" fx:id="dateDebutColumn">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="dateDebut"/>
+                        </cellValueFactory>
+                    </TableColumn>
+
+                    <TableColumn text="Date fin" prefWidth="130" fx:id="dateFinColumn">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="dateFin"/>
+                        </cellValueFactory>
+                    </TableColumn>
+
+                    <TableColumn text="Heures" prefWidth="130" fx:id="heuresColumn">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="heures"/>
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn text="Coefficient" fx:id="cofColumn" prefWidth="90">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="coefficient"/>
+                        </cellValueFactory>
+                    </TableColumn>
+
+                    <TableColumn text="Formateur" prefWidth="150" fx:id="formateurColumn">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="formateur"/>
+                        </cellValueFactory>
+                    </TableColumn>
+
+
+                    <TableColumn fx:id="actionsColumn" text="" prefWidth="80"/>
+                </columns>
+
+            </TableView>
+        </VBox>
+    </VBox>
+</AnchorPane>

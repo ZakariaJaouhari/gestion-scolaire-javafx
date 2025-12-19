@@ -8,9 +8,9 @@ public class Module {
     private int id;
     private String nom;
     private String matricule;
-    private LocalDate dateDebut;
-    private LocalDate dateFin;
-    private String heuresPratique;
+    private LocalDate date_D;
+    private LocalDate date_F;
+    private String heures_P;
     private int coefficient;
     private int formateurId;
     private int directeurId;
@@ -18,6 +18,23 @@ public class Module {
     // Relations
     private Formateur formateur;
     private List<Groupe> groupes;
+
+    // ✅ CONSTRUCTEUR VIDE (OBLIGATOIRE POUR DAO / FXML / JDBC)
+    public Module() {
+    }
+
+    // Constructeur complet
+    public Module(String nom, String matricule, LocalDate date_D, LocalDate date_F,
+                  String heures_P, Integer coefficient, int formateurId, int directeurId) {
+        this.nom = nom;
+        this.matricule = matricule;
+        this.date_D = date_D;
+        this.date_F = date_F;
+        this.heures_P = heures_P;
+        this.coefficient = coefficient;
+        this.formateurId = formateurId;
+        this.directeurId = directeurId;
+    }
 
     // Getters et Setters
     public int getId() { return id; }
@@ -29,14 +46,14 @@ public class Module {
     public String getMatricule() { return matricule; }
     public void setMatricule(String matricule) { this.matricule = matricule; }
 
-    public LocalDate getDateDebut() { return dateDebut; }
-    public void setDateDebut(LocalDate dateDebut) { this.dateDebut = dateDebut; }
+    public LocalDate getDateDebut() { return date_D; }
+    public void setDateDebut(LocalDate date_D) { this.date_D = date_D; }
 
-    public LocalDate getDateFin() { return dateFin; }
-    public void setDateFin(LocalDate dateFin) { this.dateFin = dateFin; }
+    public LocalDate getDateFin() { return date_F; }
+    public void setDateFin(LocalDate date_F) { this.date_F = date_F; }
 
-    public String getHeuresPratique() { return heuresPratique; }
-    public void setHeuresPratique(String heuresPratique) { this.heuresPratique = heuresPratique; }
+    public String getHeuresPratique() { return heures_P; }
+    public void setHeuresPratique(String heures_P) { this.heures_P = heures_P; }
 
     public int getCoefficient() { return coefficient; }
     public void setCoefficient(int coefficient) { this.coefficient = coefficient; }
