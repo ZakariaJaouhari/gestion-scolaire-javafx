@@ -380,9 +380,11 @@ public class DashboardController {
 
     @FXML
     private void handleCertificats() {
-        showAlert("Certificats", "Gestion des certificats",
-                "Cette fonctionnalité sera disponible prochainement.",
-                Alert.AlertType.INFORMATION);
+        try {
+            StageManager.loadScene("/view/directeur/Gestion_Planning/PlanningSemaine.fxml", "/styles/gestionFormateurs.css", "gestion des Modules");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML

@@ -4,6 +4,9 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -276,7 +279,43 @@ public class gestionModules_Controller {
     // =====================================================================
     @FXML
     private void handleEdit(org.example.model.Module module) {
+        try {
+            // Charger le FXML
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/view/directeur/Gestion_Modules/Modifier_Module.fxml")
+            );
+            Parent root = loader.load();
 
+            // Récupérer le controller de modification
+            Modifier_Module_Controller controller = loader.getController();
+            controller.setModuleToEdit(module);
+
+            // Récupérer la fenêtre principale
+            Stage stage = StageManager.getPrimaryStage();
+            Scene scene = stage.getScene();
+
+            if (scene == null) {
+                // Si pas de scène existante, créer une nouvelle
+                scene = new Scene(root);
+                stage.setScene(scene);
+            } else {
+                // Sinon remplacer le root de la scène actuelle → Garde la taille
+                scene.setRoot(root);
+            }
+
+            // Charger le CSS
+            scene.getStylesheets().clear();
+            scene.getStylesheets().add(
+                    getClass().getResource("/styles/gestionFormateurs.css").toExternalForm()
+            );
+
+            // Mettre le titre
+            stage.setTitle("Modifier Module");
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void handleDelete(org.example.model.Module module) {

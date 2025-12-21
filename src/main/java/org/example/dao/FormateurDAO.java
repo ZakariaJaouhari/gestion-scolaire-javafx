@@ -55,20 +55,77 @@ public class FormateurDAO {
     }
 
     // Trouver par ID
-    public Optional<Formateur> findById(int id) {
+    public Formateur findById(int id) {
         String sql = "SELECT * FROM formateurs WHERE id = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, id);
-
             ResultSet rs = stmt.executeQuery();
+
             if (rs.next()) {
-                return Optional.of(mapResultSetToFormateur(rs));
+                Formateur formateur = new Formateur();
+                formateur.setId(rs.getInt("id"));
+                formateur.setMatricule(rs.getString("matricule"));
+                formateur.setNom(rs.getString("nom"));
+                formateur.setPrenom(rs.getString("prenom"));
+
+                // Gestion du sexe (enum)
+                String sexeStr = rs.getString("sexe");
+                if (sexeStr != null && !sexeStr.trim().isEmpty()) {
+                    try {
+                        formateur.setSexe(Formateur.Sexe.fromString(sexeStr));
+                    } catch (IllegalArgumentException e) {
+                        // Valeur par défaut si le sexe n'est pas valide
+                        formateur.setSexe(Formateur.Sexe.HOMME);
+                    }
+                }
+
+                // Date de naissance
+                Date dateNaissance = rs.getDate("date_naissance");
+                if (dateNaissance != null) {
+                    formateur.setDateNaissance(dateNaissance.toLocalDate());
+                }
+
+                // Situation (enum)
+                String situationStr = rs.getString("situation");
+                if (situationStr != null && !situationStr.trim().isEmpty()) {
+                    try {
+                        formateur.setSituation(Formateur.Situation.fromString(situationStr));
+                    } catch (IllegalArgumentException e) {
+                        // Valeur par défaut
+                        formateur.setSituation(Formateur.Situation.CELIBATAIRE);
+                    }
+                }
+
+                formateur.setCin(rs.getString("cin"));
+
+                // Date de recrutement
+                Date dateRecrutement = rs.getDate("date_recrutement");
+                if (dateRecrutement != null) {
+                    formateur.setDateRecrutement(dateRecrutement.toLocalDate());
+                }
+
+                formateur.setEmail(rs.getString("email"));
+                formateur.setPassword(rs.getString("password"));
+                formateur.setDirecteurId(rs.getInt("directeur_id"));
+
+                // Dates de création/modification
+                Timestamp createdAt = rs.getTimestamp("created_at");
+                if (createdAt != null) {
+                    formateur.setCreatedAt(createdAt.toLocalDateTime());
+                }
+
+                Timestamp updatedAt = rs.getTimestamp("updated_at");
+                if (updatedAt != null) {
+                    formateur.setUpdatedAt(updatedAt.toLocalDateTime());
+                }
+
+                return formateur;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return Optional.empty();
+        return null;
     }
 
     // Trouver par matricule

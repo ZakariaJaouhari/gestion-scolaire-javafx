@@ -42,20 +42,48 @@ public class GroupeDAO {
     }
 
     // Trouver par ID
-    public Optional<Groupe> findById(Long id) {
+    public Groupe findById(int id) {
         String sql = "SELECT * FROM groupes WHERE id = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setLong(1, id);
-
+            stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
+
             if (rs.next()) {
-                return Optional.of(mapResultSetToGroupe(rs));
+                Groupe groupe = new Groupe();
+                groupe.setId(rs.getInt("id"));
+                groupe.setMatricule(rs.getString("matricule"));
+
+                // Gestion du niveau (enum)
+                String niveauStr = rs.getString("niveau");
+                if (niveauStr != null && !niveauStr.trim().isEmpty()) {
+                    try {
+                        groupe.setNiveau(Groupe.Niveau.fromString(niveauStr));
+                    } catch (IllegalArgumentException e) {
+                        // Valeur par défaut
+                        groupe.setNiveau(Groupe.Niveau.PREMIERE_ANNEE);
+                    }
+                }
+
+                groupe.setDirecteurId(rs.getInt("directeur_id"));
+
+                // Dates de création/modification
+                Timestamp createdAt = rs.getTimestamp("created_at");
+                if (createdAt != null) {
+                    groupe.setCreatedAt(createdAt.toLocalDateTime());
+                }
+
+                Timestamp updatedAt = rs.getTimestamp("updated_at");
+                if (updatedAt != null) {
+                    groupe.setUpdatedAt(updatedAt.toLocalDateTime());
+                }
+
+                return groupe;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return Optional.empty();
+        return null;
     }
 
     // Trouver par matricule

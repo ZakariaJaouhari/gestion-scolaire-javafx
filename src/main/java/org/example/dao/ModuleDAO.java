@@ -1,6 +1,8 @@
 package org.example.dao;
 
+import org.example.model.Etudiant;
 import org.example.model.Formateur;
+import org.example.model.Groupe;
 import org.example.model.Module;
 import org.example.util.DatabaseConnection;
 
@@ -42,6 +44,32 @@ public class ModuleDAO {
             e.printStackTrace();
         }
         return null;
+    }
+
+    // Mettre à jour un étudiant
+    public boolean update(Module module) {
+        String sql = "UPDATE modules SET nom = ?, matricule = ?, date_D = ?, " +
+                "date_F = ?, heures_P = ?, coefficient = ?, formateur_id = ?, " +
+                "directeur_id = ?, updated_at = NOW() " +
+                "WHERE id = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, module.getNom());
+            stmt.setString(2, module.getMatricule());
+            stmt.setDate(3, Date.valueOf(module.getDateDebut()));
+            stmt.setDate(4, Date.valueOf(module.getDateFin()));
+            stmt.setString(5, module.getHeuresPratique());
+            stmt.setString(6, String.valueOf(module.getCoefficient()));
+            stmt.setInt(7, module.getFormateurId());
+            stmt.setInt(8, module.getDirecteurId());
+            stmt.setInt(9, module.getId());
+
+            int affectedRows = stmt.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     // Trouver les modules par groupe ID (via la table de relation)
@@ -248,5 +276,58 @@ public class ModuleDAO {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public Module findById(int id) {
+        String sql = "SELECT * FROM modules WHERE id = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                Module module = new Module();
+                module.setId(rs.getInt("id"));
+                module.setNom(rs.getString("nom"));
+                module.setMatricule(rs.getString("matricule"));
+
+                // Dates
+                Date dateD = rs.getDate("date_D");
+                if (dateD != null) {
+                    module.setDateDebut(dateD.toLocalDate());
+                }
+
+                Date dateF = rs.getDate("date_F");
+                if (dateF != null) {
+                    module.setDateFin(dateF.toLocalDate());
+                }
+
+                module.setHeuresPratique(rs.getString("heures_P"));
+
+                // Coefficient (attention aux valeurs null)
+                Object coefficientObj = rs.getObject("coefficient");
+                if (coefficientObj != null) {
+                    if (coefficientObj instanceof Number) {
+                        module.setCoefficient(((Number) coefficientObj).intValue());
+                    } else {
+                        try {
+                            module.setCoefficient(Integer.parseInt(coefficientObj.toString()));
+                        } catch (NumberFormatException e) {
+                            module.setCoefficient(1); // Valeur par défaut
+                        }
+                    }
+                } else {
+                    module.setCoefficient(1); // Valeur par défaut
+                }
+
+                module.setFormateurId(rs.getInt("formateur_id"));
+                module.setDirecteurId(rs.getInt("directeur_id"));
+
+                return module;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

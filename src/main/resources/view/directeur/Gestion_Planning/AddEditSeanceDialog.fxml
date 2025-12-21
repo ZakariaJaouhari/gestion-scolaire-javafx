@@ -1,20 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
-<?import javafx.collections.FXCollections?>
-<?import javafx.geometry.Insets?>
-
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.controller.Modifier_Etudiant_Controller"
-            prefHeight="400.0" prefWidth="600.0">
+            fx:controller="org.example.controller.AddEditSeanceDialogController"
+            prefWidth="500" prefHeight="600"
+            style="-fx-background-color: #f8f9fa;">
 
     <VBox style="-fx-background-color: #142b77; -fx-background-radius: 0 40 40 0;"
           prefWidth="250"
@@ -55,15 +51,15 @@
             </HBox>
 
             <!-- ETUDIANTS -->
-            <HBox alignment="CENTER_LEFT" style="-fx-background-color: #f5f5f4; -fx-background-radius: 30 0 0 30; -fx-padding: 12 0 12 30;" onMouseClicked="#handleEtudiants">
+            <HBox alignment="CENTER_LEFT" style=" -fx-padding: 12 0 12 30;" onMouseClicked="#handleStagiaires">
 
                 <ImageView fitWidth="30" fitHeight="30">
                     <image>
-                        <Image url="/images/stagiaire-hover.png"/>
+                        <Image url="/images/stagiaire.png"/>
                     </image>
                 </ImageView>
 
-                <Label text="Etudiants" style="-fx-text-fill: #43639a; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
+                <Label text="Etudiants" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
             </HBox>
 
             <!-- GROUPES -->
@@ -103,15 +99,15 @@
             </HBox>
 
             <!-- Planning -->
-            <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 0 12 30;" onMouseClicked="#handleCertificats">
+            <HBox alignment="CENTER_LEFT" style="-fx-background-color: #f5f5f4; -fx-background-radius: 30 0 0 30; -fx-padding: 12 0 12 30;" onMouseClicked="#handleCertificats">
 
                 <ImageView fitWidth="35" fitHeight="35">
                     <image>
-                        <Image url="/images/calendrier.png"/>
+                        <Image url="/images/calendrier-hover.png"/>
                     </image>
                 </ImageView>
 
-                <Label text="Planning" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 7;"/>
+                <Label text="Planning" style="-fx-text-fill: #43639a;  -fx-font-size: 17;-fx-padding: 0 0 0 7;"/>
             </HBox>
 
             <Region VBox.vgrow="ALWAYS"/>
@@ -132,8 +128,6 @@
         </VBox>
 
     </VBox>
-
-
     <!-- CONTENU PRINCIPAL -->
     <VBox AnchorPane.topAnchor="0"
           AnchorPane.bottomAnchor="0"
@@ -180,25 +174,25 @@
                 </VBox>
             </HBox>
         </HBox>
-
-        <!-- CONTENU SPÉCIFIQUE AUX FORMATEURS -->
         <VBox style="-fx-padding: 40 40;" spacing="20">
             <HBox spacing="20" alignment="CENTER_LEFT">
+                <!-- Titre -->
                 <VBox spacing="5">
                     <HBox spacing="10" alignment="CENTER_LEFT">
-                        <Label text="Modifier un Etudiant"
+                        <Label text="Ajouter une Séance"
                                style="-fx-font-size: 46px; -fx-font-weight: bold; -fx-font-family: 'Apple Chancery';"/>
                     </HBox>
                 </VBox>
+
             </HBox>
             <VBox alignment="CENTER" layoutX="50" layoutY="80" spacing="15" AnchorPane.leftAnchor="50" AnchorPane.rightAnchor="50">
                 <children>
-                    <!-- Nom / Prénom -->
+                    <!-- Nom / matricule -->
                     <HBox spacing="20" alignment="CENTER">
                         <VBox prefWidth="400">
-                            <Label text="Nom"
+                            <Label text="Date"
                                    style="-fx-font-family: 'sans-serif'; -fx-font-size: 14px; -fx-text-fill: #1a202c;"/>
-                            <TextField fx:id="nomField"
+                            <DatePicker fx:id="datePicker"
                                        style="
                            -fx-font-family: 'sans-serif';
                            -fx-font-size: 14px;
@@ -211,121 +205,65 @@
                            -fx-background-insets: 16 0 6 0;
                            "/>
                         </VBox>
-                        <VBox prefWidth="400">
-                            <Label text="Prénom"
+                        <VBox>
+                            <Label text="Module"
                                    style="-fx-font-family: 'sans-serif'; -fx-font-size: 14px; -fx-text-fill: #1a202c;"/>
-                            <TextField fx:id="prenomField"
-                                       style="
-                           -fx-font-family: 'sans-serif';
-                           -fx-font-size: 14px;
-                           -fx-text-fill: #374151;
-                           -fx-background-color: transparent;
-                           -fx-border-color: #1a202c;
-                           -fx-border-width: 0 0 1 0;
-                           -fx-padding: 16 0 6 0;
-                           -fx-border-insets: 16 0 6 0;
-                           -fx-background-insets: 16 0 6 0;
-                           "/>
+                            <ComboBox fx:id="moduleComboBox"
+                                      prefWidth="400" style="
+                             -fx-font-family: 'sans-serif';
+                             -fx-font-size: 14px;
+                             -fx-text-fill: #374151;
+                             -fx-background-color: transparent;
+                             -fx-border-color: #1a202c;
+                             -fx-border-width: 0 0 1 0;
+                             -fx-padding: 8 12 8 12;
+                             -fx-border-insets: 8 0 8 0;
+                             -fx-background-insets: 8 0 8 0;
+                             "/>
                         </VBox>
                     </HBox>
 
 
 
-                    <!-- Sexe / CIN -->
+
+
                     <HBox spacing="20" alignment="CENTER">
-                        <!-- Date de naissance -->
-                        <VBox alignment="CENTER">
-                            <Label text="Date Naissance" alignment="CENTER_LEFT"
+                        <VBox>
+                            <Label text="Heure début"
                                    style="-fx-font-family: 'sans-serif'; -fx-font-size: 14px; -fx-text-fill: #1a202c;"/>
-                            <HBox spacing="10" prefWidth="400" alignment="CENTER">
-
-                                <ComboBox fx:id="dayComboBox"
-                                          maxWidth="Infinity"
-                                          HBox.hgrow="ALWAYS"
-                                          style="
-                  -fx-font-family: 'sans-serif';
-                  -fx-font-size: 14px;
-                  -fx-text-fill: #374151;
-                  -fx-background-color: transparent;
-                  -fx-border-color: #1a202c;
-                  -fx-border-width: 0 0 1 0;
-                  -fx-padding: 8 12 8 12;
-              "/>
-
-                                <ComboBox fx:id="monthComboBox"
-                                          maxWidth="Infinity"
-                                          HBox.hgrow="ALWAYS"
-                                          style="
-                  -fx-font-family: 'sans-serif';
-                  -fx-font-size: 14px;
-                  -fx-text-fill: #374151;
-                  -fx-background-color: transparent;
-                  -fx-border-color: #1a202c;
-                  -fx-border-width: 0 0 1 0;
-                  -fx-padding: 8 12 8 12;
-              "/>
-
-                                <ComboBox fx:id="yearComboBox"
-                                          maxWidth="Infinity"
-                                          HBox.hgrow="ALWAYS"
-                                          style="
-                  -fx-font-family: 'sans-serif';
-                  -fx-font-size: 14px;
-                  -fx-text-fill: #374151;
-                  -fx-background-color: transparent;
-                  -fx-border-color: #1a202c;
-                  -fx-border-width: 0 0 1 0;
-                  -fx-padding: 8 12 8 12;
-              "/>
-
-                            </HBox>
-
+                            <ComboBox fx:id="startTimeComboBox"
+                                      prefWidth="400" style="
+                             -fx-font-family: 'sans-serif';
+                             -fx-font-size: 14px;
+                             -fx-text-fill: #374151;
+                             -fx-background-color: transparent;
+                             -fx-border-color: #1a202c;
+                             -fx-border-width: 0 0 1 0;
+                             -fx-padding: 8 12 8 12;
+                             -fx-border-insets: 8 0 8 0;
+                             -fx-background-insets: 8 0 8 0;
+                             "/>
+                        </VBox>
+                        <VBox>
+                            <Label text="Heure fin"
+                                   style="-fx-font-family: 'sans-serif'; -fx-font-size: 14px; -fx-text-fill: #1a202c;"/>
+                            <ComboBox fx:id="endTimeComboBox"
+                                      prefWidth="400" style="
+                             -fx-font-family: 'sans-serif';
+                             -fx-font-size: 14px;
+                             -fx-text-fill: #374151;
+                             -fx-background-color: transparent;
+                             -fx-border-color: #1a202c;
+                             -fx-border-width: 0 0 1 0;
+                             -fx-padding: 8 12 8 12;
+                             -fx-border-insets: 8 0 8 0;
+                             -fx-background-insets: 8 0 8 0;
+                             "/>
                         </VBox>
 
-                        <VBox prefWidth="400">
-                            <Label text="CIN"
-                                   style="-fx-font-family: 'sans-serif'; -fx-font-size: 14px; -fx-text-fill: #1a202c;"/>
-                            <TextField fx:id="cinField"
-                                       style="
-                           -fx-font-family: 'sans-serif';
-                           -fx-font-size: 14px;
-                           -fx-text-fill: #374151;
-                           -fx-background-color: transparent;
-                           -fx-border-color: #1a202c;
-                           -fx-border-width: 0 0 1 0;
-                           -fx-padding: 16 0 6 0;
-                           -fx-border-insets: 16 0 6 0;
-                           -fx-background-insets: 16 0 6 0;
-                           "/>
-                        </VBox>
                     </HBox>
-
                     <HBox spacing="20" alignment="CENTER">
-                        <VBox >
-                            <Label text="Sexe"
-                                   style="-fx-font-family: 'sans-serif'; -fx-font-size: 14px; -fx-text-fill: #1a202c;"/>
-                            <ComboBox fx:id="sexeComboBox" prefWidth="400"
-                                      style="
-                          -fx-font-family: 'sans-serif';
-                          -fx-font-size: 14px;
-                          -fx-text-fill: #374151;
-                          -fx-background-color: transparent;
-                          -fx-border-color: #1a202c;
-                          -fx-border-width: 0 0 1 0;
-                          -fx-padding: 8 12 8 12;
-                          -fx-border-insets: 8 0 8 0;
-                          -fx-background-insets: 8 0 8 0;
-                          ">
-                                <items>
-                                    <FXCollections fx:factory="observableArrayList">
-                                        <String fx:value="" />
-                                        <String fx:value="Homme" />
-                                        <String fx:value="Femme" />
-                                    </FXCollections>
-                                </items>
-                            </ComboBox>
-                        </VBox>
-                        <VBox >
+                        <VBox>
                             <Label text="Groupe"
                                    style="-fx-font-family: 'sans-serif'; -fx-font-size: 14px; -fx-text-fill: #1a202c;"/>
                             <ComboBox fx:id="groupeComboBox"
@@ -341,46 +279,29 @@
                              -fx-background-insets: 8 0 8 0;
                              "/>
                         </VBox>
-
+                        <VBox>
+                            <Label text="Formateur"
+                                   style="-fx-font-family: 'sans-serif'; -fx-font-size: 14px; -fx-text-fill: #1a202c;"/>
+                            <ComboBox fx:id="formateurComboBox"
+                                      prefWidth="400" style="
+                             -fx-font-family: 'sans-serif';
+                             -fx-font-size: 14px;
+                             -fx-text-fill: #374151;
+                             -fx-background-color: transparent;
+                             -fx-border-color: #1a202c;
+                             -fx-border-width: 0 0 1 0;
+                             -fx-padding: 8 12 8 12;
+                             -fx-border-insets: 8 0 8 0;
+                             -fx-background-insets: 8 0 8 0;
+                             "/>
+                        </VBox>
                     </HBox>
-
-
-                    <!-- Email / Password -->
+                    <!-- Coefficient -->
                     <HBox spacing="20" alignment="CENTER">
                         <VBox prefWidth="400">
-                            <Label text="Email"
+                            <Label text="Salle"
                                    style="-fx-font-family: 'sans-serif'; -fx-font-size: 14px; -fx-text-fill: #1a202c;"/>
-                            <HBox spacing="0" alignment="BASELINE_LEFT">
-                                <TextField fx:id="emailField"
-                                           style="
-                               -fx-font-family: 'sans-serif';
-                               -fx-font-size: 14px;
-                               -fx-text-fill: #374151;
-                               -fx-background-color: transparent;
-                               -fx-border-color: #1a202c;
-                               -fx-border-width: 0 0 1 0;
-                               -fx-padding: 16 0 6 0;
-                               -fx-border-insets: 16 0 6 0;
-                               -fx-background-insets: 16 0 6 0;
-                               -fx-pref-width: 320;
-                               "/>
-                                <Label text="/@taalim.ma"
-                                       style="
-                           -fx-font-family: 'sans-serif';
-                           -fx-font-size: 14px;
-                           -fx-text-fill: #6b7280;
-                           -fx-padding: 20 0 6 0;
-                           -fx-border-color: #1a202c;
-                           -fx-border-width: 0 0 1 0;
-                           -fx-pref-height: 37;
-                           -fx-alignment: center-left;
-                           "/>
-                            </HBox>
-                        </VBox>
-                        <VBox prefWidth="400">
-                            <Label text="Mot de passe"
-                                   style="-fx-font-family: 'sans-serif'; -fx-font-size: 14px; -fx-text-fill: #1a202c;"/>
-                            <TextField fx:id="passwordField"
+                            <TextField fx:id="salleTextField"
                                        style="
                                -fx-font-family: 'sans-serif';
                                -fx-font-size: 14px;
@@ -397,7 +318,7 @@
 
                     <!-- Boutons -->
                     <HBox spacing="20" style="-fx-alignment: center-right; -fx-padding: 20 0 0 0;">
-                        <Button text="Annuler" fx:id="cancelButton" onAction="#handleEtudiants"
+                        <Button text="Annuler" fx:id="cancelButton"
                                 style="
                     -fx-font-family: 'sans-serif';
                     -fx-font-size: 14px;
@@ -407,7 +328,7 @@
                     -fx-border-color: transparent;
                     -fx-cursor: hand;
                     "/>
-                        <Button text="Enregistrer" fx:id="modifierButton" onAction="#saveEtudiant"
+                        <Button text="Enregistrer" fx:id="saveButton"
                                 style="
                     -fx-font-family: 'sans-serif';
                     -fx-font-size: 14px;
@@ -428,7 +349,7 @@
                 </padding>
             </VBox>
 
-
         </VBox>
     </VBox>
+
 </AnchorPane>

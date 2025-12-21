@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.controller.PlanningSemaineController"
+            style="-fx-background-color: #f8f9fa;">
+
+    <VBox style="-fx-background-color: #142b77; -fx-background-radius: 0 40 40 0;"
+          prefWidth="250"
+          AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0">
+
+        <Region prefHeight="120"/>
+
+        <VBox spacing="2" style="-fx-padding: 50 0 0 20;">
+
+            <!-- HOME -->
+            <HBox alignment="CENTER_LEFT"
+                  style="-fx-padding: 12 0 12 30;"
+                  onMouseClicked="#handleHome">
+
+                <ImageView fitWidth="27" fitHeight="27">
+                    <image>
+                        <Image url="/images/Bhome.png"/>
+                    </image>
+                </ImageView>
+
+                <Label text="Accueil"
+                       style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
+            </HBox>
+
+            <!-- FORMATEURS -->
+            <HBox alignment="CENTER_LEFT"
+                  style=" -fx-padding: 12 0 12 30;"
+                  onMouseClicked="#handleFormateurs">
+
+                <ImageView fitWidth="30" fitHeight="30">
+                    <image>
+                        <Image url="/images/prof.png"/>
+                    </image>
+                </ImageView>
+
+                <Label text="Formateurs"
+                       style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
+            </HBox>
+
+            <!-- ETUDIANTS -->
+            <HBox alignment="CENTER_LEFT" style=" -fx-padding: 12 0 12 30;" onMouseClicked="#handleStagiaires">
+
+                <ImageView fitWidth="30" fitHeight="30">
+                    <image>
+                        <Image url="/images/stagiaire.png"/>
+                    </image>
+                </ImageView>
+
+                <Label text="Etudiants" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
+            </HBox>
+
+            <!-- GROUPES -->
+            <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 0 12 30;" onMouseClicked="#handleGroupes">
+
+                <ImageView fitWidth="30" fitHeight="30">
+                    <image>
+                        <Image url="/images/groupe.png"/>
+                    </image>
+                </ImageView>
+
+                <Label text="Groupes" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
+            </HBox>
+
+            <!-- MODULES -->
+            <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 0 12 30;" onMouseClicked="#handleModules">
+
+                <ImageView fitWidth="27" fitHeight="27">
+                    <image>
+                        <Image url="/images/module.png"/>
+                    </image>
+                </ImageView>
+
+                <Label text="Modules" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 15;"/>
+            </HBox>
+
+            <!-- NOTES -->
+            <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 0 12 30;" onMouseClicked="#handleNotes">
+
+                <ImageView fitWidth="35" fitHeight="35">
+                    <image>
+                        <Image url="/images/note.png"/>
+                    </image>
+                </ImageView>
+
+                <Label text="Notes" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 7;"/>
+            </HBox>
+
+            <!-- Planning -->
+            <HBox alignment="CENTER_LEFT" style="-fx-background-color: #f5f5f4; -fx-background-radius: 30 0 0 30; -fx-padding: 12 0 12 30;" onMouseClicked="#handleCertificats">
+
+                <ImageView fitWidth="35" fitHeight="35">
+                    <image>
+                        <Image url="/images/calendrier-hover.png"/>
+                    </image>
+                </ImageView>
+
+                <Label text="Planning" style="-fx-text-fill: #43639a;  -fx-font-size: 17;-fx-padding: 0 0 0 7;"/>
+            </HBox>
+
+            <Region VBox.vgrow="ALWAYS"/>
+
+            <!-- LOGOUT -->
+            <HBox alignment="CENTER_LEFT" style="-fx-padding: 400 0 12 30;" onMouseClicked="#handleLogout">
+
+                <ImageView fitWidth="30" fitHeight="30">
+                    <image>
+                        <Image url="/images/logout.png"/>
+                    </image>
+                </ImageView>
+
+                <Label text="Déconnexion" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
+            </HBox>
+
+            <Region prefHeight="20"/>
+        </VBox>
+
+    </VBox>
+    <!-- CONTENU PRINCIPAL -->
+    <VBox AnchorPane.topAnchor="0"
+          AnchorPane.bottomAnchor="0"
+          AnchorPane.leftAnchor="250"
+          AnchorPane.rightAnchor="0">
+
+        <!-- HEADER -->
+        <HBox alignment="CENTER_LEFT" style="-fx-padding: 40 40 0 40;">
+            <HBox alignment="CENTER_LEFT" spacing="5">
+                <ImageView fitWidth="130" fitHeight="137" preserveRatio="true" style="-fx-padding: 0 27 0 0;">
+                    <image><Image url="/images/notes 2.png"/></image>
+                </ImageView>
+                <VBox alignment="CENTER_LEFT" spacing="4" style="-fx-padding: 2 0 0 0;">
+                    <Label fx:id="versionLabel" text="V 0.1.0"
+                           style="-fx-font-size: 10; -fx-background-color: #ef4444; -fx-padding: 2 8; -fx-background-radius: 10; -fx-text-fill: white;"/>
+                </VBox>
+            </HBox>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <!-- École -->
+            <HBox alignment="CENTER_LEFT" spacing="5" style="-fx-padding: 0 30 0 0">
+                <ImageView fitWidth="48" fitHeight="40">
+                    <image>
+                        <Image url="/images/ecole(1).png"/>
+                    </image>
+                </ImageView>
+                <VBox alignment="CENTER_LEFT" spacing="2">
+                    <Label text="École" style="-fx-font-size: 14; -fx-text-fill: #6b7280;"/>
+                    <Label fx:id="nomEcoleLabel" style="-fx-font-size: 18; -fx-font-weight: 600;"/>
+                </VBox>
+            </HBox>
+
+            <!-- Directeur -->
+            <HBox alignment="CENTER_LEFT" spacing="5">
+                <ImageView fitWidth="48" fitHeight="40">
+                    <image>
+                        <Image url="/images/profil.png"/>
+                    </image>
+                </ImageView>
+                <VBox alignment="CENTER_LEFT" spacing="2">
+                    <Label text="Directeur" style="-fx-font-size: 14; -fx-text-fill: #6b7280;"/>
+                    <Label fx:id="nomDirecteurLabel" style="-fx-font-size: 18; -fx-font-weight: 600;"/>
+                </VBox>
+            </HBox>
+        </HBox>
+        <VBox style="-fx-padding: 40 40;" spacing="20">
+            <HBox spacing="20" alignment="CENTER_LEFT">
+                <!-- Titre -->
+                <VBox spacing="5">
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="Planning des Cours"
+                               style="-fx-font-size: 46px; -fx-font-weight: bold; -fx-font-family: 'Apple Chancery';"/>
+                    </HBox>
+                </VBox>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <!-- Bouton Ajouter etudiant à droite -->
+                <Button fx:id="addSeanceButton" text="+ Ajouter Séance"
+                        style="-fx-background-color: #059669; -fx-text-fill: white; -fx-font-weight: bold;
+                       -fx-font-size: 14px; -fx-padding: 12 24; -fx-background-radius: 5;"/>
+
+
+
+            </HBox>
+            <!-- Formulaire de Filtrage -->
+            <VBox spacing="15" alignment="CENTER">
+                <!-- Première ligne du filtre -->
+                <HBox spacing="20" alignment="CENTER">
+                    <!-- Type de vue -->
+                    <VBox styleClass="float-input-container" prefWidth="300">
+                        <Label text="Vue par" styleClass="float-label"/>
+                        <ComboBox fx:id="viewTypeComboBox"
+                                  prefWidth="300" prefHeight="35"
+                                  styleClass="float-text-field"
+                                  promptText="Sélectionner..."/>
+                    </VBox>
+
+                    <!-- Entité spécifique -->
+                    <VBox styleClass="float-input-container" prefWidth="300">
+                        <Label text="Sélection" styleClass="float-label"/>
+                        <ComboBox fx:id="entityComboBox"
+                                  prefWidth="300" prefHeight="35"
+                                  styleClass="float-text-field"
+                                  promptText="Sélectionner..."/>
+                    </VBox>
+                </HBox>
+
+                <!-- Deuxième ligne : Navigation semaine -->
+                <HBox spacing="20" alignment="CENTER" style="-fx-padding: 15 0 0 0;">
+                    <!-- Bouton précédent -->
+                    <Button fx:id="previousWeekButton" text="◀ Semaine précédente"
+                            style="-fx-background-color: #ecf0f1;
+                   -fx-font-weight: bold;
+                   -fx-text-fill: #2c3e50;
+                   -fx-padding: 8 20;
+                   -fx-background-radius: 5;"/>
+
+                    <!-- Label semaine courante -->
+                    <Label fx:id="currentWeekLabel"
+                           style="-fx-font-weight: bold;
+                  -fx-font-size: 16px;
+                  -fx-text-fill: #2c3e50;
+                  -fx-padding: 8 20;
+                  -fx-background-color: #f8f9fa;
+                  -fx-background-radius: 5;
+                  -fx-border-color: #e9ecef;
+                  -fx-border-width: 1;
+                  -fx-border-radius: 5;"/>
+
+                    <!-- Bouton suivant -->
+                    <Button fx:id="nextWeekButton" text="Semaine suivante ▶"
+                            style="-fx-background-color: #ecf0f1;
+                   -fx-font-weight: bold;
+                   -fx-text-fill: #2c3e50;
+                   -fx-padding: 8 20;
+                   -fx-background-radius: 5;"/>
+                    <Button fx:id="todayButton" text="Aujourd'hui"
+                            style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold;"/>
+                </HBox>
+            </VBox>
+
+            <VBox spacing="15" alignment="CENTER">
+                <ScrollPane fitToWidth="true" fitToHeight="true"
+                            style="-fx-background: white; -fx-border-color: #dfe6e9;">
+                    <GridPane fx:id="planningGrid"
+                              style="-fx-background-color: white;"
+                              GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+                        <!-- Rempli dynamiquement -->
+                    </GridPane>
+                </ScrollPane>
+            </VBox>
+
+        </VBox>
+    </VBox>
+</AnchorPane>
