@@ -1,6 +1,7 @@
 package org.example.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Groupe {
@@ -13,6 +14,10 @@ public class Groupe {
 
     // Relation avec les modules
     private List<Module> modules;
+
+    // Relation avec les étudiants - AJOUTER CETTE PROPRIÉTÉ
+    private List<Etudiant> etudiants = new ArrayList<>();
+
     // Enum pour le niveau
     public enum Niveau {
         PREMIERE_ANNEE("1ér année"),
@@ -42,9 +47,12 @@ public class Groupe {
     }
 
     // Constructeurs
-    public Groupe() {}
+    public Groupe() {
+        this.etudiants = new ArrayList<>();
+    }
 
     public Groupe(String matricule, Niveau niveau, int directeurId) {
+        this();
         this.matricule = matricule;
         this.niveau = niveau;
         this.directeurId = directeurId;
@@ -103,6 +111,23 @@ public class Groupe {
         this.directeurId = directeurId;
     }
 
+    // Getter et Setter pour les étudiants
+    public List<Etudiant> getEtudiants() {
+        return etudiants;
+    }
+
+    public void setEtudiants(List<Etudiant> etudiants) {
+        this.etudiants = etudiants;
+    }
+
+    // Méthode pour ajouter un étudiant
+    public void addEtudiant(Etudiant etudiant) {
+        if (this.etudiants == null) {
+            this.etudiants = new ArrayList<>();
+        }
+        this.etudiants.add(etudiant);
+    }
+
     // Méthodes utilitaires
     public String getNiveauComplet() {
         return niveau.getValeur();
@@ -139,6 +164,7 @@ public class Groupe {
                 ", matricule='" + matricule + '\'' +
                 ", niveau=" + niveau +
                 ", directeurId=" + directeurId +
+                ", etudiants=" + (etudiants != null ? etudiants.size() : 0) +
                 '}';
     }
 }

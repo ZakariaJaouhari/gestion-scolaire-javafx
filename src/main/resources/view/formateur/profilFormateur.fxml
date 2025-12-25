@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<?import java.lang.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="org.example.controller.formateur.ProfilFormateurController"
+            prefHeight="800.0" prefWidth="1200.0">
+
+    <!-- SIDEBAR -->
+    <VBox style="-fx-background-color: #142b77; -fx-background-radius: 0 40 40 0;"
+          prefWidth="250"
+          AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0">
+
+        <VBox spacing="2" style="-fx-padding: 100 0 0 20;">
+
+            <!-- HOME -->
+            <HBox alignment="CENTER_LEFT"
+                  style=" -fx-padding: 12 0 12 30;"
+                  onMouseClicked="#handleHome">
+                <ImageView fitWidth="27" fitHeight="27">
+                    <image><Image url="@../../images/Bhome.png"/></image>
+                </ImageView>
+                <Label text="Accueil" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
+            </HBox>
+
+            <!-- PROFILE -->
+            <HBox alignment="CENTER_LEFT" style="-fx-background-color: #f5f5f4; -fx-background-radius: 30 0 0 30;-fx-padding: 12 0 12 30;" onMouseClicked="#handleProfile">
+                <ImageView fitWidth="30" fitHeight="30">
+                    <image><Image url="@../../images/prof-hover.png"/></image>
+                </ImageView>
+                <Label text="Profil" style="-fx-text-fill: #43639a; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
+            </HBox>
+
+            <!-- GROUPES -->
+            <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 0 12 30;" onMouseClicked="#handleGroupes">
+                <ImageView fitWidth="30" fitHeight="30">
+                    <image><Image url="@../../images/groupe.png"/></image>
+                </ImageView>
+                <Label text="Groupes" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
+            </HBox>
+
+            <!-- MODULES -->
+            <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 0 12 30;" onMouseClicked="#handleModules">
+                <ImageView fitWidth="27" fitHeight="27">
+                    <image><Image url="@../../images/module.png"/></image>
+                </ImageView>
+                <Label text="Modules" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 13;"/>
+            </HBox>
+
+            <!-- NOTES -->
+            <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 0 12 30;" onMouseClicked="#handleNotes">
+                <ImageView fitWidth="35" fitHeight="35">
+                    <image><Image url="@../../images/note.png"/></image>
+                </ImageView>
+                <Label text="Notes" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 5;"/>
+            </HBox>
+
+            <Region VBox.vgrow="ALWAYS"/>
+
+            <!-- EMPLOI DU TEMPS -->
+            <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 0 12 30;" onMouseClicked="#handleEmploiDuTemps">
+                <ImageView fitWidth="30" fitHeight="30">
+                    <image><Image url="@../../images/calendrier.png"/></image>
+                </ImageView>
+                <Label text="Planning" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
+            </HBox>
+
+            <!-- LOGOUT -->
+            <HBox alignment="CENTER_LEFT" style="-fx-padding: 350 0 12 30;" onMouseClicked="#handleLogout">
+                <ImageView fitWidth="30" fitHeight="30">
+                    <image><Image url="@../../images/logout.png"/></image>
+                </ImageView>
+                <Label text="Déconnexion" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
+            </HBox>
+
+            <Region prefHeight="20"/>
+        </VBox>
+    </VBox>
+
+    <!-- CONTENU PRINCIPAL -->
+    <VBox AnchorPane.topAnchor="0"
+          AnchorPane.bottomAnchor="0"
+          AnchorPane.leftAnchor="250"
+          AnchorPane.rightAnchor="0"
+          spacing="20"
+          style="-fx-padding: 40 40;">
+
+        <!-- HEADER -->
+        <HBox alignment="CENTER_LEFT">
+            <HBox alignment="CENTER_LEFT" spacing="5">
+                <ImageView fitWidth="130" fitHeight="137" preserveRatio="true" style="-fx-padding: 0 27 0 0;">
+                    <image><Image url="/images/notes 2.png"/></image>
+                </ImageView>
+                <VBox alignment="CENTER_LEFT" spacing="4" style="-fx-padding: 2 0 0 0;">
+                    <Label fx:id="versionLabel" text="V 0.1.0"
+                           style="-fx-font-size: 10; -fx-background-color: #ef4444; -fx-padding: 2 8; -fx-background-radius: 10; -fx-text-fill: white;"/>
+                </VBox>
+            </HBox>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <!-- École -->
+            <HBox alignment="CENTER_LEFT" spacing="5" style="-fx-padding: 0 30 0 0">
+                <ImageView fitWidth="48" fitHeight="40">
+                    <image><Image url="/images/ecole(1).png"/></image>
+                </ImageView>
+                <VBox alignment="CENTER_LEFT" spacing="2">
+                    <Label text="École" style="-fx-font-size: 14; -fx-text-fill: #6b7280;"/>
+                    <Label fx:id="nomEcoleLabel" style="-fx-font-size: 18; -fx-font-weight: 600;"/>
+                </VBox>
+            </HBox>
+
+            <!-- Formateur -->
+            <HBox alignment="CENTER_LEFT" spacing="5">
+                <ImageView fitWidth="48" fitHeight="40">
+                    <image><Image url="/images/profil.png"/></image>
+                </ImageView>
+                <VBox alignment="CENTER_LEFT" spacing="2">
+                    <Label text="Formateur" style="-fx-font-size: 14; -fx-text-fill: #6b7280;"/>
+                    <Label fx:id="nomFormateurLabel" style="-fx-font-size: 18; -fx-font-weight: 600;"/>
+                </VBox>
+            </HBox>
+        </HBox>
+
+        <!-- TITRE -->
+        <HBox alignment="CENTER_LEFT" spacing="20">
+            <VBox spacing="5">
+                <Label text="Mon Profil"
+                       style="-fx-font-size: 46px; -fx-font-weight: bold; -fx-font-family: 'Apple Chancery';"/>
+                <Label text="Consultez et modifiez vos informations personnelles"
+                       style="-fx-text-fill: #666;"/>
+            </VBox>
+            <Region HBox.hgrow="ALWAYS"/>
+        </HBox>
+
+        <!-- CONTENU DU PROFIL -->
+        <HBox spacing="40" style="-fx-padding: 20 0;" alignment="CENTER">
+
+            <!-- SECTION GAUCHE : INFORMATIONS PERSONNELLES -->
+            <VBox spacing="30" prefWidth="500">
+
+                <!-- INFORMATIONS PERSONNELLES -->
+                <VBox spacing="20">
+                    <Label text="INFORMATIONS PERSONNELLES"
+                           style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+
+                    <!-- Grille des informations -->
+                    <GridPane hgap="20" vgap="15" prefWidth="450">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="50" />
+                            <ColumnConstraints percentWidth="50" />
+                        </columnConstraints>
+
+                        <!-- Nom -->
+                        <VBox GridPane.columnIndex="0">
+                            <Label text="Nom"
+                                   style="-fx-font-family: 'sans-serif'; -fx-font-size: 14px; -fx-text-fill: #1a202c;"/>
+                            <Label fx:id="nomLabel"
+                                   style="
+                            -fx-font-family: 'sans-serif';
+                           -fx-font-size: 14px;
+                           -fx-text-fill: #374151;
+                           -fx-background-color: transparent;
+                           -fx-border-color: #1a202c;
+                           -fx-border-width: 0 0 1 0;
+                           -fx-padding: 5 0 6 0;
+                           -fx-border-insets: 16 0 6 0;
+                           -fx-background-insets: 16 0 6 0;
+                           -fx-min-height: 40;
+                           -fx-pref-width: 200;
+                           -fx-max-width: 200;
+                           "/>
+                        </VBox>
+
+                        <!-- Prénom -->
+                        <VBox GridPane.columnIndex="1">
+                            <Label text="Prénom"
+                                   style="-fx-font-family: 'sans-serif'; -fx-font-size: 14px; -fx-text-fill: #1a202c;"/>
+                            <Label fx:id="prenomLabel"
+                                   style="
+                            -fx-font-family: 'sans-serif';
+                           -fx-font-size: 14px;
+                           -fx-text-fill: #374151;
+                           -fx-background-color: transparent;
+                           -fx-border-color: #1a202c;
+                           -fx-border-width: 0 0 1 0;
+                           -fx-padding: 5 0 6 0;
+                           -fx-border-insets: 16 0 6 0;
+                           -fx-background-insets: 16 0 6 0;
+                           -fx-min-height: 40;
+                           -fx-pref-width: 200;
+                           -fx-max-width: 200;
+                           "/>
+                        </VBox>
+
+                        <!-- Matricule -->
+                        <VBox GridPane.rowIndex="1" GridPane.columnIndex="0">
+                            <Label text="Matricule"
+                                   style="-fx-font-family: 'sans-serif'; -fx-font-size: 14px; -fx-text-fill: #1a202c;"/>
+                            <Label fx:id="matriculeLabel"
+                                   style="
+                            -fx-font-family: 'sans-serif';
+                           -fx-font-size: 14px;
+                           -fx-text-fill: #374151;
+                           -fx-background-color: transparent;
+                           -fx-border-color: #1a202c;
+                           -fx-border-width: 0 0 1 0;
+                           -fx-padding: 5 0 6 0;
+                           -fx-border-insets: 16 0 6 0;
+                           -fx-background-insets: 16 0 6 0;
+                           -fx-min-height: 40;
+                           -fx-pref-width: 200;
+                           -fx-max-width: 200;
+                           "/>
+                        </VBox>
+
+                        <!-- CIN -->
+                        <VBox GridPane.rowIndex="1" GridPane.columnIndex="1">
+                            <Label text="CIN"
+                                   style="-fx-font-family: 'sans-serif'; -fx-font-size: 14px; -fx-text-fill: #1a202c;"/>
+                            <Label fx:id="cinLabel"
+                                   style="
+                            -fx-font-family: 'sans-serif';
+                           -fx-font-size: 14px;
+                           -fx-text-fill: #374151;
+                           -fx-background-color: transparent;
+                           -fx-border-color: #1a202c;
+                           -fx-border-width: 0 0 1 0;
+                           -fx-padding: 5 0 6 0;
+                           -fx-border-insets: 16 0 6 0;
+                           -fx-background-insets: 16 0 6 0;
+                           -fx-min-height: 40;
+                           -fx-pref-width: 200;
+                           -fx-max-width: 200;
+                           "/>
+                        </VBox>
+
+                        <!-- Date de naissance -->
+                        <VBox GridPane.rowIndex="2" GridPane.columnIndex="0">
+                            <Label text="Date naissance"
+                                   style="-fx-font-family: 'sans-serif'; -fx-font-size: 14px; -fx-text-fill: #1a202c;"/>
+                            <Label fx:id="dateNaissanceLabel"
+                                   style="
+                            -fx-font-family: 'sans-serif';
+                           -fx-font-size: 14px;
+                           -fx-text-fill: #374151;
+                           -fx-background-color: transparent;
+                           -fx-border-color: #1a202c;
+                           -fx-border-width: 0 0 1 0;
+                           -fx-padding: 5 0 6 0;
+                           -fx-border-insets: 16 0 6 0;
+                           -fx-background-insets: 16 0 6 0;
+                           -fx-min-height: 40;
+                           -fx-pref-width: 200;
+                           -fx-max-width: 200;
+                           "/>
+                        </VBox>
+
+                        <!-- Âge -->
+                        <VBox GridPane.rowIndex="2" GridPane.columnIndex="1">
+                            <Label text="Âge"
+                                   style="-fx-font-family: 'sans-serif'; -fx-font-size: 14px; -fx-text-fill: #1a202c;"/>
+                            <Label fx:id="ageLabel"
+                                   style="
+                            -fx-font-family: 'sans-serif';
+                           -fx-font-size: 14px;
+                           -fx-text-fill: #374151;
+                           -fx-background-color: transparent;
+                           -fx-border-color: #1a202c;
+                           -fx-border-width: 0 0 1 0;
+                           -fx-padding: 5 0 6 0;
+                           -fx-border-insets: 16 0 6 0;
+                           -fx-background-insets: 16 0 6 0;
+                           -fx-min-height: 40;
+                           -fx-pref-width: 200;
+                           -fx-max-width: 200;
+                           "/>
+                        </VBox>
+
+                        <!-- Sexe -->
+                        <VBox GridPane.rowIndex="3" GridPane.columnIndex="0">
+                            <Label text="Sexe"
+                                   style="-fx-font-family: 'sans-serif'; -fx-font-size: 14px; -fx-text-fill: #1a202c;"/>
+                            <Label fx:id="sexeLabel"
+                                   style="
+                            -fx-font-family: 'sans-serif';
+                           -fx-font-size: 14px;
+                           -fx-text-fill: #374151;
+                           -fx-background-color: transparent;
+                           -fx-border-color: #1a202c;
+                           -fx-border-width: 0 0 1 0;
+                           -fx-padding: 5 0 6 0;
+                           -fx-border-insets: 16 0 6 0;
+                           -fx-background-insets: 16 0 6 0;
+                           -fx-min-height: 40;
+                           -fx-pref-width: 200;
+                           -fx-max-width: 200;
+                           "/>
+                        </VBox>
+
+                        <!-- Situation -->
+                        <VBox GridPane.rowIndex="3" GridPane.columnIndex="1">
+                            <Label text="Situation"
+                                   style="-fx-font-family: 'sans-serif'; -fx-font-size: 14px; -fx-text-fill: #1a202c;"/>
+                            <Label fx:id="situationLabel"
+                                   style="
+                            -fx-font-family: 'sans-serif';
+                           -fx-font-size: 14px;
+                           -fx-text-fill: #374151;
+                           -fx-background-color: transparent;
+                           -fx-border-color: #1a202c;
+                           -fx-border-width: 0 0 1 0;
+                           -fx-padding: 5 0 6 0;
+                           -fx-border-insets: 16 0 6 0;
+                           -fx-background-insets: 16 0 6 0;
+                           -fx-min-height: 40;
+                           -fx-pref-width: 200;
+                           -fx-max-width: 200;
+                           "/>
+                        </VBox>
+
+                        <!-- Date recrutement -->
+                        <VBox GridPane.rowIndex="4" GridPane.columnIndex="0">
+                            <Label text="Date recrutement"
+                                   style="-fx-font-family: 'sans-serif'; -fx-font-size: 14px; -fx-text-fill: #1a202c;"/>
+                            <Label fx:id="dateRecrutementLabel"
+                                   style="
+                            -fx-font-family: 'sans-serif';
+                           -fx-font-size: 14px;
+                           -fx-text-fill: #374151;
+                           -fx-background-color: transparent;
+                           -fx-border-color: #1a202c;
+                           -fx-border-width: 0 0 1 0;
+                           -fx-padding: 5 0 6 0;
+                           -fx-border-insets: 16 0 6 0;
+                           -fx-background-insets: 16 0 6 0;
+                           -fx-min-height: 40;
+                           -fx-pref-width: 200;
+                           -fx-max-width: 200;
+                           "/>
+                        </VBox>
+
+                        <!-- Ancienneté -->
+                        <VBox GridPane.rowIndex="4" GridPane.columnIndex="1">
+                            <Label text="Ancienneté"
+                                   style="-fx-font-family: 'sans-serif'; -fx-font-size: 14px; -fx-text-fill: #1a202c;"/>
+                            <Label fx:id="ancienneteLabel"
+                                   style="
+                            -fx-font-family: 'sans-serif';
+                           -fx-font-size: 14px;
+                           -fx-text-fill: #374151;
+                           -fx-background-color: transparent;
+                           -fx-border-color: #1a202c;
+                           -fx-border-width: 0 0 1 0;
+                           -fx-padding: 5 0 6 0;
+                           -fx-border-insets: 16 0 6 0;
+                           -fx-background-insets: 16 0 6 0;
+                           -fx-min-height: 40;
+                           -fx-pref-width: 200;
+                           -fx-max-width: 200;
+                           "/>
+                        </VBox>
+
+                        <!-- Email -->
+                        <VBox GridPane.rowIndex="5" GridPane.columnIndex="0" GridPane.columnSpan="2">
+                            <Label text="Email"
+                                   style="-fx-font-family: 'sans-serif'; -fx-font-size: 14px; -fx-text-fill: #1a202c;"/>
+                            <Label fx:id="emailLabel"
+                                   style="
+                            -fx-font-family: 'sans-serif';
+                           -fx-font-size: 14px;
+                           -fx-text-fill: #374151;
+                           -fx-background-color: transparent;
+                           -fx-border-color: #1a202c;
+                           -fx-border-width: 0 0 1 0;
+                           -fx-padding: 5 0 6 0;
+                           -fx-border-insets: 16 0 6 0;
+                           -fx-background-insets: 16 0 6 0;
+                           -fx-min-height: 40;
+                           -fx-pref-width: 420;
+                           -fx-max-width: 420;
+                           "/>
+                        </VBox>
+                    </GridPane>
+                </VBox>
+            </VBox>
+
+            <!-- SECTION DROITE : CHANGEMENT DE MOT DE PASSE -->
+            <VBox spacing="20" prefWidth="500">
+                <Label text="CHANGEMENT DE MOT DE PASSE"
+                       style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #374151;"/>
+
+                <VBox spacing="20" style="-fx-padding: 20; -fx-background-color: #f5f5f4; -fx-background-radius: 10;">
+                    <!-- Ancien mot de passe -->
+                    <VBox >
+                        <Label text="Ancien mot de passe *"
+                               style="-fx-font-family: 'sans-serif'; -fx-font-size: 14px; -fx-text-fill: #1a202c;"/>
+                        <PasswordField fx:id="ancienPasswordField"
+                                       style="
+                            -fx-font-family: 'sans-serif';
+                           -fx-font-size: 14px;
+                           -fx-text-fill: #374151;
+                           -fx-background-color: transparent;
+                           -fx-border-color: #1a202c;
+                           -fx-border-width: 0 0 1 0;
+                           -fx-padding: 5 0 6 0;
+                           -fx-border-insets: 16 0 6 0;
+                           -fx-background-insets: 16 0 6 0;
+                           -fx-min-height: 40;
+                           -fx-pref-width: 210;
+                           -fx-max-width: 210;
+                           "/>
+                    </VBox>
+                    <HBox spacing="20" alignment="CENTER">
+                        <!-- Nouveau mot de passe -->
+                        <VBox GridPane.rowIndex="3" GridPane.columnIndex="1">
+                            <Label text="Nouveau mot de passe *"
+                                   style="-fx-font-family: 'sans-serif'; -fx-font-size: 14px; -fx-text-fill: #1a202c;"/>
+                            <PasswordField fx:id="nouveauPasswordField"
+                                           style="
+                            -fx-font-family: 'sans-serif';
+                           -fx-font-size: 14px;
+                           -fx-text-fill: #374151;
+                           -fx-background-color: transparent;
+                           -fx-border-color: #1a202c;
+                           -fx-border-width: 0 0 1 0;
+                           -fx-padding: 5 0 6 0;
+                           -fx-border-insets: 16 0 6 0;
+                           -fx-background-insets: 16 0 6 0;
+                           -fx-min-height: 40;
+                           -fx-pref-width: 210;
+                           -fx-max-width: 210;
+                           "/>
+                        </VBox>
+
+                        <!-- Confirmer mot de passe -->
+                        <VBox GridPane.rowIndex="3" GridPane.columnIndex="1">
+                            <Label text="Confirmer le mot de passe *"
+                                   style="-fx-font-family: 'sans-serif'; -fx-font-size: 14px; -fx-text-fill: #1a202c;"/>
+                            <PasswordField fx:id="confirmerPasswordField"
+                                           style="
+                            -fx-font-family: 'sans-serif';
+                           -fx-font-size: 14px;
+                           -fx-text-fill: #374151;
+                           -fx-background-color: transparent;
+                           -fx-border-color: #1a202c;
+                           -fx-border-width: 0 0 1 0;
+                           -fx-padding: 5 0 6 0;
+                           -fx-border-insets: 16 0 6 0;
+                           -fx-background-insets: 16 0 6 0;
+                           -fx-min-height: 40;
+                           -fx-pref-width: 210;
+                           -fx-max-width: 210;
+                           "/>
+                        </VBox>
+                    </HBox>
+                    <!-- Bouton de modification -->
+                    <Button fx:id="modifierPasswordButton" text="Modifier le mot de passe"
+                            style="-fx-background-color: #059669; -fx-text-fill: white; -fx-font-weight: bold;
+                                   -fx-pref-height: 45px; -fx-font-size: 14px;"
+                            onAction="#handleChangerMotDePasse"/>
+
+                    <!-- Note -->
+                    <Label text="* Champs obligatoires"
+                           style="-fx-font-size: 12px; -fx-text-fill: #6b7280; -fx-font-style: italic;"/>
+                </VBox>
+
+                <!-- INFORMATIONS DE SÉCURITÉ -->
+                <VBox spacing="15" style="-fx-padding: 20; -fx-background-color: #fef3c7; -fx-background-radius: 10;">
+                    <Label text="🔒 Conseils de sécurité" style="-fx-font-weight: bold; -fx-text-fill: #92400e;"/>
+                    <VBox spacing="5">
+                        <Label text="• Utilisez un mot de passe fort avec des lettres, chiffres et symboles"
+                               style="-fx-text-fill: #92400e; -fx-font-size: 13px;"/>
+                        <Label text="• Ne partagez jamais votre mot de passe avec qui que ce soit"
+                               style="-fx-text-fill: #92400e; -fx-font-size: 13px;"/>
+                        <Label text="• Changez régulièrement votre mot de passe"
+                               style="-fx-text-fill: #92400e; -fx-font-size: 13px;"/>
+                    </VBox>
+                </VBox>
+            </VBox>
+        </HBox>
+    </VBox>
+</AnchorPane>

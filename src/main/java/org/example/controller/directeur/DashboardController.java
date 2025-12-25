@@ -1,4 +1,4 @@
-package org.example.controller;
+package org.example.controller.directeur;
 
 import javafx.fxml.FXML;
 import javafx.scene.chart.BarChart;
@@ -345,7 +345,7 @@ public class DashboardController {
     }
 
     @FXML
-    private void handleStagiaires() {
+    private void handleEtudiants() {
         try {
             StageManager.loadScene("/view/directeur/Gestion_Etudiants/gestionEtudiants.fxml", "/styles/gestionFormateurs.css", "gestion des Etudiants");
         } catch (IOException e) {
@@ -373,9 +373,12 @@ public class DashboardController {
 
     @FXML
     private void handleNotes() {
-        showAlert("Notes", "Gestion des notes",
-                "Cette fonctionnalité sera disponible prochainement.",
-                Alert.AlertType.INFORMATION);
+        try {
+            StageManager.loadScene("/view/directeur/gestionNotesDirecteur.fxml",
+                    "/styles/gestionFormateurs.css", "Gestion des Notes");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -399,6 +402,18 @@ public class DashboardController {
             StageManager.loadScene("/view/login_register.fxml", "/styles/auth.css", "Connexion");
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleProfilDirecteur() {
+        try {
+            StageManager.loadScene("/view/directeur/profilDirecteur.fxml",
+                    "/styles/profil.css", "Mon Profil - Directeur");
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Erreur", "Navigation impossible",
+                    "Impossible d'ouvrir la page profil.", Alert.AlertType.ERROR);
         }
     }
 

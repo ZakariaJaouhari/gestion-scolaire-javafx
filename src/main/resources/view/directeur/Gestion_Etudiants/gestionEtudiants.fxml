@@ -11,7 +11,7 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.controller.gestionEtudiant_Controller"
+            fx:controller="org.example.controller.directeur.gestionetudiants.gestionEtudiant_Controller"
             prefHeight="400.0" prefWidth="600.0">
 
 
@@ -55,7 +55,7 @@
             </HBox>
 
             <!-- ETUDIANTS -->
-            <HBox alignment="CENTER_LEFT" style="-fx-background-color: #f5f5f4; -fx-background-radius: 30 0 0 30; -fx-padding: 12 0 12 30;" onMouseClicked="#handleStagiaires">
+            <HBox alignment="CENTER_LEFT" style="-fx-background-color: #f5f5f4; -fx-background-radius: 30 0 0 30; -fx-padding: 12 0 12 30;" onMouseClicked="#handleEtudiants">
 
                 <ImageView fitWidth="30" fitHeight="30">
                     <image>
@@ -167,7 +167,7 @@
             </HBox>
 
             <!-- Directeur -->
-            <HBox alignment="CENTER_LEFT" spacing="5">
+            <HBox alignment="CENTER_LEFT" spacing="5" onMouseClicked="#handleProfilDirecteur">
                 <ImageView fitWidth="48" fitHeight="40">
                     <image>
                         <Image url="/images/profil.png"/>

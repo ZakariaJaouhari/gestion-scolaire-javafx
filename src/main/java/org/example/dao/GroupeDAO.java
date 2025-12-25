@@ -138,6 +138,31 @@ public class GroupeDAO {
         return groupes;
     }
 
+    public List<Groupe> findByFormateurId(int formateurId) {
+        List<Groupe> groupes = new ArrayList<>();
+
+        // Si vous avez une table de liaison groupe_modules
+        String sql = """
+        SELECT DISTINCT g.* FROM groupes g
+        INNER JOIN new_groupe_new_module gm ON g.id = gm.groupe_id
+        INNER JOIN modules m ON gm.module_id = m.id
+        WHERE m.formateur_id = ?
+        ORDER BY g.matricule
+    """;
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, formateurId);
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                groupes.add(mapResultSetToGroupe(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return groupes;
+    }
+
     // Méthode pour charger un groupe avec ses modules
     public Optional<Groupe> findByIdWithModules(int id) {
         String sql = "SELECT * FROM groupes WHERE id = ?";

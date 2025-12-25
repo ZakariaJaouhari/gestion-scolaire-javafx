@@ -262,6 +262,47 @@ public class ModuleDAO {
         return modules;
     }
 
+    public List<Module> findByFormateurId(int formateurId) {
+        List<Module> modules = new ArrayList<>();
+        String sql = "SELECT * FROM modules WHERE formateur_id = ? ORDER BY nom";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, formateurId);
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                modules.add(mapResultSetToModule(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return modules;
+    }
+
+    public List<Module> findByFormateurIdAndGroupeId(int formateurId, int groupeId) {
+        List<Module> modules = new ArrayList<>();
+        String sql = """
+            SELECT DISTINCT m.* 
+            FROM modules m
+            INNER JOIN new_groupe_new_module gm ON m.id = gm.module_id
+            WHERE m.formateur_id = ? 
+            AND gm.groupe_id = ?
+            ORDER BY m.nom
+            """;
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, formateurId);
+            stmt.setInt(2, groupeId);
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                modules.add(mapResultSetToModule(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return modules;
+    }
 
     // Supprimer un module
     public boolean delete(int id) {
@@ -276,6 +317,22 @@ public class ModuleDAO {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public List<Module> findAll() {
+        List<Module> modules = new ArrayList<>();
+        String sql = "SELECT * FROM modules ORDER BY nom";
+
+        try (Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                modules.add(mapResultSetToModule(rs));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return modules;
     }
 
     public Module findById(int id) {

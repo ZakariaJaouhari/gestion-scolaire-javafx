@@ -7,129 +7,81 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 
-<?import javafx.util.Callback?>
-<?import java.lang.String?>
-<?import javafx.scene.control.cell.PropertyValueFactory?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.controller.directeur.gestiongroupes.gestionGroupes_Controller"
-            prefHeight="600.0" prefWidth="900.0">
+            fx:controller="org.example.controller.formateur.GroupesFormateurController"
+            prefHeight="600.0" prefWidth="900.0"
+            style="-fx-background-color: #f8f9fa;">
 
+    <!-- MENU LATÉRAL -->
     <VBox style="-fx-background-color: #142b77; -fx-background-radius: 0 40 40 0;"
           prefWidth="250"
           AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0">
 
-        <Region prefHeight="120"/>
 
-        <VBox spacing="2" style="-fx-padding: 50 0 0 20;">
-
+        <VBox spacing="2" style="-fx-padding: 100 0 0 20;">
             <!-- HOME -->
             <HBox alignment="CENTER_LEFT"
-                  style="-fx-padding: 12 0 12 30;"
+                  style=" -fx-padding: 12 0 12 30;"
                   onMouseClicked="#handleHome">
-
                 <ImageView fitWidth="27" fitHeight="27">
-                    <image>
-                        <Image url="/images/Bhome.png"/>
-                    </image>
+                    <image><Image url="@../../images/Bhome.png"/></image>
                 </ImageView>
-
-                <Label text="Accueil"
-                       style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
+                <Label text="Accueil" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
             </HBox>
 
-            <!-- FORMATEURS -->
-            <HBox alignment="CENTER_LEFT"
-                  style="-fx-padding: 12 0 12 30;"
-                  onMouseClicked="#handleFormateurs">
-
+            <!-- PROFILE -->
+            <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 0 12 30;" onMouseClicked="#handleProfile">
                 <ImageView fitWidth="30" fitHeight="30">
-                    <image>
-                        <Image url="/images/prof.png"/>
-                    </image>
+                    <image><Image url="@../../images/prof.png"/></image>
                 </ImageView>
-
-                <Label text="Formateurs"
-                       style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
-            </HBox>
-
-            <!-- ETUDIANTS -->
-            <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 0 12 30;" onMouseClicked="#handleEtudiants">
-
-                <ImageView fitWidth="30" fitHeight="30">
-                    <image>
-                        <Image url="/images/stagiaire.png"/>
-                    </image>
-                </ImageView>
-
-                <Label text="Etudiants" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
+                <Label text="Profil" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
             </HBox>
 
             <!-- GROUPES -->
             <HBox alignment="CENTER_LEFT" style="-fx-background-color: #f5f5f4; -fx-background-radius: 30 0 0 30; -fx-padding: 12 0 12 30;" onMouseClicked="#handleGroupes">
-
                 <ImageView fitWidth="30" fitHeight="30">
-                    <image>
-                        <Image url="/images/groupe-hover.png"/>
-                    </image>
+                    <image><Image url="@../../images/groupe-hover.png"/></image>
                 </ImageView>
-
-                <Label text="Groupes" style="-fx-text-fill: #43639a;  -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
+                <Label text="Groupes" style="-fx-text-fill: #43639a; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
             </HBox>
 
             <!-- MODULES -->
             <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 0 12 30;" onMouseClicked="#handleModules">
-
                 <ImageView fitWidth="27" fitHeight="27">
-                    <image>
-                        <Image url="/images/module.png"/>
-                    </image>
+                    <image><Image url="@../../images/module.png"/></image>
                 </ImageView>
-
-                <Label text="Modules" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 15;"/>
+                <Label text="Modules" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 13;"/>
             </HBox>
 
             <!-- NOTES -->
             <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 0 12 30;" onMouseClicked="#handleNotes">
-
                 <ImageView fitWidth="35" fitHeight="35">
-                    <image>
-                        <Image url="/images/note.png"/>
-                    </image>
+                    <image><Image url="@../../images/note.png"/></image>
                 </ImageView>
-
-                <Label text="Notes" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 7;"/>
-            </HBox>
-
-            <!-- Planning -->
-            <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 0 12 30;" onMouseClicked="#handleCertificats">
-
-                <ImageView fitWidth="35" fitHeight="35">
-                    <image>
-                        <Image url="/images/calendrier.png"/>
-                    </image>
-                </ImageView>
-
-                <Label text="Planning" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 7;"/>
+                <Label text="Notes" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 5;"/>
             </HBox>
 
             <Region VBox.vgrow="ALWAYS"/>
 
-            <!-- LOGOUT -->
-            <HBox alignment="CENTER_LEFT" style="-fx-padding: 400 0 12 30;" onMouseClicked="#handleLogout">
-
+            <!-- EMPLOI DU TEMPS -->
+            <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 0 12 30;" onMouseClicked="#handleEmploiDuTemps">
                 <ImageView fitWidth="30" fitHeight="30">
-                    <image>
-                        <Image url="/images/logout.png"/>
-                    </image>
+                    <image><Image url="@../../images/calendrier.png"/></image>
                 </ImageView>
+                <Label text="Planning" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
+            </HBox>
 
+            <!-- LOGOUT -->
+            <HBox alignment="CENTER_LEFT" style="-fx-padding: 350 0 12 30;" onMouseClicked="#handleLogout">
+                <ImageView fitWidth="30" fitHeight="30">
+                    <image><Image url="@../../images/logout.png"/></image>
+                </ImageView>
                 <Label text="Déconnexion" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
             </HBox>
 
             <Region prefHeight="20"/>
         </VBox>
-
     </VBox>
 
     <!-- CONTENU PRINCIPAL -->
@@ -155,9 +107,7 @@
             <!-- École -->
             <HBox alignment="CENTER_LEFT" spacing="5" style="-fx-padding: 0 30 0 0">
                 <ImageView fitWidth="48" fitHeight="40">
-                    <image>
-                        <Image url="/images/ecole(1).png"/>
-                    </image>
+                    <image><Image url="/images/ecole(1).png"/></image>
                 </ImageView>
                 <VBox alignment="CENTER_LEFT" spacing="2">
                     <Label text="École" style="-fx-font-size: 14; -fx-text-fill: #6b7280;"/>
@@ -165,38 +115,31 @@
                 </VBox>
             </HBox>
 
-            <!-- Directeur -->
-            <HBox alignment="CENTER_LEFT" spacing="5" onMouseClicked="#handleProfilDirecteur">
+            <!-- Formateur -->
+            <HBox alignment="CENTER_LEFT" spacing="5">
                 <ImageView fitWidth="48" fitHeight="40">
-                    <image>
-                        <Image url="/images/profil.png"/>
-                    </image>
+                    <image><Image url="/images/profil.png"/></image>
                 </ImageView>
                 <VBox alignment="CENTER_LEFT" spacing="2">
-                    <Label text="Directeur" style="-fx-font-size: 14; -fx-text-fill: #6b7280;"/>
-                    <Label fx:id="nomDirecteurLabel" style="-fx-font-size: 18; -fx-font-weight: 600;"/>
+                    <Label text="Formateur" style="-fx-font-size: 14; -fx-text-fill: #6b7280;"/>
+                    <Label fx:id="nomFormateurLabel" style="-fx-font-size: 18; -fx-font-weight: 600;"/>
                 </VBox>
             </HBox>
         </HBox>
-        <!-- CONTENU SPÉCIFIQUE AUX FORMATEURS -->
+
+        <!-- CONTENU -->
         <VBox style="-fx-padding: 40 40;" spacing="20">
             <HBox spacing="20" alignment="CENTER_LEFT">
                 <VBox spacing="5">
                     <HBox spacing="10" alignment="CENTER_LEFT">
-                        <Label text="Gestion des Groupes"
+                        <Label text="Mes Groupes"
                                style="-fx-font-size: 46px; -fx-font-weight: bold; -fx-font-family: 'Apple Chancery';"/>
                     </HBox>
-                    <Label text="Utilisez le filtre pour effectuer une recherche plus rapide."
+                    <Label text="Visualisez les étudiants de vos groupes"
                            style="-fx-text-fill: #666; -fx-padding: 0 0 0 30"/>
                 </VBox>
 
                 <Region HBox.hgrow="ALWAYS"/>
-
-                <!-- Bouton Ajouter groupe à droite -->
-                <Button text="+ Ajouter groupe"
-                        style="-fx-background-color: #059669; -fx-text-fill: white; -fx-font-weight: bold;
-                       -fx-font-size: 14px; -fx-padding: 12 24; -fx-background-radius: 5;"
-                        onAction="#ajouterGroupe"/>
             </HBox>
 
             <!-- Formulaire de Filtrage -->
@@ -229,17 +172,17 @@
                             onAction="#filtrerGroupes"/>
                 </HBox>
             </VBox>
+
             <!-- TABLEAU DES GROUPES -->
             <VBox style="-fx-padding: 20 0 0 0;">
-
                 <!-- Tableau principal -->
                 <TableView fx:id="groupesTable" prefHeight="400" styleClass="custom-table"
                            VBox.vgrow="ALWAYS" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
                     <columns>
                         <TableColumn text="Matricule" fx:id="matriculeColumn" prefWidth="100"/>
                         <TableColumn text="Niveau" fx:id="niveauColumn" prefWidth="120"/>
-                        <TableColumn fx:id="modulesColumn" text="Modules" />
-                        <TableColumn fx:id="actionsColumn" text="" prefWidth="80"/>
+                        <TableColumn text="Étudiants" fx:id="nombreEtudiantsColumn" prefWidth="120"/>
+                        <TableColumn fx:id="etudiantsColumn" text="Liste des Étudiants" prefWidth="600"/>
                     </columns>
                     <columnResizePolicy>
                         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
@@ -251,8 +194,6 @@
                        style="-fx-text-fill: #9ca3af; -fx-font-size: 14px; -fx-padding: 20;"
                        visible="false"/>
             </VBox>
-
         </VBox>
-
     </VBox>
 </AnchorPane>

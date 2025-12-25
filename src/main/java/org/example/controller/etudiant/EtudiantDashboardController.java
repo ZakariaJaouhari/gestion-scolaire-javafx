@@ -1,11 +1,10 @@
-package org.example.controller;
+package org.example.controller.etudiant;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
@@ -365,33 +364,6 @@ public class EtudiantDashboardController {
         return cell;
     }
 
-    // Méthodes de navigation
-    @FXML
-    private void handleHome() {
-        System.out.println("Accueil étudiant clicked");
-    }
-
-    @FXML
-    private void handleNotes() {
-        System.out.println("Mes Notes clicked");
-        // Rediriger vers la page des notes
-        // StageManager.loadScene("/view/etudiant/notes.fxml", ...);
-    }
-
-    @FXML
-    private void handleEmploiDuTemps() {
-        System.out.println("Emploi du temps clicked");
-        // Rediriger vers la page emploi du temps
-        // StageManager.loadScene("/view/etudiant/emploi.fxml", ...);
-    }
-
-    @FXML
-    private void handleExamens() {
-        System.out.println("Mes Examens clicked");
-        // Rediriger vers la page des examens
-        // StageManager.loadScene("/view/etudiant/examens.fxml", ...);
-    }
-
     // ========== NAVIGATION CALENDRIER ==========
     @FXML
     private void previousMonth() {
@@ -406,15 +378,53 @@ public class EtudiantDashboardController {
     }
 
 
+
+    // Méthodes de navigation
+    @FXML
+    private void handleHome() {
+        try {
+            StageManager.loadScene("/view/etudiant/dashboardE.fxml",
+                    "/styles/dashboard.css", "Dashboard Étudiant");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleNotes() {
+        System.out.println("Mes Notes clicked");
+        // Rediriger vers la page des notes
+        // StageManager.loadScene("/view/etudiant/notes.fxml", ...);
+    }
+
+    @FXML
+    private void handleEmploiDuTemps() {
+        try {
+            StageManager.loadScene("/view/etudiant/planningEtudiant.fxml", "/styles/gestionFormateurs.css", "Planning");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     @FXML
     public void handleModules(MouseEvent mouseEvent) {
+        try {
+            StageManager.loadScene("/view/etudiant/modulesEtudiant.fxml",
+                    "/styles/gestionFormateurs.css", "Mes Modules");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void handleProfil() {
-        System.out.println("Mon Profil clicked");
-        // Rediriger vers la page profil
-        // StageManager.loadScene("/view/etudiant/profil.fxml", ...);
+        try {
+            StageManager.loadScene("/view/etudiant/profilEtudiant.fxml",
+                    "/styles/profil.css", "Mon Profil");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML

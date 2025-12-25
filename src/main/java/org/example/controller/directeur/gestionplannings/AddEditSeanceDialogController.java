@@ -1,8 +1,7 @@
-package org.example.controller;
+package org.example.controller.directeur.gestionplannings;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
@@ -13,7 +12,6 @@ import org.example.util.SessionManager;
 import org.example.util.StageManager;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -88,17 +86,104 @@ public class AddEditSeanceDialogController {
         int directeurId = SessionManager.getInstance().getCurrentDirecteur().getId();
 
         try {
-            // Charger les modules
+            // Charger les modules - afficher uniquement le nom
             List<Module> modules = moduleDAO.findByDirecteurId(directeurId);
             moduleComboBox.getItems().setAll(modules);
 
-            // Charger les groupes
+            // Configurer l'affichage pour le module (uniquement le nom)
+            moduleComboBox.setCellFactory(param -> new ListCell<Module>() {
+                @Override
+                protected void updateItem(Module module, boolean empty) {
+                    super.updateItem(module, empty);
+                    if (empty || module == null) {
+                        setText(null);
+                    } else {
+                        setText(module.getNom());
+                    }
+                }
+            });
+
+            moduleComboBox.setConverter(new StringConverter<Module>() {
+                @Override
+                public String toString(Module module) {
+                    return module != null ? module.getNom() : "";
+                }
+
+                @Override
+                public Module fromString(String string) {
+                    return moduleComboBox.getItems().stream()
+                            .filter(m -> m.getNom().equals(string))
+                            .findFirst()
+                            .orElse(null);
+                }
+            });
+
+            // Charger les groupes - afficher uniquement le matricule
             List<Groupe> groupes = groupeDAO.findByDirecteurId(directeurId);
             groupeComboBox.getItems().setAll(groupes);
 
-            // Charger les formateurs
+            // Configurer l'affichage pour le groupe (uniquement le matricule)
+            groupeComboBox.setCellFactory(param -> new ListCell<Groupe>() {
+                @Override
+                protected void updateItem(Groupe groupe, boolean empty) {
+                    super.updateItem(groupe, empty);
+                    if (empty || groupe == null) {
+                        setText(null);
+                    } else {
+                        setText(groupe.getMatricule());
+                    }
+                }
+            });
+
+            groupeComboBox.setConverter(new StringConverter<Groupe>() {
+                @Override
+                public String toString(Groupe groupe) {
+                    return groupe != null ? groupe.getMatricule() : "";
+                }
+
+                @Override
+                public Groupe fromString(String string) {
+                    return groupeComboBox.getItems().stream()
+                            .filter(g -> g.getMatricule().equals(string))
+                            .findFirst()
+                            .orElse(null);
+                }
+            });
+
+            // Charger les formateurs - afficher le nom complet
             List<Formateur> formateurs = formateurDAO.findByDirecteurId(directeurId);
             formateurComboBox.getItems().setAll(formateurs);
+
+            // Configurer l'affichage pour le formateur (nom complet)
+            formateurComboBox.setCellFactory(param -> new ListCell<Formateur>() {
+                @Override
+                protected void updateItem(Formateur formateur, boolean empty) {
+                    super.updateItem(formateur, empty);
+                    if (empty || formateur == null) {
+                        setText(null);
+                    } else {
+                        setText(formateur.getNom() + " " + formateur.getPrenom());
+                    }
+                }
+            });
+
+            formateurComboBox.setConverter(new StringConverter<Formateur>() {
+                @Override
+                public String toString(Formateur formateur) {
+                    if (formateur != null) {
+                        return formateur.getNom() + " " + formateur.getPrenom();
+                    }
+                    return "";
+                }
+
+                @Override
+                public Formateur fromString(String string) {
+                    return formateurComboBox.getItems().stream()
+                            .filter(f -> (f.getNom() + " " + f.getPrenom()).equals(string))
+                            .findFirst()
+                            .orElse(null);
+                }
+            });
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -124,25 +209,28 @@ public class AddEditSeanceDialogController {
             salleTextField.setText(seanceToEdit.getSalle());
 
             // Sélectionner les valeurs dans les ComboBox
-            for (Module module : moduleComboBox.getItems()) {
-                if (module.getId() == seanceToEdit.getModuleId()) {
-                    moduleComboBox.setValue(module);
-                    break;
-                }
+            // Module
+            if (seanceToEdit.getModuleId() > 0) {
+                moduleComboBox.getItems().stream()
+                        .filter(m -> m.getId() == seanceToEdit.getModuleId())
+                        .findFirst()
+                        .ifPresent(moduleComboBox::setValue);
             }
 
-            for (Groupe groupe : groupeComboBox.getItems()) {
-                if (groupe.getId() == seanceToEdit.getGroupeId()) {
-                    groupeComboBox.setValue(groupe);
-                    break;
-                }
+            // Groupe
+            if (seanceToEdit.getGroupeId() > 0) {
+                groupeComboBox.getItems().stream()
+                        .filter(g -> g.getId() == seanceToEdit.getGroupeId())
+                        .findFirst()
+                        .ifPresent(groupeComboBox::setValue);
             }
 
-            for (Formateur formateur : formateurComboBox.getItems()) {
-                if (formateur.getId() == seanceToEdit.getFormateurId()) {
-                    formateurComboBox.setValue(formateur);
-                    break;
-                }
+            // Formateur
+            if (seanceToEdit.getFormateurId() > 0) {
+                formateurComboBox.getItems().stream()
+                        .filter(f -> f.getId() == seanceToEdit.getFormateurId())
+                        .findFirst()
+                        .ifPresent(formateurComboBox::setValue);
             }
 
             saveButton.setText("Modifier");
@@ -368,7 +456,7 @@ public class AddEditSeanceDialogController {
     }
 
     @FXML
-    private void handleStagiaires() {
+    private void handleEtudiants() {
         try {
             StageManager.loadScene("/view/directeur/gestion_Etudiants/gestionEtudiants.fxml", "/styles/gestionFormateurs.css", "Etudiants");
         } catch (IOException e) {
@@ -419,6 +507,18 @@ public class AddEditSeanceDialogController {
             StageManager.loadScene("/view/login_register.fxml", "/styles/auth.css", "Connexion");
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleProfilDirecteur() {
+        try {
+            StageManager.loadScene("/view/directeur/profilDirecteur.fxml",
+                    "/styles/profil.css", "Mon Profil - Directeur");
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Erreur", "Navigation impossible",
+                    "Impossible d'ouvrir la page profil.", Alert.AlertType.ERROR);
         }
     }
 

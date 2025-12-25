@@ -1,7 +1,9 @@
-package org.example.controller;
+package org.example.controller.directeur.gestionplannings;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -9,11 +11,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
 import org.example.dao.*;
 import org.example.model.*;
 import org.example.util.SessionManager;
@@ -26,7 +25,6 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class PlanningSemaineController {
 
@@ -197,9 +195,9 @@ public class PlanningSemaineController {
         planningGrid.getColumnConstraints().clear();
         planningGrid.getRowConstraints().clear();
 
-        // Définir les dimensions
+        // Définir les dimensions - chaque ligne = 30 minutes
         int numDays = 6; // Lundi à Samedi
-        int numHours = 12; // 8h à 19h
+        int numSlots = 24; // 8h à 19h avec des créneaux de 30 minutes (12h * 2)
 
         // Configurer les colonnes (jours)
         for (int col = 0; col <= numDays; col++) {
@@ -212,10 +210,10 @@ public class PlanningSemaineController {
             planningGrid.getColumnConstraints().add(colConst);
         }
 
-        // Configurer les lignes (heures)
-        for (int row = 0; row <= numHours; row++) {
+        // Configurer les lignes (créneaux de 30 minutes)
+        for (int row = 0; row <= numSlots; row++) {
             RowConstraints rowConst = new RowConstraints();
-            rowConst.setPrefHeight(60);
+            rowConst.setPrefHeight(30); // Hauteur de 30px par créneau
             planningGrid.getRowConstraints().add(rowConst);
         }
 
@@ -231,19 +229,24 @@ public class PlanningSemaineController {
             planningGrid.add(dayLabel, col, 0);
         }
 
-        // En-tête des heures
+        // En-tête des heures (toutes les heures)
         for (int hour = 8; hour <= 19; hour++) {
-            int row = hour - 7;
+            // Chaque heure correspond à 2 créneaux
+            int rowStart = (hour - 8) * 2 + 1;
+
+            // Afficher l'heure pleine
             Label hourLabel = new Label(String.format("%02d:00", hour));
             hourLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 11px; -fx-alignment: center-right;");
             hourLabel.setPadding(new javafx.geometry.Insets(5));
-            planningGrid.add(hourLabel, 0, row);
+            planningGrid.add(hourLabel, 0, rowStart);
 
-            // Ligne de séparation
-            Region separator = new Region();
-            separator.setStyle("-fx-background-color: #e0e0e0;");
-            GridPane.setRowSpan(separator, 1);
-            planningGrid.add(separator, 0, row, 7, 1);
+            // Afficher la demi-heure (si ce n'est pas la dernière heure)
+            if (hour < 19) {
+                Label halfHourLabel = new Label(String.format("%02d:30", hour));
+                halfHourLabel.setStyle("-fx-font-weight: normal; -fx-font-size: 10px; -fx-alignment: center-right; -fx-text-fill: #666;");
+                halfHourLabel.setPadding(new javafx.geometry.Insets(5));
+                planningGrid.add(halfHourLabel, 0, rowStart + 1);
+            }
         }
 
         // Charger et afficher les séances
@@ -252,6 +255,7 @@ public class PlanningSemaineController {
 
     private void loadAndDisplaySeances() {
         if (currentEntityId == null) return;
+        overlapCounter.clear();
 
         List<Seance> seances = new ArrayList<>();
         int directeurId = SessionManager.getInstance().getCurrentDirecteur().getId();
@@ -283,10 +287,33 @@ public class PlanningSemaineController {
             return;
         }
 
+        // Réinitialiser le compteur de chevauchements
+        overlapCounter.clear();
+
+        // Trier les séances par heure de début pour un meilleur affichage
+        seances.sort(Comparator.comparing(Seance::getHeureDebut));
+
+        System.out.println("=== CHARGEMENT SÉANCES ===");
+        System.out.println("Nombre de séances: " + seances.size());
+
         // Afficher les séances
         for (Seance seance : seances) {
             addSeanceToGrid(seance);
         }
+    }
+
+    private Map<String, Integer> overlapCounter = new HashMap<>();
+
+    private int getOverlapIndex(int dayOfWeek, int startSlot, int durationSlots) {
+        String key = dayOfWeek + "-" + startSlot;
+
+        // Vérifier combien de séances sont déjà dans ce créneau
+        int count = overlapCounter.getOrDefault(key, 0);
+
+        // Incrémenter pour la prochaine séance
+        overlapCounter.put(key, count + 1);
+
+        return count;
     }
 
     private void addSeanceToGrid(Seance seance) {
@@ -301,23 +328,38 @@ public class PlanningSemaineController {
         int dayOfWeek = date.getDayOfWeek().getValue(); // 1 = lundi, 7 = dimanche
         if (dayOfWeek == 7) return; // On ignore le dimanche
 
-        // Calculer les lignes (heures)
+        // Calculer les lignes basées sur les minutes précises
         LocalTime startTime = seance.getHeureDebut();
         LocalTime endTime = seance.getHeureFin();
 
-        int startRow = startTime.getHour() - 7; // 8h -> row 1
-        int endRow = endTime.getHour() - 7; // 10h -> row 3
+        // Convertir les heures en créneaux de 30 minutes
+        int startSlot = calculateTimeSlot(startTime);
+        int endSlot = calculateTimeSlot(endTime);
 
-        // Calculer la durée en heures (pour rowSpan)
-        int durationHours = (int) java.time.Duration.between(startTime, endTime).toHours();
+        // S'assurer que les valeurs sont valides
+        if (startSlot < 0) startSlot = 0;
+        if (endSlot > 24) endSlot = 24;
 
-        // Créer la cellule de séance avec BorderPane pour organiser le contenu
+        int durationSlots = endSlot - startSlot;
+        if (durationSlots < 1) {
+            durationSlots = 1;
+        }
+
+        // Ajuster le row index (ajouter 1 pour la ligne d'en-tête)
+        int startRow = startSlot + 1;
+
+        // DEBUG - Supprimez ou gardez pour vérification
+        System.out.println("Séance " + seance.getModule().getNom() +
+                " (" + startTime + "-" + endTime + ")" +
+                " -> ligne " + startRow + " | durée " + durationSlots);
+
+        // Créer la cellule de séance
         BorderPane seanceCell = new BorderPane();
         seanceCell.setStyle("-fx-background-color: " + getColorForModule(seance.getModuleId()) +
                 "; -fx-border-color: #b0bec5; -fx-border-width: 1px; -fx-border-radius: 3px;");
         seanceCell.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
-        // Contenu principal au centre
+        // Contenu principal
         VBox content = new VBox(3);
         content.setPadding(new javafx.geometry.Insets(5));
         content.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
@@ -336,69 +378,55 @@ public class PlanningSemaineController {
         infoLabel.setWrapText(true);
 
         // Formater les heures
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
-        Label timeLabel = new Label(startTime.format(timeFormatter) + " - " + endTime.format(timeFormatter));
+        DateTimeFormatter displayFormatter = DateTimeFormatter.ofPattern("H'h'mm");
+        Label timeLabel = new Label(startTime.format(displayFormatter) + " - " + endTime.format(displayFormatter));
         timeLabel.setStyle("-fx-font-size: 8px; -fx-text-fill: #7f8c8d; -fx-font-style: italic;");
 
         content.getChildren().addAll(moduleLabel, infoLabel, timeLabel);
 
-        // Conteneur pour les boutons d'action (en haut à droite)
-        HBox actionsContainer = new HBox(5);
-        actionsContainer.setAlignment(javafx.geometry.Pos.TOP_RIGHT);
-        actionsContainer.setPadding(new javafx.geometry.Insets(5));
-        actionsContainer.setOpacity(0.7); // Semi-transparent par défaut
+        // CONTENEUR PRINCIPAL avec StackPane pour superposer les boutons
+        StackPane mainContainer = new StackPane();
+        mainContainer.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
-        // Bouton modifier
-        Button editButton = new Button();
-        try {
-            ImageView editIcon = new ImageView(new Image(getClass().getResourceAsStream("/images/crayon.png")));
-            editIcon.setFitWidth(16);
-            editIcon.setFitHeight(16);
-            editButton.setGraphic(editIcon);
-        } catch (Exception e) {
-            editButton.setText("✏️");
-            editButton.setStyle("-fx-font-size: 10px;");
-        }
-        editButton.setStyle("-fx-background-color: transparent; -fx-padding: 2px; -fx-cursor: hand;");
-        editButton.setOnAction(e -> openEditSeanceDialog(seance));
+        // Ajouter le contenu
+        mainContainer.getChildren().add(content);
 
-        // Bouton supprimer
-        Button deleteButton = new Button();
-        try {
-            ImageView deleteIcon = new ImageView(new Image(getClass().getResourceAsStream("/images/supprimer.png")));
-            deleteIcon.setFitWidth(16);
-            deleteIcon.setFitHeight(16);
-            deleteButton.setGraphic(deleteIcon);
-        } catch (Exception e) {
-            deleteButton.setText("🗑️");
-            deleteButton.setStyle("-fx-font-size: 10px;");
-        }
-        deleteButton.setStyle("-fx-background-color: transparent; -fx-padding: 2px; -fx-cursor: hand;");
-        deleteButton.setOnAction(e -> deleteSeance(seance));
+        // Créer les boutons
+        Button editButton = createIconButton("/images/crayon.png", "✏️", e -> openEditSeanceDialog(seance));
+        Button deleteButton = createIconButton("/images/supprimer.png", "🗑️", e -> deleteSeance(seance));
 
-        actionsContainer.getChildren().addAll(editButton, deleteButton);
+        // Positionner les boutons en haut à droite DANS le StackPane
+        HBox buttonsContainer = new HBox(5, editButton, deleteButton);
+        buttonsContainer.setAlignment(Pos.TOP_RIGHT);
+        buttonsContainer.setPadding(new Insets(5, 5, 0, 0));
+        buttonsContainer.setOpacity(0.7);
+
+        // Ajouter les boutons au StackPane (ils seront par-dessus le contenu)
+        mainContainer.getChildren().add(buttonsContainer);
+
+        // Positionner les boutons dans le StackPane
+        StackPane.setAlignment(buttonsContainer, Pos.TOP_RIGHT);
 
         // Organisation dans le BorderPane
-        seanceCell.setTop(actionsContainer);
-        seanceCell.setCenter(content);
+        seanceCell.setCenter(mainContainer);
 
         // Ajouter au grid
-        planningGrid.add(seanceCell, dayOfWeek, startRow, 1, durationHours);
+        planningGrid.add(seanceCell, dayOfWeek, startRow, 1, durationSlots);
 
         // Effet au survol
         seanceCell.setOnMouseEntered(e -> {
             seanceCell.setStyle("-fx-background-color: " + getColorForModule(seance.getModuleId()).replace("0.8", "1.0") +
                     "; -fx-border-color: #3498db; -fx-border-width: 2px; -fx-border-radius: 3px;");
-            actionsContainer.setOpacity(1.0); // Rendre complètement visible
+            buttonsContainer.setOpacity(1.0);
         });
 
         seanceCell.setOnMouseExited(e -> {
             seanceCell.setStyle("-fx-background-color: " + getColorForModule(seance.getModuleId()) +
                     "; -fx-border-color: #b0bec5; -fx-border-width: 1px; -fx-border-radius: 3px;");
-            actionsContainer.setOpacity(0.7); // Revenir semi-transparent
+            buttonsContainer.setOpacity(0.7);
         });
 
-        // Garder le double-clic pour modifier
+        // Double-clic pour modifier
         seanceCell.setOnMouseClicked(e -> {
             if (e.getClickCount() == 2) {
                 openEditSeanceDialog(seance);
@@ -406,28 +434,114 @@ public class PlanningSemaineController {
         });
     }
 
-    private void deleteSeance(Seance seance) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Confirmation de suppression");
-        alert.setHeaderText("Supprimer la séance");
-        alert.setContentText("Êtes-vous sûr de vouloir supprimer cette séance ?\n" +
-                "Module: " + (seance.getModule() != null ? seance.getModule().getNom() : "N/A") + "\n" +
-                "Date: " + seance.getDate() + "\n" +
-                "Heure: " + seance.getHeureDebut() + " - " + seance.getHeureFin());
-
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
-            try {
-                seanceDAO.delete(seance.getId());
-                showAlert("Succès", "Séance supprimée",
-                        "La séance a été supprimée avec succès.", Alert.AlertType.INFORMATION);
-                loadPlanning(); // Recharger l'affichage
-            } catch (Exception e) {
-                e.printStackTrace();
-                showAlert("Erreur", "Échec de suppression",
-                        "Impossible de supprimer la séance: " + e.getMessage(), Alert.AlertType.ERROR);
-            }
+    // Méthode utilitaire pour créer des boutons avec icônes
+    private Button createIconButton(String iconPath, String fallbackText, javafx.event.EventHandler<javafx.event.ActionEvent> handler) {
+        Button button = new Button();
+        try {
+            ImageView icon = new ImageView(new Image(getClass().getResourceAsStream(iconPath)));
+            icon.setFitWidth(16);
+            icon.setFitHeight(16);
+            button.setGraphic(icon);
+        } catch (Exception e) {
+            button.setText(fallbackText);
+            button.setStyle("-fx-font-size: 10px;");
         }
+        button.setStyle("-fx-background-color: transparent; -fx-padding: 2px; -fx-cursor: hand;");
+        button.setOnAction(handler);
+        return button;
+    }
+
+
+    // Méthode utilitaire pour convertir une heure en créneau de 30 minutes
+    private int calculateTimeSlot(LocalTime time) {
+        int hour = time.getHour();
+        int minute = time.getMinute();
+
+        // Chaque heure = 2 slots
+        int slot = (hour - 8) * 2;
+
+        if (minute >= 30) {
+            slot += 1;
+        }
+
+        return slot;
+    }
+
+
+
+
+    // Méthode utilitaire pour convertir un créneau en LocalTime
+    private LocalTime slotToTime(int slot) {
+        int totalMinutes = slot * 30;
+        int hour = 8 + (totalMinutes / 60);
+        int minute = totalMinutes % 60;
+        return LocalTime.of(hour, minute);
+    }
+
+    private void deleteSeance(Seance seance) {
+        Stage stage = (Stage) currentWeekLabel.getScene().getWindow(); // ⭐ fenêtre courante
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.initOwner(stage);                 // 🔑 IMPORTANT
+        confirm.initModality(Modality.WINDOW_MODAL);
+
+        confirm.setTitle("Supprimer séance");
+        confirm.setHeaderText("Confirmer la suppression");
+
+        // Construire le message détaillé
+        StringBuilder content = new StringBuilder();
+        content.append("Voulez-vous vraiment supprimer cette séance ?\n\n");
+
+        if (seance.getModule() != null) {
+            content.append("Module: ").append(seance.getModule().getNom()).append("\n");
+        }
+
+        content.append("Date: ").append(seance.getDate()).append("\n");
+        content.append("Heure: ").append(seance.getHeureDebut()).append(" - ").append(seance.getHeureFin()).append("\n");
+
+        if ("Formateur".equals(currentViewType) && seance.getGroupe() != null) {
+            content.append("Groupe: ").append(seance.getGroupe().getMatricule()).append("\n");
+        } else if ("Groupe".equals(currentViewType) && seance.getFormateur() != null) {
+            content.append("Formateur: ").append(seance.getFormateur().getNom())
+                    .append(" ").append(seance.getFormateur().getPrenom()).append("\n");
+        }
+
+        confirm.setContentText(content.toString());
+
+        // Boutons personnalisés
+        ButtonType buttonTypeYes = new ButtonType("Oui", ButtonBar.ButtonData.YES);
+        ButtonType buttonTypeNo = new ButtonType("Non", ButtonBar.ButtonData.NO);
+        confirm.getButtonTypes().setAll(buttonTypeYes, buttonTypeNo);
+
+        confirm.showAndWait().ifPresent(response -> {
+            if (response == buttonTypeYes) {
+                try {
+                    seanceDAO.delete(seance.getId());
+                    loadPlanning(); // Recharger l'affichage
+
+                    // Message de succès (aussi modale)
+                    Alert success = new Alert(Alert.AlertType.INFORMATION);
+                    success.initOwner(stage);
+                    success.initModality(Modality.WINDOW_MODAL);
+                    success.setTitle("Succès");
+                    success.setHeaderText("Séance supprimée");
+                    success.setContentText("La séance a été supprimée avec succès.");
+                    success.showAndWait();
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+
+                    // Message d'erreur (modale)
+                    Alert error = new Alert(Alert.AlertType.ERROR);
+                    error.initOwner(stage);
+                    error.initModality(Modality.WINDOW_MODAL);
+                    error.setTitle("Erreur");
+                    error.setHeaderText("Échec de suppression");
+                    error.setContentText("Impossible de supprimer la séance: " + e.getMessage());
+                    error.showAndWait();
+                }
+            }
+        });
     }
 
     private String getColorForModule(int moduleId) {
@@ -550,7 +664,7 @@ public class PlanningSemaineController {
     }
 
     @FXML
-    private void handleStagiaires() {
+    private void handleEtudiants() {
         try {
             StageManager.loadScene("/view/directeur/gestion_Etudiants/gestionEtudiants.fxml", "/styles/gestionFormateurs.css", "Etudiants");
         } catch (IOException e) {
@@ -604,7 +718,17 @@ public class PlanningSemaineController {
         }
     }
 
-
+    @FXML
+    private void handleProfilDirecteur() {
+        try {
+            StageManager.loadScene("/view/directeur/profilDirecteur.fxml",
+                    "/styles/profil.css", "Mon Profil - Directeur");
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Erreur", "Navigation impossible",
+                    "Impossible d'ouvrir la page profil.", Alert.AlertType.ERROR);
+        }
+    }
 
     private void showAlert(String title, String header, String content, Alert.AlertType type) {
         Alert alert = new Alert(type);

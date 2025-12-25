@@ -1,5 +1,6 @@
-package org.example.controller;
+package org.example.controller.directeur.gestionmodules;
 
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -10,17 +11,14 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.geometry.Pos;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.beans.property.SimpleStringProperty;
-import org.example.dao.EtudiantDAO;
-import org.example.dao.GroupeDAO;
+import org.example.dao.FormateurDAO;
+import org.example.dao.ModuleDAO;
 import org.example.model.Directeur;
-import org.example.model.Etudiant;
-import org.example.model.Groupe;
+import org.example.model.Formateur;
 import org.example.util.SessionManager;
 import org.example.util.StageManager;
 
@@ -29,7 +27,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-public class gestionEtudiant_Controller {
+public class gestionModules_Controller {
 
 
     // HEADER
@@ -39,30 +37,30 @@ public class gestionEtudiant_Controller {
 
     // FILTRES
     @FXML private TextField nomField;
-    @FXML private TextField prenomField;
-    @FXML private TextField cinField;
-    @FXML private ComboBox<String> sexeComboBox;
-    @FXML private ComboBox<String> groupeComboBox;
+    @FXML private TextField matriculeField;
+    @FXML private ComboBox<String> formateurComboBox;
 
     // TABLE
-    @FXML private TableView<Etudiant> etudiantsTable;
-    @FXML private TableColumn<Etudiant, String> nomColumn;
-    @FXML private TableColumn<Etudiant, String> sexeColumn;
-    @FXML private TableColumn<Etudiant, String> dateNaissanceColumn;
-    @FXML private TableColumn<Etudiant, String> cinColumn;
-    @FXML private TableColumn<Etudiant, String> groupeColumn;
-    @FXML private TableColumn<Etudiant, Void> actionsColumn;
+    @FXML private TableView<org.example.model.Module> modulesTable;
+    @FXML private TableColumn<org.example.model.Module, String> nomColumn;
+    @FXML private TableColumn<org.example.model.Module, String> dateDebutColumn;
+    @FXML private TableColumn<org.example.model.Module, String> dateFinColumn;
+    @FXML private TableColumn<org.example.model.Module, String> matriculeColumn;
+    @FXML private TableColumn<org.example.model.Module, String> heuresColumn;
+    @FXML private TableColumn<org.example.model.Module, Integer> cofColumn;
+    @FXML private TableColumn<org.example.model.Module, String> formateurColumn;
+    @FXML private TableColumn<org.example.model.Module, Void> actionsColumn;
 
-    private final GroupeDAO groupeDAO = new GroupeDAO();
+    private final FormateurDAO formateurDAO = new FormateurDAO();
 
-    private EtudiantDAO etudiantDAO;
-    private ObservableList<Etudiant> etudiantList = FXCollections.observableArrayList();
-    private ObservableList<Etudiant> filteredList = FXCollections.observableArrayList();
+    private ModuleDAO moduleDAO;
+    private ObservableList<org.example.model.Module> moduleList = FXCollections.observableArrayList();
+    private ObservableList<org.example.model.Module> filteredList = FXCollections.observableArrayList();
 
 
     @FXML
     public void initialize() {
-        etudiantDAO = new EtudiantDAO();
+        moduleDAO = new ModuleDAO();
 
         // --- HEADER ----
         SessionManager session = SessionManager.getInstance();
@@ -76,17 +74,16 @@ public class gestionEtudiant_Controller {
         loadComboBoxes();
 
         // --- CHARGEMENT DES DONNÉES ----
-        loadEtudiantsFromDB();
+        loadModulesFromDB();
 
         // --- CONFIGURATION DE LA TABLE ----
         configureTableColumns();
-        configureNomColumn();
         configureActionsColumn();
 
         // --- GESTION DU FOCUS POUR LES LABELS FLOTTANTS ----
         setupFloatingLabels();
 
-        etudiantsTable.setColumnResizePolicy(
+        modulesTable.setColumnResizePolicy(
                 TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS
         );
 
@@ -96,38 +93,34 @@ public class gestionEtudiant_Controller {
     // =====================================================================
     // ============= CHARGEMENT DES DONNÉES DEPUIS BD ======================
     // =====================================================================
-    private void loadEtudiantsFromDB() {
-        List<Etudiant> list = etudiantDAO.findByDirecteurId(
+    private void loadModulesFromDB() {
+        List<org.example.model.Module> list = moduleDAO.findByDirecteurId(
                 SessionManager.getInstance().getUserId()
         );
 
-        etudiantList.setAll(list);
-        filteredList.setAll(etudiantList);
-        etudiantsTable.setItems(filteredList);
+        moduleList.setAll(list);
+        filteredList.setAll(moduleList);
+        modulesTable.setItems(filteredList);
     }
 
     private void loadComboBoxes() {
 
-        // 🔹 Sexe
-        sexeComboBox.getItems().setAll("Homme", "Femme");
-
-        // 🔹 Groupes (matricules)
+        // 🔹
         Directeur directeur = SessionManager.getInstance().getCurrentDirecteur();
         int directeurId = directeur.getId();
 
 
-        List<Groupe> groupes = groupeDAO.findByDirecteurId((int) directeurId);
+        List<Formateur> formateurs = formateurDAO.findByDirecteurId((int) directeurId);
 
-        List<String> matricules = groupes.stream()
-                .map(Groupe::getMatricule)
+        List<String> noms = formateurs.stream()
+                .map(Formateur::getNomComplet)
                 .toList();
 
-        groupeComboBox.getItems().clear();
-        groupeComboBox.getItems().addAll(matricules);
+        formateurComboBox.getItems().clear();
+        formateurComboBox.getItems().addAll(noms);
 
         // 🔹 Style
-        sexeComboBox.getStyleClass().add("float-text-field");
-        groupeComboBox.getStyleClass().add("float-text-field");
+        formateurComboBox.getStyleClass().add("float-text-field");
     }
 
 
@@ -139,36 +132,41 @@ public class gestionEtudiant_Controller {
 
         nomColumn.setCellValueFactory(cellData ->
                 new SimpleStringProperty(
-                        cellData.getValue().getNom() + " " + cellData.getValue().getPrenom()
+                        cellData.getValue().getNom()
                 )
         );
-
-        sexeColumn.setCellValueFactory(cellData ->
-                new SimpleStringProperty(cellData.getValue().getSexe().getValeur())
+        matriculeColumn.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getMatricule())
         );
-
-        dateNaissanceColumn.setCellValueFactory(cellData ->
-                new SimpleStringProperty(cellData.getValue().getDateNaissance().toString())
+        dateDebutColumn.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getDateDebut().toString())
         );
-
-        cinColumn.setCellValueFactory(cellData ->
-                new SimpleStringProperty(cellData.getValue().getCin())
+        dateFinColumn.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getDateFin().toString())
         );
-
-        groupeColumn.setCellValueFactory(cellData ->
-                new SimpleStringProperty(cellData.getValue().getGroupe().getMatricule())
+        heuresColumn.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getHeuresPratique())
+        );
+        cofColumn.setCellValueFactory(cellData ->
+                new SimpleIntegerProperty(cellData.getValue().getCoefficient()).asObject()
+        );
+        formateurColumn.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getFormateur().getNomComplet())
         );
 
 
         // 🔹 appliquer le style "other-column"
-        applyOtherColumnStyle(sexeColumn);
-        applyOtherColumnStyle(dateNaissanceColumn);
-        applyOtherColumnStyle(cinColumn);
-        applyOtherColumnStyle(groupeColumn);
+        applyOtherColumnStyle(nomColumn);
+        applyOtherColumnStyle(matriculeColumn);
+        applyOtherColumnStyle(dateDebutColumn);
+        applyOtherColumnStyle(dateFinColumn);
+        applyOtherColumnStyle(heuresColumn);
+        applyOtherColumnStyle(cofColumn);
+        applyOtherColumnStyle(formateurColumn);
     }
 
 
-    private <T> void applyOtherColumnStyle(TableColumn<Etudiant, T> column) {
+    private <T> void applyOtherColumnStyle(TableColumn<org.example.model.Module, T> column) {
         column.setCellFactory(col -> new TableCell<>() {
             @Override
             protected void updateItem(T item, boolean empty) {
@@ -181,53 +179,13 @@ public class gestionEtudiant_Controller {
         });
     }
 
-    private void configureNomColumn() {
-        nomColumn.setCellFactory(new Callback<TableColumn<Etudiant, String>, TableCell<Etudiant, String>>() {
-            @Override
-            public TableCell<Etudiant, String> call(TableColumn<Etudiant, String> param) {
-                return new TableCell<Etudiant, String>() {
-                    private final VBox container = new VBox(2);
-                    private final Label nomLabel = new Label();
-                    private final Label emailLabel = new Label();
-
-                    {
-                        container.getStyleClass().add("nom-container");
-                        container.setAlignment(Pos.CENTER);
-                        nomLabel.getStyleClass().add("nom-text");
-                        emailLabel.getStyleClass().add("email-text");
-                        container.getChildren().addAll(nomLabel, emailLabel);
-                    }
-
-                    @Override
-                    protected void updateItem(String item, boolean empty) {
-                        super.updateItem(item, empty);
-
-                        if (empty || getTableRow() == null || getTableRow().getItem() == null) {
-                            setGraphic(null);
-                            setText(null);
-                            getStyleClass().remove("nom-cell");
-                        } else {
-                            Etudiant etudiant = getTableRow().getItem();
-                            nomLabel.setText(etudiant.getPrenom() + " " + etudiant.getNom());
-                            emailLabel.setText(etudiant.getEmail());
-
-                            setGraphic(container);
-                            setText(null);
-                            getStyleClass().add("nom-cell");
-                            setAlignment(Pos.CENTER_LEFT);
-                        }
-                    }
-                };
-            }
-        });
-    }
 
 
     private void configureActionsColumn() {
-        actionsColumn.setCellFactory(new Callback<TableColumn<Etudiant, Void>, TableCell<Etudiant, Void>>() {
+        actionsColumn.setCellFactory(new Callback<TableColumn<org.example.model.Module, Void>, TableCell<org.example.model.Module, Void>>() {
             @Override
-            public TableCell<Etudiant, Void> call(final TableColumn<Etudiant, Void> param) {
-                return new TableCell<Etudiant, Void>() {
+            public TableCell<org.example.model.Module, Void> call(final TableColumn<org.example.model.Module, Void> param) {
+                return new TableCell<org.example.model.Module, Void>() {
                     private final HBox container = new HBox(12);
                     private final Button editButton = new Button();
                     private final Button deleteButton = new Button();
@@ -246,8 +204,8 @@ public class gestionEtudiant_Controller {
                         }
                         editButton.getStyleClass().add("action-button");
                         editButton.setOnAction(event -> {
-                            Etudiant etudiant = getTableView().getItems().get(getIndex());
-                            handleEdit(etudiant);
+                            org.example.model.Module module = getTableView().getItems().get(getIndex());
+                            handleEdit(module);
                         });
 
                         // Bouton supprimer
@@ -261,8 +219,8 @@ public class gestionEtudiant_Controller {
                         }
                         deleteButton.getStyleClass().add("action-button");
                         deleteButton.setOnAction(event -> {
-                            Etudiant etudiant = getTableView().getItems().get(getIndex());
-                            handleDelete(etudiant);
+                            org.example.model.Module module = getTableView().getItems().get(getIndex());
+                            handleDelete(module);
                         });
 
                         container.getChildren().addAll(editButton, deleteButton);
@@ -290,8 +248,7 @@ public class gestionEtudiant_Controller {
     private void setupFloatingLabels() {
         // Gestion des labels flottants pour les champs de filtrage
         setupFloatingLabelForField(nomField, "Nom");
-        setupFloatingLabelForField(prenomField, "Prenom");
-        setupFloatingLabelForField(cinField, "CIN");
+        setupFloatingLabelForField(matriculeField, "Matricule");
     }
 
     private void setupFloatingLabelForField(TextField field, String labelText) {
@@ -321,17 +278,17 @@ public class gestionEtudiant_Controller {
     // ================ GESTION DES ACTIONS ================================
     // =====================================================================
     @FXML
-    private void handleEdit(Etudiant etudiant) {
+    private void handleEdit(org.example.model.Module module) {
         try {
             // Charger le FXML
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/view/directeur/Gestion_Etudiants/Modifier_Etudiant.fxml")
+                    getClass().getResource("/view/directeur/Gestion_Modules/Modifier_Module.fxml")
             );
             Parent root = loader.load();
 
             // Récupérer le controller de modification
-            Modifier_Etudiant_Controller controller = loader.getController();
-            controller.setEtudiantToEdit(etudiant);
+            Modifier_Module_Controller controller = loader.getController();
+            controller.setModuleToEdit(module);
 
             // Récupérer la fenêtre principale
             Stage stage = StageManager.getPrimaryStage();
@@ -353,7 +310,7 @@ public class gestionEtudiant_Controller {
             );
 
             // Mettre le titre
-            stage.setTitle("Modifier Etudiant");
+            stage.setTitle("Modifier Module");
             stage.show();
 
         } catch (IOException e) {
@@ -361,7 +318,7 @@ public class gestionEtudiant_Controller {
         }
     }
 
-    private void handleDelete(Etudiant etudiant) {
+    private void handleDelete(org.example.model.Module module) {
 
         Stage stage = (Stage) nomEcoleLabel.getScene().getWindow(); // ⭐ fenêtre courante
 
@@ -369,11 +326,11 @@ public class gestionEtudiant_Controller {
         confirm.initOwner(stage);                 // 🔑 IMPORTANT
         confirm.initModality(Modality.WINDOW_MODAL);
 
-        confirm.setTitle("Supprimer étudiant");
+        confirm.setTitle("Supprimer module");
         confirm.setHeaderText("Confirmer la suppression");
         confirm.setContentText(
                 "Voulez-vous vraiment supprimer "
-                        + etudiant.getPrenom() + " " + etudiant.getNom() + " ?"
+                        +  module.getNom() + " ?"
         );
 
         ButtonType buttonTypeYes = new ButtonType("Oui", ButtonBar.ButtonData.YES);
@@ -383,13 +340,13 @@ public class gestionEtudiant_Controller {
         confirm.showAndWait().ifPresent(response -> {
             if (response == buttonTypeYes) {
 
-                etudiantDAO.delete(etudiant.getId());
-                loadEtudiantsFromDB(); // rafraîchir la table
+                moduleDAO.delete(module.getId());
+                loadModulesFromDB(); // rafraîchir la table
 
                 showAlert(
                         "Succès",
-                        "Étudiant supprimé",
-                        etudiant.getNomComplet() + " a été supprimé avec succès.",
+                        "Module supprimé",
+                        module.getNom() + " a été supprimé avec succès.",
                         Alert.AlertType.INFORMATION
                 );
             }
@@ -403,29 +360,24 @@ public class gestionEtudiant_Controller {
     // ================ BOUTON : FILTRER ===================================
     // =====================================================================
     @FXML
-    private void filtrerEtudiants() {
+    private void filtrerModules() {
         String nom = nomField.getText().toLowerCase();
-        String prenom = prenomField.getText().toLowerCase();
-        String cin = cinField.getText().toLowerCase();
-        String sexe = sexeComboBox.getValue();
-        String groupe = groupeComboBox.getValue();
+        String matricule = matriculeField.getText().toLowerCase();
+        String formateur = formateurComboBox.getValue();
 
-        List<Etudiant> filtered = etudiantList.stream()
+        List<org.example.model.Module> filtered = moduleList.stream()
                 .filter(f ->
                         (nom.isEmpty() || f.getNom().toLowerCase().contains(nom)) &&
-                                (prenom.isEmpty() || f.getPrenom().toLowerCase().contains(prenom)) &&
-                                (cin.isEmpty() || f.getCin().toLowerCase().contains(cin)) &&
-                                (sexe == null || f.getSexe().getValeur().equals(sexe)) &&
-                                (groupe == null || f.getGroupe().getMatricule().equals(groupe))
+                                (matricule.isEmpty() || f.getMatricule().toLowerCase().contains(matricule)) &&
+                                (formateur == null || f.getFormateur().getMatricule().equals(formateur))
                 )
                 .collect(Collectors.toList());
 
         filteredList.setAll(filtered);
 
-        if (filtered.isEmpty() && (!nom.isEmpty() || !prenom.isEmpty() || !cin.isEmpty() ||
-                sexe != null || groupe != null)) {
+        if (filtered.isEmpty() && (!nom.isEmpty() || !matricule.isEmpty() || formateur != null)) {
             showAlert("Information", "Aucun résultat",
-                    "Aucun etudiant ne correspond aux critères de recherche.",
+                    "Aucun module ne correspond aux critères de recherche.",
                     Alert.AlertType.INFORMATION);
         }
     }
@@ -436,33 +388,30 @@ public class gestionEtudiant_Controller {
     @FXML
     private void reinitialiserFiltres() {
         nomField.clear();
-        prenomField.clear();
-        cinField.clear();
-        sexeComboBox.setValue(null);
-        groupeComboBox.setValue(null);
+        matriculeField.clear();
+        formateurComboBox.setValue(null);
 
         // Réinitialiser les styles des champs
         nomField.getStyleClass().removeAll("has-text", "focused");
-        prenomField.getStyleClass().removeAll("has-text", "focused");
-        cinField.getStyleClass().removeAll("has-text", "focused");
+        matriculeField.getStyleClass().removeAll("has-text", "focused");
 
-        filteredList.setAll(etudiantList);
+        filteredList.setAll(moduleList);
     }
 
     @FXML
     private void rafraichirDonnees() {
-        loadEtudiantsFromDB();
+        loadModulesFromDB();
         reinitialiserFiltres();
     }
 
 
     // =====================================================================
-    // ================ BOUTON : AJOUTER ETUDIANT =========================
+    // ================ BOUTON : AJOUTER MODULE =========================
     // =====================================================================
     @FXML
-    private void ajouterEtudiant() {
+    private void ajouterModule() {
         try {
-            StageManager.loadScene("/view/directeur/Gestion_Etudiants/Ajouter_Etudiant.fxml", "/styles/gestionFormateurs.css", "Ajouter Etudiant");
+            StageManager.loadScene("/view/directeur/Gestion_Modules/Ajouter_Module.fxml", "/styles/gestionFormateurs.css", "Ajouter Module");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -472,7 +421,7 @@ public class gestionEtudiant_Controller {
 
 
     // =====================================================================
-    // ======================= NAVIGATION MENU =============================
+    // ======================= NAVIGATION ==================================
     // =====================================================================
     @FXML
     private void handleHome() {
@@ -486,22 +435,25 @@ public class gestionEtudiant_Controller {
     @FXML
     private void handleFormateurs() {
         try {
-            StageManager.loadScene("/view/directeur/Gestion_Formateurs/gestionFormateurs.fxml", "/styles/gestionFormateurs.css", "Formateurs");
+            StageManager.loadScene("/view/directeur/Gestion_Formateurs/gestionFormateurs.fxml", "/styles/gestionFormateurs.css", "gesttion des Formateurs");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     @FXML
-    private void handleStagiaires() {
-        // On est déjà sur cette page, on rafraîchit juste les données
-        rafraichirDonnees();
+    private void handleEtudiants() {
+        try {
+            StageManager.loadScene("/view/directeur/Gestion_Etudiants/gestionEtudiants.fxml", "/styles/gestionFormateurs.css", "gestion des Etudiants");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void handleGroupes() {
         try {
-            StageManager.loadScene("/view/directeur/gestionGroupes.fxml", "/styles/gestionGroupes.css", "Groupes");
+            StageManager.loadScene("/view/directeur/Gestion_Groupes/gestionGroupes.fxml", "/styles/gestionFormateurs.css", "gestion des Groupes");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -510,7 +462,7 @@ public class gestionEtudiant_Controller {
     @FXML
     private void handleModules() {
         try {
-            StageManager.loadScene("/view/directeur/gestionModules.fxml", "/styles/gestionModules.css", "Modules");
+            StageManager.loadScene("/view/directeur/Gestion_Modules/gestionModules.fxml", "/styles/gestionFormateurs.css", "gestion des Modules");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -518,17 +470,15 @@ public class gestionEtudiant_Controller {
 
     @FXML
     private void handleNotes() {
-        try {
-            StageManager.loadScene("/view/directeur/gestionNotes.fxml", "/styles/gestionNotes.css", "Notes");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        showAlert("Notes", "Gestion des notes",
+                "Cette fonctionnalité sera disponible prochainement.",
+                Alert.AlertType.INFORMATION);
     }
 
     @FXML
     private void handleCertificats() {
         try {
-            StageManager.loadScene("/view/directeur/gestionCertificats.fxml", "/styles/gestionCertificats.css", "Certificats");
+            StageManager.loadScene("/view/directeur/Gestion_Planning/PlanningSemaine.fxml", "/styles/gestionFormateurs.css", "Planning");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -536,7 +486,12 @@ public class gestionEtudiant_Controller {
 
     @FXML
     private void handleLogout() {
+        System.out.println("Déconnexion demandée");
         SessionManager.getInstance().clearSession();
+        redirectToLogin();
+    }
+
+    private void redirectToLogin() {
         try {
             StageManager.loadScene("/view/login_register.fxml", "/styles/auth.css", "Connexion");
         } catch (IOException e) {
@@ -544,7 +499,17 @@ public class gestionEtudiant_Controller {
         }
     }
 
-
+    @FXML
+    private void handleProfilDirecteur() {
+        try {
+            StageManager.loadScene("/view/directeur/profilDirecteur.fxml",
+                    "/styles/profil.css", "Mon Profil - Directeur");
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Erreur", "Navigation impossible",
+                    "Impossible d'ouvrir la page profil.", Alert.AlertType.ERROR);
+        }
+    }
 
     private void showAlert(
             String title,

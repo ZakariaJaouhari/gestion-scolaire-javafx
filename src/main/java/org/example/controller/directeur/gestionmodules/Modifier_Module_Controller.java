@@ -1,23 +1,17 @@
-package org.example.controller;
+package org.example.controller.directeur.gestionmodules;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import org.example.dao.EtudiantDAO;
 import org.example.dao.FormateurDAO;
-import org.example.dao.GroupeDAO;
 import org.example.dao.ModuleDAO;
-import org.example.model.Etudiant;
 import org.example.model.Formateur;
-import org.example.model.Groupe;
 import org.example.util.SessionManager;
 import org.example.util.StageManager;
 
 import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 
 public class Modifier_Module_Controller {
@@ -311,7 +305,7 @@ public class Modifier_Module_Controller {
 
 
     // =====================================================================
-    // ======================= NAVIGATION MENU =============================
+    // ======================= NAVIGATION ==================================
     // =====================================================================
     @FXML
     private void handleHome() {
@@ -325,7 +319,7 @@ public class Modifier_Module_Controller {
     @FXML
     private void handleFormateurs() {
         try {
-            StageManager.loadScene("/view/directeur/Gestion_Formateurs/gestionFormateurs.fxml", "/styles/gestionFormateurs.css", "Formateurs");
+            StageManager.loadScene("/view/directeur/Gestion_Formateurs/gestionFormateurs.fxml", "/styles/gestionFormateurs.css", "gesttion des Formateurs");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -334,7 +328,7 @@ public class Modifier_Module_Controller {
     @FXML
     private void handleEtudiants() {
         try {
-            StageManager.loadScene("/view/directeur/Gestion_Etudiants/gestionEtudiants.fxml", "/styles/gestionFormateurs.css", "Etudiants");
+            StageManager.loadScene("/view/directeur/Gestion_Etudiants/gestionEtudiants.fxml", "/styles/gestionFormateurs.css", "gestion des Etudiants");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -343,7 +337,7 @@ public class Modifier_Module_Controller {
     @FXML
     private void handleGroupes() {
         try {
-            StageManager.loadScene("/view/directeur/Gestion_Groupes/gestionGroupes.fxml", "/styles/gestionGroupes.css", "Groupes");
+            StageManager.loadScene("/view/directeur/Gestion_Groupes/gestionGroupes.fxml", "/styles/gestionFormateurs.css", "gestion des Groupes");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -352,7 +346,7 @@ public class Modifier_Module_Controller {
     @FXML
     private void handleModules() {
         try {
-            StageManager.loadScene("/view/directeur/Gestion_Modules/gestionModules.fxml", "/styles/gestionFormateurs.css", "Modules");
+            StageManager.loadScene("/view/directeur/Gestion_Modules/gestionModules.fxml", "/styles/gestionFormateurs.css", "gestion des Modules");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -360,17 +354,15 @@ public class Modifier_Module_Controller {
 
     @FXML
     private void handleNotes() {
-        try {
-            StageManager.loadScene("/view/directeur/gestionNotes.fxml", "/styles/gestionNotes.css", "Notes");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        showAlert("Notes", "Gestion des notes",
+                "Cette fonctionnalité sera disponible prochainement.",
+                Alert.AlertType.INFORMATION);
     }
 
     @FXML
     private void handleCertificats() {
         try {
-            StageManager.loadScene("/view/directeur/gestionCertificats.fxml", "/styles/gestionCertificats.css", "Certificats");
+            StageManager.loadScene("/view/directeur/Gestion_Planning/PlanningSemaine.fxml", "/styles/gestionFormateurs.css", "Planning");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -378,7 +370,12 @@ public class Modifier_Module_Controller {
 
     @FXML
     private void handleLogout() {
+        System.out.println("Déconnexion demandée");
         SessionManager.getInstance().clearSession();
+        redirectToLogin();
+    }
+
+    private void redirectToLogin() {
         try {
             StageManager.loadScene("/view/login_register.fxml", "/styles/auth.css", "Connexion");
         } catch (IOException e) {
@@ -386,7 +383,17 @@ public class Modifier_Module_Controller {
         }
     }
 
-
+    @FXML
+    private void handleProfilDirecteur() {
+        try {
+            StageManager.loadScene("/view/directeur/profilDirecteur.fxml",
+                    "/styles/profil.css", "Mon Profil - Directeur");
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Erreur", "Navigation impossible",
+                    "Impossible d'ouvrir la page profil.", Alert.AlertType.ERROR);
+        }
+    }
 
     private void showAlert(
             String title,

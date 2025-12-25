@@ -13,7 +13,7 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.controller.Ajouter_Module_Controller"
+            fx:controller="org.example.controller.directeur.gestionmodules.Ajouter_Module_Controller"
             prefHeight="400.0" prefWidth="600.0">
 
     <VBox style="-fx-background-color: #142b77; -fx-background-radius: 0 40 40 0;"
@@ -55,15 +55,15 @@
             </HBox>
 
             <!-- ETUDIANTS -->
-            <HBox alignment="CENTER_LEFT" style="-fx-background-color: #f5f5f4; -fx-background-radius: 30 0 0 30; -fx-padding: 12 0 12 30;" onMouseClicked="#handleEtudiants">
+            <HBox alignment="CENTER_LEFT" style=" -fx-padding: 12 0 12 30;" onMouseClicked="#handleEtudiants">
 
                 <ImageView fitWidth="30" fitHeight="30">
                     <image>
-                        <Image url="/images/stagiaire-hover.png"/>
+                        <Image url="/images/stagiaire.png"/>
                     </image>
                 </ImageView>
 
-                <Label text="Etudiants" style="-fx-text-fill: #43639a; -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
+                <Label text="Etudiants" style=" -fx-font-size: 17;-fx-padding: 0 0 0 10;"/>
             </HBox>
 
             <!-- GROUPES -->
@@ -79,15 +79,15 @@
             </HBox>
 
             <!-- MODULES -->
-            <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 0 12 30;" onMouseClicked="#handleModules">
+            <HBox alignment="CENTER_LEFT" style="-fx-background-color: #f5f5f4; -fx-background-radius: 30 0 0 30; -fx-padding: 12 0 12 30;" onMouseClicked="#handleModules">
 
                 <ImageView fitWidth="27" fitHeight="27">
                     <image>
-                        <Image url="/images/module.png"/>
+                        <Image url="/images/module-hover.png"/>
                     </image>
                 </ImageView>
 
-                <Label text="Modules" style="-fx-text-fill: white; -fx-font-size: 17;-fx-padding: 0 0 0 15;"/>
+                <Label text="Modules" style="-fx-text-fill: #43639a; -fx-font-size: 17;-fx-padding: 0 0 0 15;"/>
             </HBox>
 
             <!-- NOTES -->
@@ -168,7 +168,7 @@
             </HBox>
 
             <!-- Directeur -->
-            <HBox alignment="CENTER_LEFT" spacing="5">
+            <HBox alignment="CENTER_LEFT" spacing="5" onMouseClicked="#handleProfilDirecteur">
                 <ImageView fitWidth="48" fitHeight="40">
                     <image>
                         <Image url="/images/profil.png"/>

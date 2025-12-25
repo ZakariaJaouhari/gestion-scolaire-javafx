@@ -1,23 +1,21 @@
-package org.example.controller;
+package org.example.controller.directeur.gestionformateurs;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.example.dao.FormateurDAO;
-import org.example.dao.ModuleDAO;
-import org.example.model.Etudiant;
-import org.example.model.Etudiant.Sexe;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.example.model.Formateur;
-import org.example.model.Groupe;
+import org.example.model.Formateur.Sexe;
+import org.example.model.Formateur.Situation;
 import org.example.util.SessionManager;
 import org.example.util.StageManager;
+import org.apache.commons.codec.digest.DigestUtils;
 
 import java.io.IOException;
 import java.time.LocalDate;
 
-public class Ajouter_Module_Controller {
+public class Ajouter_Formateur_Controller {
 
     // HEADER
     @FXML private Label nomEcoleLabel;
@@ -26,34 +24,33 @@ public class Ajouter_Module_Controller {
 
     // Champs du formulaire
     @FXML private TextField nomField;
+    @FXML private TextField prenomField;
     @FXML private TextField matriculeField;
-    @FXML private TextField heuresField;
-    @FXML private TextField cofField;
+    @FXML private TextField cinField;
 
-    // ComboBox pour date
+    // ComboBox pour date de naissance
     @FXML private ComboBox<String> dayComboBox;
     @FXML private ComboBox<String> monthComboBox;
     @FXML private ComboBox<String> yearComboBox;
-    @FXML private ComboBox<String> dayfComboBox;
-    @FXML private ComboBox<String> monthfComboBox;
-    @FXML private ComboBox<String> yearfComboBox;
 
+    @FXML private ComboBox<String> sexeComboBox;
+    @FXML private ComboBox<String> situationComboBox;
 
+    // ComboBox pour date de recrutement
+    @FXML private ComboBox<String> dayRComboBox;
+    @FXML private ComboBox<String> monthRComboBox;
+    @FXML private ComboBox<String> yearRComboBox;
+
+    @FXML private TextField emailField;
+    @FXML private TextField passwordField;
     @FXML private Button ajouterButton;
     @FXML private Button cancelButton;
 
-    @FXML private ComboBox<Formateur> formateurComboBox;
     private FormateurDAO formateurDAO;
-
-    private ModuleDAO moduleDAO;
-
-
 
     @FXML
     public void initialize() {
-        moduleDAO = new ModuleDAO();
         formateurDAO = new FormateurDAO();
-
 
         // --- HEADER ----
         SessionManager session = SessionManager.getInstance();
@@ -63,11 +60,13 @@ public class Ajouter_Module_Controller {
         }
         versionLabel.setText("V 0.1.0");
 
+        // Initialiser les ComboBox de sexe et situation
+        sexeComboBox.getItems().setAll("Homme", "Femme");
+        situationComboBox.getItems().setAll("Marié(e)", "Célibataire");
 
         // Remplir les ComboBox pour les dates
         populateDateComboBoxes();
 
-        loadFormateurs();
         // Configurer les événements
         configureEvents();
 
@@ -75,42 +74,12 @@ public class Ajouter_Module_Controller {
         setupButtonStyles();
     }
 
-    private void loadFormateurs() {
-        int directeurId = SessionManager.getInstance()
-                .getCurrentDirecteur()
-                .getId();
-
-        formateurComboBox.getItems().setAll(
-                formateurDAO.findByDirecteurId(directeurId)
-        );
-
-        // Afficher uniquement le matricule
-        formateurComboBox.setCellFactory(cb -> new ListCell<>() {
-            @Override
-            protected void updateItem(Formateur formateur, boolean empty) {
-                super.updateItem(formateur, empty);
-                setText(empty || formateur == null ? "" : formateur.getNomComplet());
-            }
-        });
-
-        // Affichage de l’élément sélectionné
-        formateurComboBox.setButtonCell(new ListCell<>() {
-            @Override
-            protected void updateItem(Formateur formateur, boolean empty) {
-                super.updateItem(formateur, empty);
-                setText(empty || formateur == null ? "" : formateur.getNomComplet());
-            }
-        });
-    }
-
-
-
     private void populateDateComboBoxes() {
         // Remplir les jours (01 à 31)
         for (int i = 1; i <= 31; i++) {
             String day = String.format("%02d", i);
             dayComboBox.getItems().add(day);
-            dayfComboBox.getItems().add(day);
+            dayRComboBox.getItems().add(day);
         }
 
         // Remplir les mois avec format "MM - NomMois"
@@ -120,7 +89,7 @@ public class Ajouter_Module_Controller {
         for (int i = 0; i < months.length; i++) {
             String monthDisplay = monthValues[i] + " - " + months[i];
             monthComboBox.getItems().add(monthDisplay);
-            monthfComboBox.getItems().add(monthDisplay);
+            monthRComboBox.getItems().add(monthDisplay);
         }
 
         // Remplir les années (de l'année actuelle à 1905)
@@ -128,10 +97,11 @@ public class Ajouter_Module_Controller {
         for (int i = currentYear; i >= 1905; i--) {
             String year = String.valueOf(i);
             yearComboBox.getItems().add(year);
-            yearfComboBox.getItems().add(year);
+            yearRComboBox.getItems().add(year);
         }
 
         // Sélectionner les valeurs par défaut
+        // Date de naissance : par défaut 25 ans
         dayComboBox.getSelectionModel().select(0); // Jour 01
         monthComboBox.getSelectionModel().select(0); // Janvier
         yearComboBox.getSelectionModel().selectFirst(); // Année actuelle
@@ -143,22 +113,22 @@ public class Ajouter_Module_Controller {
         String yearToday = String.valueOf(today.getYear());
 
         // Trouver et sélectionner le jour d'aujourd'hui
-        int dayIndex = dayfComboBox.getItems().indexOf(dayToday);
+        int dayIndex = dayRComboBox.getItems().indexOf(dayToday);
         if (dayIndex >= 0) {
-            dayfComboBox.getSelectionModel().select(dayIndex);
+            dayRComboBox.getSelectionModel().select(dayIndex);
         }
 
         // Trouver et sélectionner le mois d'aujourd'hui
         String monthDisplayToday = monthToday + " - " + getMonthName(today.getMonthValue());
-        int monthIndex = monthfComboBox.getItems().indexOf(monthDisplayToday);
+        int monthIndex = monthRComboBox.getItems().indexOf(monthDisplayToday);
         if (monthIndex >= 0) {
-            monthfComboBox.getSelectionModel().select(monthIndex);
+            monthRComboBox.getSelectionModel().select(monthIndex);
         }
 
         // Trouver et sélectionner l'année d'aujourd'hui
-        int yearIndex = yearfComboBox.getItems().indexOf(yearToday);
+        int yearIndex = yearRComboBox.getItems().indexOf(yearToday);
         if (yearIndex >= 0) {
-            yearfComboBox.getSelectionModel().select(yearIndex);
+            yearRComboBox.getSelectionModel().select(yearIndex);
         }
     }
 
@@ -170,9 +140,12 @@ public class Ajouter_Module_Controller {
 
     private void configureEvents() {
         // Action des boutons
-        ajouterButton.setOnAction(e -> ajouterModule());
-        cancelButton.setOnAction(e -> handleModules());
+        ajouterButton.setOnAction(e -> ajouterFormateur());
+        cancelButton.setOnAction(e -> returnToGestionFormateurs());
 
+        // Génération automatique de l'email et du mot de passe
+        nomField.setOnKeyReleased(e -> generateEmailAndPassword());
+        prenomField.setOnKeyReleased(e -> generateEmail());
     }
 
     private void setupButtonStyles() {
@@ -201,7 +174,9 @@ public class Ajouter_Module_Controller {
         );
     }
 
-    private void ajouterModule() {
+
+
+    private void ajouterFormateur() {
         try {
             // Validation des champs
             if (!validateFields()) {
@@ -210,41 +185,70 @@ public class Ajouter_Module_Controller {
 
             // Récupération des valeurs
             String nom = nomField.getText().trim();
+            String prenom = prenomField.getText().trim();
             String matricule = matriculeField.getText().trim();
-            String heures_P = heuresField.getText().trim();
-            Integer coefficient = Integer.valueOf(cofField.getText());
+            String cin = cinField.getText().trim();
 
             // Conversion des dates
-            LocalDate date_D = getDateFromComboBoxes(
+            LocalDate dateNaissance = getDateFromComboBoxes(
                     dayComboBox.getValue(),
                     monthComboBox.getValue(),
                     yearComboBox.getValue()
             );
-            LocalDate date_F = getDateFromComboBoxes(
-                    dayfComboBox.getValue(),
-                    monthfComboBox.getValue(),
-                    yearfComboBox.getValue()
+
+            LocalDate dateRecrutement = getDateFromComboBoxes(
+                    dayRComboBox.getValue(),
+                    monthRComboBox.getValue(),
+                    yearRComboBox.getValue()
             );
 
+            String sexe = sexeComboBox.getValue();
+            String situation = situationComboBox.getValue();
+            String emailPart = emailField.getText().trim();
+            String email = emailPart + "@taalim.ma";
+            String password = passwordField.getText();
 
-            Formateur formateur = formateurComboBox.getValue();
-            Formateur formateurSelectionne = formateurComboBox.getValue();
-
-            if (formateurSelectionne == null) {
-                showAlert("Validation", "Formateur manquant",
-                        "Veuillez sélectionner un formateur.",
-                        Alert.AlertType.WARNING);
+            // Validation mot de passe
+            if (password.length() < 6) {
+                showAlert("Erreur", "Mot de passe trop court",
+                        "Le mot de passe doit contenir au moins 6 caractères.",
+                        Alert.AlertType.ERROR);
                 return;
             }
 
-            int formateurId = formateurSelectionne.getId();
-
+            // 🔒 HASH DU MOT DE PASSE
+            String hashedPassword = DigestUtils.sha256Hex(password);
 
 
             // Vérifications supplémentaires
-            if (date_D == null ) {
+            if (dateNaissance == null || dateRecrutement == null) {
                 showAlert("Erreur", "Date invalide",
                         "Veuillez vérifier les dates saisies.",
+                        Alert.AlertType.ERROR);
+                return;
+            }
+
+            // Vérifier que la date de naissance est antérieure à la date de recrutement
+            if (dateNaissance.isAfter(dateRecrutement)) {
+                showAlert("Erreur", "Dates incohérentes",
+                        "La date de naissance doit être antérieure à la date de recrutement.",
+                        Alert.AlertType.ERROR);
+                return;
+            }
+
+            // Vérifier l'âge minimum (18 ans)
+            LocalDate minBirthDate = dateRecrutement.minusYears(18);
+            if (dateNaissance.isAfter(minBirthDate)) {
+                showAlert("Erreur", "Âge minimum requis",
+                        "Le formateur doit avoir au moins 18 ans à la date de recrutement.",
+                        Alert.AlertType.ERROR);
+                return;
+            }
+
+            // Vérifier la validité de l'email
+            if (!isValidEmail(emailPart)) {
+                showAlert("Erreur", "Email invalide",
+                        "L'email ne doit contenir que des lettres, chiffres, points et tirets.",
                         Alert.AlertType.ERROR);
                 return;
             }
@@ -253,35 +257,35 @@ public class Ajouter_Module_Controller {
             int directeurId = SessionManager.getInstance().getCurrentDirecteur().getId();
 
             // Créer l'objet Formateur
-            org.example.model.Module module = new org.example.model.Module(
-                    nom,
-                    matricule,
-                    date_D,
-                    date_F,
-                    heures_P,
-                    coefficient,
-                    formateurId,
+            Formateur formateur = new Formateur(
+                    nom, prenom, matricule,
+                    Sexe.fromString(sexe),
+                    dateNaissance,
+                    Situation.fromString(situation),
+                    cin, dateRecrutement, email, hashedPassword,
                     directeurId
             );
 
-
             // Sauvegarder dans la base de données
-            Long id = moduleDAO.create(module);
+            Long id = formateurDAO.create(formateur);
 
             if (id != null) {
 
                 showAlert(
                         "Succès",
-                        "Module ajouté",
-                        "Le module a été ajouté avec succès !",
+                        "Formateur ajouté",
+                        "Le formateur a été ajouté avec succès !",
                         Alert.AlertType.INFORMATION
                 );
 
                 // 👉 navigation APRES l'alert
-                handleModules();
+                returnToGestionFormateurs();
             } else {
+                // Retourner à la page gestionFormateurs
+                returnToGestionFormateurs();
+
                 showAlert("Erreur", "Échec de l'ajout",
-                        "Une erreur est survenue lors de l'ajout de module.",
+                        "Une erreur est survenue lors de l'ajout du formateur.",
                         Alert.AlertType.ERROR);
             }
 
@@ -293,20 +297,41 @@ public class Ajouter_Module_Controller {
         }
     }
 
+    // Méthode pour valider l'email (partie avant @taalim.ma)
+    private boolean isValidEmail(String emailPart) {
+        if (emailPart == null || emailPart.isEmpty()) {
+            return false;
+        }
+        // Vérifier que l'email ne contient que des lettres, chiffres, points et tirets
+        return emailPart.matches("^[a-zA-Z0-9.\\-]+$");
+    }
+
     private boolean validateFields() {
         StringBuilder errors = new StringBuilder();
 
         if (nomField.getText().trim().isEmpty()) {
             errors.append("- Le nom est obligatoire\n");
         }
-        if (matriculeField.getText().trim().isEmpty()) {
+        if (prenomField.getText().trim().isEmpty()) {
             errors.append("- Le prénom est obligatoire\n");
         }
-        if (heuresField.getText().trim().isEmpty()) {
-            errors.append("- Le heures est obligatoire\n");
+        if (matriculeField.getText().trim().isEmpty()) {
+            errors.append("- Le matricule est obligatoire\n");
         }
-        if (cofField.getText().trim().isEmpty()) {
-            errors.append("- Coefficient est obligatoire\n");
+        if (cinField.getText().trim().isEmpty()) {
+            errors.append("- Le CIN est obligatoire\n");
+        }
+        if (sexeComboBox.getValue() == null) {
+            errors.append("- Le sexe est obligatoire\n");
+        }
+        if (situationComboBox.getValue() == null) {
+            errors.append("- La situation familiale est obligatoire\n");
+        }
+        if (emailField.getText().trim().isEmpty()) {
+            errors.append("- L'email est obligatoire\n");
+        }
+        if (passwordField.getText().isEmpty()) {
+            errors.append("- Le mot de passe est obligatoire\n");
         }
 
         if (errors.length() > 0) {
@@ -347,27 +372,106 @@ public class Ajouter_Module_Controller {
     private void clearForm() {
         // Réinitialiser les champs texte
         nomField.clear();
+        prenomField.clear();
         matriculeField.clear();
-        heuresField.clear();
-        cofField.clear();
+        cinField.clear();
+        emailField.clear();
+        passwordField.clear();
 
         // Réinitialiser les ComboBox
         dayComboBox.getSelectionModel().select(0);
         monthComboBox.getSelectionModel().select(0);
         yearComboBox.getSelectionModel().selectFirst();
-        dayfComboBox.getSelectionModel().select(0);
-        monthfComboBox.getSelectionModel().select(0);
-        yearfComboBox.getSelectionModel().selectFirst();
 
+        // Remettre la date de recrutement à aujourd'hui
+        LocalDate today = LocalDate.now();
+        String dayToday = String.format("%02d", today.getDayOfMonth());
+        String monthToday = String.format("%02d", today.getMonthValue());
+        String yearToday = String.valueOf(today.getYear());
+
+        int dayIndex = dayRComboBox.getItems().indexOf(dayToday);
+        if (dayIndex >= 0) dayRComboBox.getSelectionModel().select(dayIndex);
+
+        String monthDisplayToday = monthToday + " - " + getMonthName(today.getMonthValue());
+        int monthIndex = monthRComboBox.getItems().indexOf(monthDisplayToday);
+        if (monthIndex >= 0) monthRComboBox.getSelectionModel().select(monthIndex);
+
+        int yearIndex = yearRComboBox.getItems().indexOf(yearToday);
+        if (yearIndex >= 0) yearRComboBox.getSelectionModel().select(yearIndex);
 
         // Réinitialiser les autres ComboBox
-        formateurComboBox.getSelectionModel().clearSelection();
+        sexeComboBox.getSelectionModel().clearSelection();
+        situationComboBox.getSelectionModel().clearSelection();
 
         // Remettre le focus sur le premier champ
         nomField.requestFocus();
     }
 
 
+
+
+    // Méthode pour retourner à la page gestionFormateurs
+    private void returnToGestionFormateurs() {
+        try {
+            StageManager.loadScene("/view/directeur/Gestion_Formateurs/gestionFormateurs.fxml",
+                    "/styles/gestionFormateurs.css", "Formateurs");
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Erreur", "Navigation impossible",
+                    "Impossible de charger la gestion des formateurs.", Alert.AlertType.ERROR);
+        }
+    }
+
+    // Méthode modifiée pour le bouton Annuler
+    private void closeWindow() {
+        // Cette méthode n'est plus utilisée, utiliser returnToGestionFormateurs() à la place
+        returnToGestionFormateurs();
+    }
+
+    @FXML
+    private void generateEmailAndPassword() {
+        generateEmail();
+        generatePassword();
+    }
+
+    @FXML
+    private void generateEmail() {
+        String nom = nomField.getText().trim().toLowerCase();
+        String prenom = prenomField.getText().trim().toLowerCase();
+
+        if (!nom.isEmpty() && !prenom.isEmpty()) {
+            // Nettoyer les accents et caractères spéciaux
+            String nomClean = removeAccents(nom);
+            String prenomClean = removeAccents(prenom);
+
+            // Générer email au format prenom.nom (sans @taalim.ma)
+            String email = prenomClean + "." + nomClean;
+            emailField.setText(email);
+        }
+    }
+
+    // Méthode pour supprimer les accents
+    private String removeAccents(String input) {
+        if (input == null) return "";
+
+        // Normaliser et remplacer les caractères accentués
+        String normalized = java.text.Normalizer.normalize(input, java.text.Normalizer.Form.NFD);
+        return normalized.replaceAll("\\p{InCombiningDiacriticalMarks}+", "")
+                .replaceAll("[^a-z0-9.]", "");
+    }
+
+    @FXML
+    private void generatePassword() {
+        String nom = nomField.getText().trim().toLowerCase();
+
+        if (!nom.isEmpty()) {
+            // Nettoyer les accents
+            String nomClean = removeAccents(nom);
+            // Générer mot de passe basé sur le nom
+            String password = nomClean + "123";
+            passwordField.setText(password);
+        }
+    }
 
     @FXML
     private void onHoverButton() {
@@ -406,7 +510,7 @@ public class Ajouter_Module_Controller {
     }
 
     // =====================================================================
-    // ======================= NAVIGATION MENU =============================
+    // ======================= NAVIGATION ==================================
     // =====================================================================
     @FXML
     private void handleHome() {
@@ -414,104 +518,88 @@ public class Ajouter_Module_Controller {
             StageManager.loadScene("/view/directeur/dashboard.fxml", "/styles/dashboard.css", "Dashboard");
         } catch (IOException e) {
             e.printStackTrace();
-            showAlert("Erreur", "Navigation impossible",
-                    "Impossible de charger le dashboard.", Alert.AlertType.ERROR);
         }
     }
 
     @FXML
     private void handleFormateurs() {
         try {
-            StageManager.loadScene("/view/directeur/Gestion_Formateurs/gestionFormateurs.fxml",
-                    "/styles/gestionFormateurs.css", "Formateurs");
+            StageManager.loadScene("/view/directeur/Gestion_Formateurs/gestionFormateurs.fxml", "/styles/gestionFormateurs.css", "gesttion des Formateurs");
         } catch (IOException e) {
             e.printStackTrace();
-            showAlert("Erreur", "Navigation impossible",
-                    "Impossible de charger la gestion des formateurs.", Alert.AlertType.ERROR);
         }
     }
 
     @FXML
     private void handleEtudiants() {
         try {
-            StageManager.loadScene("/view/directeur/Gestion_Etudiants/gestionEtudiants.fxml",
-                    "/styles/gestionFormateurs.css", "Etudiants");
+            StageManager.loadScene("/view/directeur/Gestion_Etudiants/gestionEtudiants.fxml", "/styles/gestionFormateurs.css", "gestion des Etudiants");
         } catch (IOException e) {
             e.printStackTrace();
-            showAlert("Erreur", "Navigation impossible",
-                    "Impossible de charger la gestion des formateurs.", Alert.AlertType.ERROR);
         }
     }
 
     @FXML
     private void handleGroupes() {
         try {
-            StageManager.loadScene("/view/directeur/Gestion_Groupes/gestionGroupes.fxml",
-                    "/styles/gestionGroupes.css", "Groupes");
+            StageManager.loadScene("/view/directeur/Gestion_Groupes/gestionGroupes.fxml", "/styles/gestionFormateurs.css", "gestion des Groupes");
         } catch (IOException e) {
             e.printStackTrace();
-            showAlert("Erreur", "Navigation impossible",
-                    "Impossible de charger la gestion des groupes.", Alert.AlertType.ERROR);
         }
     }
 
     @FXML
     private void handleModules() {
         try {
-            StageManager.loadScene("/view/directeur/Gestion_Modules/gestionModules.fxml",
-                    "/styles/gestionFormateurs.css", "Modules");
+            StageManager.loadScene("/view/directeur/Gestion_Modules/gestionModules.fxml", "/styles/gestionFormateurs.css", "gestion des Modules");
         } catch (IOException e) {
             e.printStackTrace();
-            showAlert("Erreur", "Navigation impossible",
-                    "Impossible de charger la gestion des modules.", Alert.AlertType.ERROR);
         }
     }
 
     @FXML
     private void handleNotes() {
-        try {
-            StageManager.loadScene("/view/directeur/gestionNotes.fxml",
-                    "/styles/gestionNotes.css", "Notes");
-        } catch (IOException e) {
-            e.printStackTrace();
-            showAlert("Erreur", "Navigation impossible",
-                    "Impossible de charger la gestion des notes.", Alert.AlertType.ERROR);
-        }
+        showAlert("Notes", "Gestion des notes",
+                "Cette fonctionnalité sera disponible prochainement.",
+                Alert.AlertType.INFORMATION);
     }
 
     @FXML
     private void handleCertificats() {
         try {
-            StageManager.loadScene("/view/directeur/gestionCertificats.fxml",
-                    "/styles/gestionCertificats.css", "Certificats");
+            StageManager.loadScene("/view/directeur/Gestion_Planning/PlanningSemaine.fxml", "/styles/gestionFormateurs.css", "Planning");
         } catch (IOException e) {
             e.printStackTrace();
-            showAlert("Erreur", "Navigation impossible",
-                    "Impossible de charger la gestion des certificats.", Alert.AlertType.ERROR);
         }
     }
 
     @FXML
     private void handleLogout() {
-        Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmAlert.setTitle("Confirmation");
-        confirmAlert.setHeaderText("Déconnexion");
-        confirmAlert.setContentText("Êtes-vous sûr de vouloir vous déconnecter ?");
-
-        confirmAlert.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.OK) {
-                SessionManager.getInstance().clearSession();
-                try {
-                    StageManager.loadScene("/view/login_register.fxml",
-                            "/styles/auth.css", "Connexion");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    showAlert("Erreur", "Déconnexion impossible",
-                            "Impossible de charger la page de connexion.", Alert.AlertType.ERROR);
-                }
-            }
-        });
+        System.out.println("Déconnexion demandée");
+        SessionManager.getInstance().clearSession();
+        redirectToLogin();
     }
+
+    private void redirectToLogin() {
+        try {
+            StageManager.loadScene("/view/login_register.fxml", "/styles/auth.css", "Connexion");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleProfilDirecteur() {
+        try {
+            StageManager.loadScene("/view/directeur/profilDirecteur.fxml",
+                    "/styles/profil.css", "Mon Profil - Directeur");
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Erreur", "Navigation impossible",
+                    "Impossible d'ouvrir la page profil.", Alert.AlertType.ERROR);
+        }
+    }
+
 
     private void showAlert(
             String title,
@@ -530,4 +618,6 @@ public class Ajouter_Module_Controller {
 
         alert.showAndWait();
     }
+
+
 }

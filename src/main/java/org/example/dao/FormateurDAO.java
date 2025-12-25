@@ -335,6 +335,33 @@ public class FormateurDAO {
         return formateurs;
     }
 
+
+    public Formateur findByModuleAndGroupe(int moduleId, int groupeId) {
+        String sql = """
+        SELECT f.* 
+        FROM formateurs f
+        INNER JOIN modules m ON f.id = m.formateur_id
+        INNER JOIN new_groupe_new_module gm ON m.id = gm.module_id
+        WHERE gm.module_id = ? AND gm.groupe_id = ?
+        LIMIT 1
+        """;
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, moduleId);
+            stmt.setInt(2, groupeId);
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return mapResultSetToFormateur(rs);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
+
     // Méthode utilitaire pour mapper ResultSet à Formateur
     private Formateur mapResultSetToFormateur(ResultSet rs) throws SQLException {
         Formateur formateur = new Formateur();

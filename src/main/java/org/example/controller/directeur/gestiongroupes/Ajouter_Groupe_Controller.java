@@ -1,11 +1,10 @@
-package org.example.controller;
+package org.example.controller.directeur.gestiongroupes;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -18,10 +17,10 @@ import org.example.util.SessionManager;
 import org.example.util.StageManager;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 
-public class Modifier_Groupe_Controller {
+public class Ajouter_Groupe_Controller {
 
     // HEADER
     @FXML private Label nomEcoleLabel;
@@ -33,16 +32,12 @@ public class Modifier_Groupe_Controller {
     @FXML private ComboBox<String> niveauComboBox;
     @FXML private ListView<Module> modulesListView;
 
-    @FXML private Button modifierButton;
-    @FXML private Button annulerButton;
+    @FXML private Button ajouterButton;
+    @FXML private Button cancelButton;
 
     private GroupeDAO groupeDAO;
     private ModuleDAO moduleDAO;
     private ObservableList<Module> allModulesList = FXCollections.observableArrayList();
-
-    // Le groupe à modifier
-    private Groupe groupeAModifier;
-    private int groupeId;
 
     @FXML
     public void initialize() {
@@ -59,23 +54,6 @@ public class Modifier_Groupe_Controller {
 
         // Initialiser le ComboBox de niveau
         niveauComboBox.getItems().setAll("1ér année", "2éme année", "3éme année", "4éme année", "5éme année");
-    }
-
-    // Méthode pour initialiser avec les données du groupe à modifier
-    public void initData(Groupe groupe) {
-        if (groupe == null) {
-            showAlert("Erreur", "Groupe non trouvé",
-                    "Impossible de charger les données du groupe.", Alert.AlertType.ERROR);
-            retournerALaListe();
-            return;
-        }
-
-        this.groupeAModifier = groupe;
-        this.groupeId = groupe.getId();
-
-        // Remplir les champs avec les données existantes
-        matriculeField.setText(groupe.getMatricule());
-        niveauComboBox.setValue(groupe.getNiveau().getValeur());
 
         // Charger les modules disponibles
         chargerModules();
@@ -91,9 +69,6 @@ public class Modifier_Groupe_Controller {
 
         // Configurer les styles des boutons
         setupButtonStyles();
-
-        // Pré-sélectionner les modules déjà associés au groupe
-        preSelectionnerModules();
     }
 
     private void chargerModules() {
@@ -108,49 +83,14 @@ public class Modifier_Groupe_Controller {
 
             if (modules.isEmpty()) {
                 showAlert("Information", "Aucun module disponible",
-                        "Aucun module n'est disponible pour l'instant.", Alert.AlertType.INFORMATION);
+                        "Aucun module n'est disponible pour l'instant. " +
+                                "Veuillez d'abord créer des modules.", Alert.AlertType.INFORMATION);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Erreur", "Chargement des modules",
                     "Impossible de charger les modules: " + e.getMessage(), Alert.AlertType.ERROR);
-        }
-    }
-
-    private void preSelectionnerModules() {
-        if (groupeAModifier == null) return;
-
-        try {
-            // Charger les modules associés à ce groupe
-            List<Module> modulesAssocies = moduleDAO.findByGroupeId(groupeId);
-
-            // Sélectionner ces modules dans la ListView
-            ObservableList<Module> selectedItems = modulesListView.getSelectionModel().getSelectedItems();
-
-            // D'abord désélectionner tout
-            modulesListView.getSelectionModel().clearSelection();
-
-            // Puis sélectionner les modules associés
-            for (Module module : allModulesList) {
-                for (Module moduleAssocie : modulesAssocies) {
-                    if (module.getId() == moduleAssocie.getId()) {
-                        int index = allModulesList.indexOf(module);
-                        if (index >= 0) {
-                            modulesListView.getSelectionModel().select(index);
-                        }
-                        break;
-                    }
-                }
-            }
-
-            // Rafraîchir l'affichage
-            modulesListView.refresh();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            showAlert("Erreur", "Chargement des modules associés",
-                    "Impossible de charger les modules associés au groupe.", Alert.AlertType.WARNING);
         }
     }
 
@@ -274,7 +214,6 @@ public class Modifier_Groupe_Controller {
             modulesListView.refresh();
         });
     }
-
     private void initialiserStylesListView() {
         // Appliquer le style à la ListView après son initialisation
         Platform.runLater(() -> {
@@ -292,15 +231,17 @@ public class Modifier_Groupe_Controller {
         });
     }
 
+
+
     private void configureEvents() {
         // Action des boutons
-        modifierButton.setOnAction(e -> modifierGroupe());
-        annulerButton.setOnAction(e -> retournerALaListe());
+        ajouterButton.setOnAction(e -> ajouterGroupe());
+        cancelButton.setOnAction(e -> returnToGestionGroupes());
     }
 
     private void setupButtonStyles() {
         // Style pour le bouton Annuler
-        annulerButton.setStyle(
+        cancelButton.setStyle(
                 "-fx-font-family: 'sans-serif';" +
                         "-fx-font-size: 14px;" +
                         "-fx-font-weight: bold;" +
@@ -310,25 +251,21 @@ public class Modifier_Groupe_Controller {
                         "-fx-cursor: hand;"
         );
 
-        // Style initial pour le bouton Modifier
-        modifierButton.setStyle(
+        // Style initial pour le bouton Ajouter
+        ajouterButton.setStyle(
                 "-fx-font-family: 'sans-serif';" +
                         "-fx-font-size: 14px;" +
                         "-fx-font-weight: bold;" +
                         "-fx-text-fill: white;" +
-                        "-fx-background-color: #3b82f6;" + // Bleu pour modification
+                        "-fx-background-color: #10B981;" +
                         "-fx-background-radius: 6;" +
                         "-fx-padding: 8 24;" +
                         "-fx-cursor: hand;" +
                         "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);"
         );
-
-        // Effet hover pour le bouton Modifier
-        modifierButton.setOnMouseEntered(e -> onHoverButton());
-        modifierButton.setOnMouseExited(e -> onExitButton());
     }
 
-    private void modifierGroupe() {
+    private void ajouterGroupe() {
         try {
             // Validation des champs
             if (!validateFields()) {
@@ -339,43 +276,49 @@ public class Modifier_Groupe_Controller {
             String matricule = matriculeField.getText().trim();
             String niveau = niveauComboBox.getValue();
 
-            // Vérifier si le matricule existe déjà (sauf pour le groupe actuel)
-            if (!matricule.equals(groupeAModifier.getMatricule()) &&
-                    groupeDAO.matriculeExists(matricule)) {
+            // Récupérer les modules sélectionnés
+            List<Module> modulesSelectionnes = new ArrayList<>(
+                    modulesListView.getSelectionModel().getSelectedItems()
+            );
+
+            // Vérifier si le matricule existe déjà
+            if (groupeDAO.matriculeExists(matricule)) {
                 showAlert("Erreur", "Matricule déjà utilisé",
                         "Ce matricule de groupe existe déjà.", Alert.AlertType.ERROR);
                 return;
             }
 
-            // Récupérer les modules sélectionnés
-            List<Module> nouveauxModules = new ArrayList<>(
-                    modulesListView.getSelectionModel().getSelectedItems()
-            );
-
             // Récupérer l'id du directeur connecté
             int directeurId = SessionManager.getInstance().getCurrentDirecteur().getId();
 
-            // Mettre à jour l'objet Groupe
-            groupeAModifier.setMatricule(matricule);
-            groupeAModifier.setNiveau(Groupe.Niveau.fromString(niveau));
-            groupeAModifier.setDirecteurId(directeurId);
+            // Créer l'objet Groupe
+            Groupe groupe = new Groupe(
+                    matricule,
+                    Groupe.Niveau.fromString(niveau),
+                    directeurId
+            );
 
-            // Mettre à jour le groupe dans la base de données
-            boolean groupeMisAJour = groupeDAO.update(groupeAModifier);
+            // Sauvegarder le groupe dans la base de données
+            Long groupeId = groupeDAO.create(groupe);
 
-            if (groupeMisAJour) {
-                // Mettre à jour les associations de modules
-                boolean associationsReussies = mettreAJourAssociationsModules(nouveauxModules);
+            if (groupeId != null) {
+                // Associer les modules sélectionnés au groupe
+                boolean associationsReussies = true;
+                for (Module module : modulesSelectionnes) {
+                    if (!moduleDAO.addModuleToGroupe(groupeId.intValue(), module.getId())) {
+                        associationsReussies = false;
+                    }
+                }
 
-                if (associationsReussies) {
+                if (associationsReussies || modulesSelectionnes.isEmpty()) {
                     StringBuilder message = new StringBuilder();
-                    message.append("Le groupe a été modifié avec succès !\n\n");
+                    message.append("Le groupe a été ajouté avec succès !\n\n");
                     message.append("Matricule: ").append(matricule).append("\n");
                     message.append("Niveau: ").append(niveau).append("\n");
 
-                    if (!nouveauxModules.isEmpty()) {
+                    if (!modulesSelectionnes.isEmpty()) {
                         message.append("\nModules associés:\n");
-                        for (Module module : nouveauxModules) {
+                        for (Module module : modulesSelectionnes) {
                             message.append("- ").append(module.getMatricule())
                                     .append(" - ").append(module.getNom()).append("\n");
                         }
@@ -383,19 +326,21 @@ public class Modifier_Groupe_Controller {
                         message.append("\nAucun module associé.");
                     }
 
-                    showAlert("Succès", "Groupe modifié",
+                    showAlert("Succès", "Groupe ajouté",
                             message.toString(), Alert.AlertType.INFORMATION);
 
                     // Retourner à la page GestionGroupes
-                    retournerALaListe();
+                    returnToGestionGroupes();
                 } else {
+                    // Supprimer le groupe si les associations ont échoué
+                    groupeDAO.delete(groupeId.intValue());
                     showAlert("Erreur", "Échec des associations",
-                            "Le groupe a été modifié mais les associations avec les modules ont échoué.",
+                            "Le groupe a été créé mais les associations avec les modules ont échoué.",
                             Alert.AlertType.ERROR);
                 }
             } else {
-                showAlert("Erreur", "Échec de la modification",
-                        "Une erreur est survenue lors de la modification du groupe.",
+                showAlert("Erreur", "Échec de l'ajout",
+                        "Une erreur est survenue lors de l'ajout du groupe.",
                         Alert.AlertType.ERROR);
             }
 
@@ -404,62 +349,6 @@ public class Modifier_Groupe_Controller {
             showAlert("Erreur", "Exception",
                     "Erreur inattendue: " + ex.getMessage(),
                     Alert.AlertType.ERROR);
-        }
-    }
-
-    private boolean mettreAJourAssociationsModules(List<Module> nouveauxModules) {
-        try {
-            // 1. Récupérer les modules actuellement associés
-            List<Module> modulesActuels = moduleDAO.findByGroupeId(groupeId);
-
-            // 2. Identifier les modules à supprimer
-            List<Module> modulesASupprimer = new ArrayList<>();
-            for (Module moduleActuel : modulesActuels) {
-                boolean toujoursPresent = false;
-                for (Module nouveauModule : nouveauxModules) {
-                    if (moduleActuel.getId() == nouveauModule.getId()) {
-                        toujoursPresent = true;
-                        break;
-                    }
-                }
-                if (!toujoursPresent) {
-                    modulesASupprimer.add(moduleActuel);
-                }
-            }
-
-            // 3. Identifier les modules à ajouter
-            List<Module> modulesAAjouter = new ArrayList<>();
-            for (Module nouveauModule : nouveauxModules) {
-                boolean dejaPresent = false;
-                for (Module moduleActuel : modulesActuels) {
-                    if (moduleActuel.getId() == nouveauModule.getId()) {
-                        dejaPresent = true;
-                        break;
-                    }
-                }
-                if (!dejaPresent) {
-                    modulesAAjouter.add(nouveauModule);
-                }
-            }
-
-            // 4. Supprimer les anciennes associations
-            for (Module module : modulesASupprimer) {
-                moduleDAO.removeModuleFromGroupe(groupeId, module.getId());
-            }
-
-            // 5. Ajouter les nouvelles associations
-            boolean toutesAjoutees = true;
-            for (Module module : modulesAAjouter) {
-                if (!moduleDAO.addModuleToGroupe(groupeId, module.getId())) {
-                    toutesAjoutees = false;
-                }
-            }
-
-            return toutesAjoutees;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
         }
     }
 
@@ -482,8 +371,22 @@ public class Modifier_Groupe_Controller {
         return true;
     }
 
+    private void clearForm() {
+        // Réinitialiser les champs texte
+        matriculeField.clear();
+
+        // Réinitialiser les ComboBox
+        niveauComboBox.getSelectionModel().clearSelection();
+
+        // Désélectionner tous les modules
+        modulesListView.getSelectionModel().clearSelection();
+
+        // Remettre le focus sur le premier champ
+        matriculeField.requestFocus();
+    }
+
     // Méthode pour retourner à la page gestionGroupes
-    private void retournerALaListe() {
+    private void returnToGestionGroupes() {
         try {
             StageManager.loadScene("/view/directeur/Gestion_Groupes/gestionGroupes.fxml",
                     "/styles/gestionFormateurs.css", "Groupes");
@@ -496,15 +399,15 @@ public class Modifier_Groupe_Controller {
 
     @FXML
     private void onHoverButton() {
-        modifierButton.setStyle(
+        ajouterButton.setStyle(
                 "-fx-font-family: 'sans-serif';" +
                         "-fx-font-size: 14px;" +
                         "-fx-font-weight: bold;" +
-                        "-fx-text-fill: #3b82f6;" + // Bleu pour modification
+                        "-fx-text-fill: #10B981;" +
                         "-fx-background-color: white;" +
                         "-fx-background-radius: 6;" +
                         "-fx-padding: 8 24;" +
-                        "-fx-border-color: #3b82f6;" +
+                        "-fx-border-color: #10B981;" +
                         "-fx-border-width: 2;" +
                         "-fx-border-radius: 6;" +
                         "-fx-cursor: hand;" +
@@ -517,12 +420,12 @@ public class Modifier_Groupe_Controller {
 
     @FXML
     private void onExitButton() {
-        modifierButton.setStyle(
+        ajouterButton.setStyle(
                 "-fx-font-family: 'sans-serif';" +
                         "-fx-font-size: 14px;" +
                         "-fx-font-weight: bold;" +
                         "-fx-text-fill: white;" +
-                        "-fx-background-color: #3b82f6;" + // Bleu pour modification
+                        "-fx-background-color: #10B981;" +
                         "-fx-background-radius: 6;" +
                         "-fx-padding: 8 24;" +
                         "-fx-cursor: hand;" +
@@ -531,7 +434,7 @@ public class Modifier_Groupe_Controller {
     }
 
     // =====================================================================
-    // ======================= NAVIGATION MENU =============================
+    // ======================= NAVIGATION ==================================
     // =====================================================================
     @FXML
     private void handleHome() {
@@ -539,97 +442,88 @@ public class Modifier_Groupe_Controller {
             StageManager.loadScene("/view/directeur/dashboard.fxml", "/styles/dashboard.css", "Dashboard");
         } catch (IOException e) {
             e.printStackTrace();
-            showAlert("Erreur", "Navigation impossible",
-                    "Impossible de charger le dashboard.", Alert.AlertType.ERROR);
         }
     }
 
     @FXML
     private void handleFormateurs() {
         try {
-            StageManager.loadScene("/view/directeur/Gestion_Formateurs/gestionFormateurs.fxml",
-                    "/styles/gestionFormateurs.css", "Formateurs");
+            StageManager.loadScene("/view/directeur/Gestion_Formateurs/gestionFormateurs.fxml", "/styles/gestionFormateurs.css", "gesttion des Formateurs");
         } catch (IOException e) {
             e.printStackTrace();
-            showAlert("Erreur", "Navigation impossible",
-                    "Impossible de charger la gestion des formateurs.", Alert.AlertType.ERROR);
         }
     }
 
     @FXML
     private void handleEtudiants() {
         try {
-            StageManager.loadScene("/view/directeur/Gestion_Etudiants/gestionEtudiants.fxml",
-                    "/styles/gestionFormateurs.css", "Étudiants");
+            StageManager.loadScene("/view/directeur/Gestion_Etudiants/gestionEtudiants.fxml", "/styles/gestionFormateurs.css", "gestion des Etudiants");
         } catch (IOException e) {
             e.printStackTrace();
-            showAlert("Erreur", "Navigation impossible",
-                    "Impossible de charger la gestion des étudiants.", Alert.AlertType.ERROR);
         }
     }
 
     @FXML
     private void handleGroupes() {
-        retournerALaListe();
+        try {
+            StageManager.loadScene("/view/directeur/Gestion_Groupes/gestionGroupes.fxml", "/styles/gestionFormateurs.css", "gestion des Groupes");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void handleModules() {
         try {
-            StageManager.loadScene("/view/directeur/gestionModules.fxml",
-                    "/styles/gestionModules.css", "Modules");
+            StageManager.loadScene("/view/directeur/Gestion_Modules/gestionModules.fxml", "/styles/gestionFormateurs.css", "gestion des Modules");
         } catch (IOException e) {
             e.printStackTrace();
-            showAlert("Erreur", "Navigation impossible",
-                    "Impossible de charger la gestion des modules.", Alert.AlertType.ERROR);
         }
     }
 
     @FXML
     private void handleNotes() {
-        try {
-            StageManager.loadScene("/view/directeur/gestionNotes.fxml",
-                    "/styles/gestionNotes.css", "Notes");
-        } catch (IOException e) {
-            e.printStackTrace();
-            showAlert("Erreur", "Navigation impossible",
-                    "Impossible de charger la gestion des notes.", Alert.AlertType.ERROR);
-        }
+        showAlert("Notes", "Gestion des notes",
+                "Cette fonctionnalité sera disponible prochainement.",
+                Alert.AlertType.INFORMATION);
     }
 
     @FXML
     private void handleCertificats() {
         try {
-            StageManager.loadScene("/view/directeur/gestionCertificats.fxml",
-                    "/styles/gestionCertificats.css", "Certificats");
+            StageManager.loadScene("/view/directeur/Gestion_Planning/PlanningSemaine.fxml", "/styles/gestionFormateurs.css", "Planning");
         } catch (IOException e) {
             e.printStackTrace();
-            showAlert("Erreur", "Navigation impossible",
-                    "Impossible de charger la gestion des certificats.", Alert.AlertType.ERROR);
         }
     }
 
     @FXML
     private void handleLogout() {
-        Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmAlert.setTitle("Confirmation");
-        confirmAlert.setHeaderText("Déconnexion");
-        confirmAlert.setContentText("Êtes-vous sûr de vouloir vous déconnecter ?");
-
-        confirmAlert.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.OK) {
-                SessionManager.getInstance().clearSession();
-                try {
-                    StageManager.loadScene("/view/login_register.fxml",
-                            "/styles/auth.css", "Connexion");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    showAlert("Erreur", "Déconnexion impossible",
-                            "Impossible de charger la page de connexion.", Alert.AlertType.ERROR);
-                }
-            }
-        });
+        System.out.println("Déconnexion demandée");
+        SessionManager.getInstance().clearSession();
+        redirectToLogin();
     }
+
+    private void redirectToLogin() {
+        try {
+            StageManager.loadScene("/view/login_register.fxml", "/styles/auth.css", "Connexion");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleProfilDirecteur() {
+        try {
+            StageManager.loadScene("/view/directeur/profilDirecteur.fxml",
+                    "/styles/profil.css", "Mon Profil - Directeur");
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Erreur", "Navigation impossible",
+                    "Impossible d'ouvrir la page profil.", Alert.AlertType.ERROR);
+        }
+    }
+
 
     private void showAlert(String title, String header, String content, Alert.AlertType type) {
         Alert alert = new Alert(type);

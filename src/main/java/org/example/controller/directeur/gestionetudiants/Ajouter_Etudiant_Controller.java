@@ -1,4 +1,4 @@
-package org.example.controller;
+package org.example.controller.directeur.gestionetudiants;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -482,7 +482,7 @@ public class Ajouter_Etudiant_Controller {
     }
 
     // =====================================================================
-    // ======================= NAVIGATION MENU =============================
+    // ======================= NAVIGATION ==================================
     // =====================================================================
     @FXML
     private void handleHome() {
@@ -490,96 +490,86 @@ public class Ajouter_Etudiant_Controller {
             StageManager.loadScene("/view/directeur/dashboard.fxml", "/styles/dashboard.css", "Dashboard");
         } catch (IOException e) {
             e.printStackTrace();
-            showAlert("Erreur", "Navigation impossible",
-                    "Impossible de charger le dashboard.", Alert.AlertType.ERROR);
         }
     }
 
     @FXML
     private void handleFormateurs() {
         try {
-            StageManager.loadScene("/view/directeur/Gestion_Formateurs/gestionFormateurs.fxml",
-                    "/styles/gestionFormateurs.css", "Formateurs");
+            StageManager.loadScene("/view/directeur/Gestion_Formateurs/gestionFormateurs.fxml", "/styles/gestionFormateurs.css", "gesttion des Formateurs");
         } catch (IOException e) {
             e.printStackTrace();
-            showAlert("Erreur", "Navigation impossible",
-                    "Impossible de charger la gestion des formateurs.", Alert.AlertType.ERROR);
         }
     }
 
     @FXML
     private void handleEtudiants() {
-        returnToGestionEtudiants();
+        try {
+            StageManager.loadScene("/view/directeur/Gestion_Etudiants/gestionEtudiants.fxml", "/styles/gestionFormateurs.css", "gestion des Etudiants");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void handleGroupes() {
         try {
-            StageManager.loadScene("/view/directeur/gestionGroupes.fxml",
-                    "/styles/gestionGroupes.css", "Groupes");
+            StageManager.loadScene("/view/directeur/Gestion_Groupes/gestionGroupes.fxml", "/styles/gestionFormateurs.css", "gestion des Groupes");
         } catch (IOException e) {
             e.printStackTrace();
-            showAlert("Erreur", "Navigation impossible",
-                    "Impossible de charger la gestion des groupes.", Alert.AlertType.ERROR);
         }
     }
 
     @FXML
     private void handleModules() {
         try {
-            StageManager.loadScene("/view/directeur/gestionModules.fxml",
-                    "/styles/gestionModules.css", "Modules");
+            StageManager.loadScene("/view/directeur/Gestion_Modules/gestionModules.fxml", "/styles/gestionFormateurs.css", "gestion des Modules");
         } catch (IOException e) {
             e.printStackTrace();
-            showAlert("Erreur", "Navigation impossible",
-                    "Impossible de charger la gestion des modules.", Alert.AlertType.ERROR);
         }
     }
 
     @FXML
     private void handleNotes() {
-        try {
-            StageManager.loadScene("/view/directeur/gestionNotes.fxml",
-                    "/styles/gestionNotes.css", "Notes");
-        } catch (IOException e) {
-            e.printStackTrace();
-            showAlert("Erreur", "Navigation impossible",
-                    "Impossible de charger la gestion des notes.", Alert.AlertType.ERROR);
-        }
+        showAlert("Notes", "Gestion des notes",
+                "Cette fonctionnalité sera disponible prochainement.",
+                Alert.AlertType.INFORMATION);
     }
 
     @FXML
     private void handleCertificats() {
         try {
-            StageManager.loadScene("/view/directeur/gestionCertificats.fxml",
-                    "/styles/gestionCertificats.css", "Certificats");
+            StageManager.loadScene("/view/directeur/Gestion_Planning/PlanningSemaine.fxml", "/styles/gestionFormateurs.css", "Planning");
         } catch (IOException e) {
             e.printStackTrace();
-            showAlert("Erreur", "Navigation impossible",
-                    "Impossible de charger la gestion des certificats.", Alert.AlertType.ERROR);
         }
     }
 
     @FXML
     private void handleLogout() {
-        Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmAlert.setTitle("Confirmation");
-        confirmAlert.setHeaderText("Déconnexion");
-        confirmAlert.setContentText("Êtes-vous sûr de vouloir vous déconnecter ?");
+        System.out.println("Déconnexion demandée");
+        SessionManager.getInstance().clearSession();
+        redirectToLogin();
+    }
 
-        confirmAlert.showAndWait().ifPresent(response -> {
-            if (response == ButtonType.OK) {
-                SessionManager.getInstance().clearSession();
-                try {
-                    StageManager.loadScene("/view/login_register.fxml",
-                            "/styles/auth.css", "Connexion");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    showAlert("Erreur", "Déconnexion impossible",
-                            "Impossible de charger la page de connexion.", Alert.AlertType.ERROR);
-                }
-            }
-        });
+    private void redirectToLogin() {
+        try {
+            StageManager.loadScene("/view/login_register.fxml", "/styles/auth.css", "Connexion");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleProfilDirecteur() {
+        try {
+            StageManager.loadScene("/view/directeur/profilDirecteur.fxml",
+                    "/styles/profil.css", "Mon Profil - Directeur");
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Erreur", "Navigation impossible",
+                    "Impossible d'ouvrir la page profil.", Alert.AlertType.ERROR);
+        }
     }
 
     private void showAlert(

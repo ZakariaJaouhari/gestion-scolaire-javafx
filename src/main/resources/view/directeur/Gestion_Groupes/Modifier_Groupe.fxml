@@ -12,7 +12,7 @@
 <?import javafx.geometry.Insets?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.controller.Modifier_Groupe_Controller"
+            fx:controller="org.example.controller.directeur.gestiongroupes.Modifier_Groupe_Controller"
             prefHeight="400.0" prefWidth="600.0">
 
 
@@ -167,7 +167,7 @@
             </HBox>
 
             <!-- Directeur -->
-            <HBox alignment="CENTER_LEFT" spacing="5">
+            <HBox alignment="CENTER_LEFT" spacing="5" onMouseClicked="#handleProfilDirecteur">
                 <ImageView fitWidth="48" fitHeight="40">
                     <image>
                         <Image url="/images/profil.png"/>

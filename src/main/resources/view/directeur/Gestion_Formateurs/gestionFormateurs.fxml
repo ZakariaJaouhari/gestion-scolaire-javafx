@@ -10,7 +10,7 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.controller.gestionFormateurs_Controller"
+            fx:controller="org.example.controller.directeur.gestionformateurs.gestionFormateurs_Controller"
             prefHeight="600.0" prefWidth="900.0">
 
     <VBox style="-fx-background-color: #142b77; -fx-background-radius: 0 40 40 0;"
@@ -164,7 +164,7 @@
             </HBox>
 
             <!-- Directeur -->
-            <HBox alignment="CENTER_LEFT" spacing="5">
+            <HBox alignment="CENTER_LEFT" spacing="5" onMouseClicked="#handleProfilDirecteur">
                 <ImageView fitWidth="48" fitHeight="40">
                     <image>
                         <Image url="/images/profil.png"/>

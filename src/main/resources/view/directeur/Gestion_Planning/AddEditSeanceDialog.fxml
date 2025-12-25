@@ -8,7 +8,7 @@
 <?import javafx.scene.image.Image?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.controller.AddEditSeanceDialogController"
+            fx:controller="org.example.controller.directeur.gestionplannings.AddEditSeanceDialogController"
             prefWidth="500" prefHeight="600"
             style="-fx-background-color: #f8f9fa;">
 
@@ -51,7 +51,7 @@
             </HBox>
 
             <!-- ETUDIANTS -->
-            <HBox alignment="CENTER_LEFT" style=" -fx-padding: 12 0 12 30;" onMouseClicked="#handleStagiaires">
+            <HBox alignment="CENTER_LEFT" style=" -fx-padding: 12 0 12 30;" onMouseClicked="#handleEtudiants">
 
                 <ImageView fitWidth="30" fitHeight="30">
                     <image>
@@ -162,7 +162,7 @@
             </HBox>
 
             <!-- Directeur -->
-            <HBox alignment="CENTER_LEFT" spacing="5">
+            <HBox alignment="CENTER_LEFT" spacing="5" onMouseClicked="#handleProfilDirecteur">
                 <ImageView fitWidth="48" fitHeight="40">
                     <image>
                         <Image url="/images/profil.png"/>

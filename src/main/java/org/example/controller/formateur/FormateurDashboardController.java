@@ -1,12 +1,8 @@
-package org.example.controller;
+package org.example.controller.formateur;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -25,7 +21,6 @@ import org.example.util.StageManager;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.YearMonth;
-import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.Locale;
 
@@ -58,27 +53,6 @@ public class FormateurDashboardController {
 
     private YearMonth currentYearMonth;
     private FormateurDAO formateurDAO;
-   // private ObservableList<Examen> examensList;
-
-    /* Classe interne pour les examens
-    public static class Examen {
-        private String groupe;
-        private String module;
-        private String date;
-        private String heure;
-
-        public Examen(String groupe, String module, String date, String heure) {
-            this.groupe = groupe;
-            this.module = module;
-            this.date = date;
-            this.heure = heure;
-        }
-
-        public String getGroupe() { return groupe; }
-        public String getModule() { return module; }
-        public String getDate() { return date; }
-        public String getHeure() { return heure; }
-    }*/
 
     @FXML
     public void initialize() {
@@ -377,36 +351,56 @@ public class FormateurDashboardController {
     // Méthodes de navigation
     @FXML
     private void handleHome() {
-        // Reste sur la même page
-        System.out.println("Home clicked");
+        try {
+            StageManager.loadScene("/view/formateur/dashboardF.fxml", "/styles/dashboardF.css", "Planning");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void handleProfile() {
-        System.out.println("Profile clicked");
-        // Rediriger vers la page profil
-        // StageManager.loadScene("/view/formateur/profile.fxml", ...);
+        try {
+            StageManager.loadScene("/view/formateur/profilFormateur.fxml", "/styles/gestionFormateurs.css", "Profil");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void handleGroupes() {
-        System.out.println("Groupes clicked");
-        // Rediriger vers la page groupes
-        // StageManager.loadScene("/view/formateur/groupes.fxml", ...);
+        try {
+            StageManager.loadScene("/view/formateur/groupesFormateur.fxml", "/styles/gestionFormateurs.css", "Groupes");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void handleModules() {
-        System.out.println("Modules clicked");
-        // Rediriger vers la page modules
-        // StageManager.loadScene("/view/formateur/modules.fxml", ...);
+        try {
+            StageManager.loadScene("/view/formateur/modulesFormateur.fxml", "/styles/gestionFormateurs.css", "Modules");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void handleNotes() {
-        System.out.println("Notes clicked");
-        // Rediriger vers la page notes
-        // StageManager.loadScene("/view/formateur/notes.fxml", ...);
+        try {
+            StageManager.loadScene("/view/formateur/saisieNotes.fxml", "/styles/gestionFormateurs.css", "Notes");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleEmploiDuTemps() {
+        try {
+            StageManager.loadScene("/view/formateur/planningFormateur.fxml", "/styles/gestionFormateurs.css", "Planning");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -442,6 +436,5 @@ public class FormateurDashboardController {
     }
 
 
-        public void handleEmploiDuTemps(MouseEvent mouseEvent) {
-    }
+
 }
