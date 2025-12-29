@@ -148,8 +148,11 @@ public class SaisieNotesController {
     @FXML
     public void initialize() {
         SessionManager session = SessionManager.getInstance();
+        Formateur formateur = session.getCurrentFormateur();
         if (session.isLoggedIn()) {
-            nomEcoleLabel.setText(session.getNomEcole());
+            DirecteurDAO DirecteurDAO = new DirecteurDAO();
+            String nomEcole = DirecteurDAO.getNomEcoleByDirecteurId(formateur.getDirecteurId());
+            nomEcoleLabel.setText(nomEcole);
             formateurConnecte = session.getCurrentFormateur();
             if (formateurConnecte != null) {
                 nomFormateurLabel.setText(formateurConnecte.getNomComplet());
@@ -566,6 +569,7 @@ public class SaisieNotesController {
         showAlert("Succès", "Sauvegarde terminée",
                 String.format("%d notes sauvegardées, %d erreurs.", succes, erreurs),
                 Alert.AlertType.INFORMATION);
+
 
         // Rafraîchir l'affichage pour montrer les IDs mis à jour
         notesTable.refresh();

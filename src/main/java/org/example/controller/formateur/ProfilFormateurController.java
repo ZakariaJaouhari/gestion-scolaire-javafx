@@ -5,6 +5,7 @@ import javafx.scene.control.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.example.dao.DirecteurDAO;
 import org.example.dao.FormateurDAO;
 import org.example.model.Formateur;
 import org.example.util.SessionManager;
@@ -49,8 +50,11 @@ public class ProfilFormateurController {
 
         // --- HEADER ----
         SessionManager session = SessionManager.getInstance();
+        Formateur formateur = session.getCurrentFormateur();
         if (session.isLoggedIn()) {
-            nomEcoleLabel.setText(session.getNomEcole());
+            DirecteurDAO DirecteurDAO = new DirecteurDAO();
+            String nomEcole = DirecteurDAO.getNomEcoleByDirecteurId(formateur.getDirecteurId());
+            nomEcoleLabel.setText(nomEcole);
 
             // Récupérer le formateur connecté
             formateurConnecte = session.getCurrentFormateur();

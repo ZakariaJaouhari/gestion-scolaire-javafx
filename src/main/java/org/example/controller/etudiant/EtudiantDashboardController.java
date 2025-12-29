@@ -44,23 +44,7 @@ public class EtudiantDashboardController {
     private Label examensCountLabel;
     @FXML
     private Label modulesCountLabel;
-    @FXML
-    private ImageView profileImageView;
 
-    @FXML
-    private TableView<Note> notesTable;
-    @FXML
-    private TableColumn<Note, String> moduleColumn;
-    @FXML
-    private TableColumn<Note, Double> noteColumn;
-    @FXML
-    private TableColumn<Note, String> dateNoteColumn;
-    @FXML
-    private TableColumn<Note, Integer> coefficientColumn;
-
-    //@FXML private ListView<String> examensListView;
-    @FXML
-    private Label aucunExamenLabel;
 
     @FXML
     private Label monthYearLabel;
@@ -73,7 +57,7 @@ public class EtudiantDashboardController {
     private EtudiantDAO etudiantDAO;
     private GroupeDAO groupeDAO;
     private DirecteurDAO directeurDAO;
-    private ObservableList<Note> notesList;
+
 
 
     // Classe interne pour les notes
@@ -156,18 +140,9 @@ public class EtudiantDashboardController {
         // Initialiser les statistiques
         loadStats();
 
-        // Initialiser la table des notes
-        initializeNotesTable();
-
         // Initialiser le calendrier
         updateCalendar();
 
-        // Initialiser la liste des examens
-        //initializeExamensList();
-
-        // Charger les données
-        loadNotes();
-        //loadExamens();
     }
 
     private void updateUserInfo(Object currentUser) {
@@ -202,79 +177,6 @@ public class EtudiantDashboardController {
         modulesCountLabel.setText("6");
     }
 
-    private void initializeNotesTable() {
-        notesList = FXCollections.observableArrayList();
-        notesTable.setItems(notesList);
-
-        // Configurer les colonnes
-        moduleColumn.setCellValueFactory(new PropertyValueFactory<>("module"));
-        noteColumn.setCellValueFactory(new PropertyValueFactory<>("note"));
-        dateNoteColumn.setCellValueFactory(new PropertyValueFactory<>("date"));
-        coefficientColumn.setCellValueFactory(new PropertyValueFactory<>("coefficient"));
-
-        // Formatter la colonne note
-        noteColumn.setCellFactory(column -> new TableCell<Note, Double>() {
-            @Override
-            protected void updateItem(Double item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                } else {
-                    setText(String.format("%.2f/20", item));
-
-                    // Colorier selon la note
-                    if (item >= 16) {
-                        setStyle("-fx-text-fill: #059669; -fx-font-weight: bold;");
-                    } else if (item >= 10) {
-                        setStyle("-fx-text-fill: #3b82f6;");
-                    } else {
-                        setStyle("-fx-text-fill: #ef4444;");
-                    }
-                }
-            }
-        });
-    }
-
-    /*private void initializeExamensList() {
-        examensListView.setItems(FXCollections.observableArrayList());
-    }*/
-
-    private void loadNotes() {
-        // Données d'exemple - À remplacer par des appels DAO réels
-        notesList.add(new Note("Programmation Java", 17.5, "2024-03-10", 3));
-        notesList.add(new Note("Base de données", 14.0, "2024-03-12", 2));
-        notesList.add(new Note("Algorithmique", 12.5, "2024-03-15", 2));
-        notesList.add(new Note("Systèmes d'exploitation", 16.0, "2024-03-18", 1));
-
-        // Calculer la moyenne
-        double sommeNotes = 0;
-        int sommeCoefficients = 0;
-
-        for (Note note : notesList) {
-            sommeNotes += note.getNote() * note.getCoefficient();
-            sommeCoefficients += note.getCoefficient();
-        }
-
-        if (sommeCoefficients > 0) {
-            double moyenne = sommeNotes / sommeCoefficients;
-            moyenneLabel.setText(String.format("%.2f", moyenne));
-        }
-    }
-
-    /*private void loadExamens() {
-        // Données d'exemple - À remplacer par des appels DAO réels
-        ObservableList<String> examens = FXCollections.observableArrayList(
-                "📝 Culture et techniques numérique - 2024-03-25 14:30",
-                "📝 Bureautique - 2024-04-02 08:30",
-                "📝 Programmation Web - 2024-04-10 10:00"
-        );
-
-        examensListView.setItems(examens);
-        examensCountLabel.setText(String.valueOf(examens.size()));
-
-        // Afficher/masquer le label "aucun examen"
-        aucunExamenLabel.setVisible(examens.isEmpty());
-    }*/
 
     // ========== CALENDRIER ==========
     private void updateCalendar() {
@@ -392,9 +294,11 @@ public class EtudiantDashboardController {
 
     @FXML
     private void handleNotes() {
-        System.out.println("Mes Notes clicked");
-        // Rediriger vers la page des notes
-        // StageManager.loadScene("/view/etudiant/notes.fxml", ...);
+        try {
+            StageManager.loadScene("/view/etudiant/espaceNotes.fxml", "/styles/gestionFormateurs.css", "Notes");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -421,7 +325,7 @@ public class EtudiantDashboardController {
     private void handleProfil() {
         try {
             StageManager.loadScene("/view/etudiant/profilEtudiant.fxml",
-                    "/styles/profil.css", "Mon Profil");
+                    "/styles/gestionFormateurs.css", "Mon Profil");
         } catch (IOException e) {
             e.printStackTrace();
         }

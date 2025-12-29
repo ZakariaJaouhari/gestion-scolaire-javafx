@@ -431,9 +431,11 @@ public class PlanningEtudiantController {
 
     @FXML
     private void handleNotes() {
-        System.out.println("Mes Notes clicked");
-        // Rediriger vers la page des notes
-        // StageManager.loadScene("/view/etudiant/notes.fxml", ...);
+        try {
+            StageManager.loadScene("/view/etudiant/espaceNotes.fxml", "/styles/gestionFormateurs.css", "Notes");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -460,7 +462,7 @@ public class PlanningEtudiantController {
     private void handleProfil() {
         try {
             StageManager.loadScene("/view/etudiant/profilEtudiant.fxml",
-                    "/styles/profil.css", "Mon Profil");
+                    "/styles/gestionFormateurs.css", "Mon Profil");
         } catch (IOException e) {
             e.printStackTrace();
         }

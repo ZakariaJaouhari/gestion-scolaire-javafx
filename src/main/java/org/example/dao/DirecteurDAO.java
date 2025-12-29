@@ -169,6 +169,8 @@ public class DirecteurDAO {
         directeur.setId(rs.getInt("id"));
         directeur.setNomDirecteur(rs.getString("nom_directeur"));
         directeur.setNomEcole(rs.getString("nom_ecole"));
+        directeur.setAcademie(rs.getString("academie"));
+        directeur.setDirection(rs.getString("direction"));
         directeur.setEmail(rs.getString("email"));
         directeur.setPassword(rs.getString("password"));
         return directeur;

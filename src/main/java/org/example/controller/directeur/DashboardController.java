@@ -15,11 +15,18 @@ import javafx.scene.text.FontWeight;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.format.TextStyle;
+import java.util.List;
 import java.util.Locale;
 import java.io.IOException;
+import java.util.Map;
 
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.example.dao.EtudiantDAO;
+import org.example.dao.FormateurDAO;
+import org.example.dao.GroupeDAO;
+import org.example.dao.ModuleDAO;
+import org.example.model.Directeur;
 import org.example.util.SessionManager;
 import org.example.util.StageManager;
 
@@ -114,14 +121,28 @@ public class DashboardController {
     }
 
     private void initializeStatistics() {
-        // Données d'exemple (remplacer par vos vraies données)
-        nombreFormateursLabel.setText("12");
-        nombreStagiairesLabel.setText("150");
-        nombreGroupesLabel.setText("8");
-        nombreTotalGroupesLabel.setText("8");
+        SessionManager session = SessionManager.getInstance();
+        Directeur directeur = session.getCurrentDirecteur();
+        int directeurId = directeur.getId();
 
-        totalHommesLabel.setText("85");
-        totalFemmesLabel.setText("65");
+        EtudiantDAO etudiantDAO = new EtudiantDAO();
+        FormateurDAO formateurDAO = new FormateurDAO();
+        GroupeDAO groupeDAO = new GroupeDAO();
+
+        // Récupérer les statistiques
+        int nbEtudiants = etudiantDAO.countByDirecteurId(directeurId);
+        int nbFormateurs = formateurDAO.countByDirecteurId(directeurId);
+        int nbGroupes = groupeDAO.countByDirecteurId(directeurId);
+        int nbHommes = etudiantDAO.countHommesByDirecteurId(directeurId);
+        int nbFemmes = etudiantDAO.countFemmesByDirecteurId(directeurId);
+
+        // Mettre à jour les labels
+        nombreStagiairesLabel.setText(String.valueOf(nbEtudiants));
+        nombreFormateursLabel.setText(String.valueOf(nbFormateurs));
+        nombreGroupesLabel.setText(String.valueOf(nbGroupes));
+        nombreTotalGroupesLabel.setText(String.valueOf(nbGroupes)); // Même valeur
+        totalHommesLabel.setText(String.valueOf(nbHommes));
+        totalFemmesLabel.setText(String.valueOf(nbFemmes));
     }
 
     @SuppressWarnings("unchecked")
@@ -132,54 +153,107 @@ public class DashboardController {
             barChart.setLegendVisible(false);
             barChart.setAnimated(true);
 
-            // Cacher les axes
-            xAxis.setTickLabelsVisible(false);
-            xAxis.setTickMarkVisible(false);
-            xAxis.setOpacity(0);
+            // Afficher les labels de l'axe X (pour les matricules)
+            xAxis.setTickLabelsVisible(true);
+            xAxis.setTickMarkVisible(true);
+            xAxis.setOpacity(1);
+            xAxis.setTickLabelFont(javafx.scene.text.Font.font(10)); // Taille de police
 
+            // Cacher les labels de l'axe Y
             yAxis.setTickLabelsVisible(false);
             yAxis.setTickMarkVisible(false);
             yAxis.setOpacity(0);
 
-            // Données d'exemple pour les groupes
-            String[] groupes = {"Groupe 1", "Groupe 2", "Groupe 3", "Groupe 4", "Groupe 5"};
-            int[] hommes = {20, 15, 25, 18, 7};
-            int[] femmes = {15, 20, 10, 12, 18};
-            int[] modules = {6, 5, 7, 5, 4};
-            int[] formateurs = {2, 3, 2, 1, 4};
+            // Récupérer les données réelles depuis la base
+            SessionManager session = SessionManager.getInstance();
+            Directeur directeur = session.getCurrentDirecteur();
 
-            // Créer les séries
-            XYChart.Series<String, Number> seriesHommes = new XYChart.Series<>();
-            seriesHommes.setName("Hommes");
-
-            XYChart.Series<String, Number> seriesFemmes = new XYChart.Series<>();
-            seriesFemmes.setName("Femmes");
-
-            XYChart.Series<String, Number> seriesModules = new XYChart.Series<>();
-            seriesModules.setName("Modules");
-
-            XYChart.Series<String, Number> seriesFormateurs = new XYChart.Series<>();
-            seriesFormateurs.setName("Formateurs");
-
-            // Ajouter les données
-            for (int i = 0; i < groupes.length; i++) {
-                seriesHommes.getData().add(new XYChart.Data<>(groupes[i], hommes[i]));
-                seriesFemmes.getData().add(new XYChart.Data<>(groupes[i], femmes[i]));
-                seriesModules.getData().add(new XYChart.Data<>(groupes[i], modules[i]));
-                seriesFormateurs.getData().add(new XYChart.Data<>(groupes[i], formateurs[i]));
+            if (directeur == null) {
+                System.err.println("❌ Directeur non connecté");
+                return;
             }
 
-            // Ajouter les séries au graphique
-            barChart.getData().addAll(seriesHommes, seriesFemmes, seriesModules, seriesFormateurs);
+            // Récupérer les statistiques des étudiants par groupe
+            EtudiantDAO etudiantDAO = new EtudiantDAO();
+            Map<String, Object> statsEtudiants = etudiantDAO.getStatistiquesParGroupe(directeur.getId());
 
-            // Appliquer les couleurs après le rendu
-            applyChartColors();
+            // Récupérer les statistiques des modules par groupe
+            ModuleDAO moduleDAO = new ModuleDAO();
+            Map<String, Object> statsModules = moduleDAO.getStatistiquesModulesParGroupe(directeur.getId());
 
-            System.out.println("✅ Graphique initialisé avec 4 séries");
+            // Vérifier si on a des données
+            List<String> groupes = (List<String>) statsEtudiants.get("groupes");
+            List<Integer> hommes = (List<Integer>) statsEtudiants.get("hommes");
+            List<Integer> femmes = (List<Integer>) statsEtudiants.get("femmes");
+            List<Integer> modules = (List<Integer>) statsModules.get("modules");
+            List<Integer> formateurs = (List<Integer>) statsModules.get("formateurs");
+
+            if (groupes == null || groupes.isEmpty()) {
+                System.out.println("⚠️ Aucun groupe trouvé pour ce directeur");
+                // Utiliser des données d'exemple temporaires
+                String[] groupesExemple = {"Aucun groupe"};
+                int[] hommesExemple = {0};
+                int[] femmesExemple = {0};
+                int[] modulesExemple = {0};
+                int[] formateursExemple = {0};
+
+                createChartSeriesWithMatricules(groupesExemple, hommesExemple, femmesExemple, modulesExemple, formateursExemple);
+                return;
+            }
+
+            // Convertir les listes en tableaux pour le graphique
+            String[] groupesArray = groupes.toArray(new String[0]);
+            int[] hommesArray = hommes.stream().mapToInt(i -> i).toArray();
+            int[] femmesArray = femmes.stream().mapToInt(i -> i).toArray();
+            int[] modulesArray = modules.stream().mapToInt(i -> i).toArray();
+            int[] formateursArray = formateurs.stream().mapToInt(i -> i).toArray();
+
+            // Créer les séries avec les données réelles
+            createChartSeriesWithMatricules(groupesArray, hommesArray, femmesArray, modulesArray, formateursArray);
+
+            System.out.println("✅ Graphique initialisé avec données réelles");
+            System.out.println("   Groupes: " + groupes.size());
+            System.out.println("   Total hommes: " + hommes.stream().mapToInt(i -> i).sum());
+            System.out.println("   Total femmes: " + femmes.stream().mapToInt(i -> i).sum());
 
         } catch (Exception e) {
             System.err.println("❌ Erreur initialisation graphique: " + e.getMessage());
+            e.printStackTrace();
         }
+    }
+
+    private void createChartSeriesWithMatricules(String[] matricules, int[] hommes, int[] femmes, int[] modules, int[] formateurs) {
+        // Créer les séries
+        XYChart.Series<String, Number> seriesHommes = new XYChart.Series<>();
+        seriesHommes.setName("Hommes");
+
+        XYChart.Series<String, Number> seriesFemmes = new XYChart.Series<>();
+        seriesFemmes.setName("Femmes");
+
+        XYChart.Series<String, Number> seriesModules = new XYChart.Series<>();
+        seriesModules.setName("Modules");
+
+        XYChart.Series<String, Number> seriesFormateurs = new XYChart.Series<>();
+        seriesFormateurs.setName("Formateurs");
+
+        // Utiliser directement les matricules comme catégories
+        for (int i = 0; i < matricules.length; i++) {
+            seriesHommes.getData().add(new XYChart.Data<>(matricules[i], hommes[i]));
+            seriesFemmes.getData().add(new XYChart.Data<>(matricules[i], femmes[i]));
+            seriesModules.getData().add(new XYChart.Data<>(matricules[i], modules[i]));
+            seriesFormateurs.getData().add(new XYChart.Data<>(matricules[i], formateurs[i]));
+        }
+
+        // Ajouter les séries au graphique
+        barChart.getData().addAll(seriesHommes, seriesFemmes, seriesModules, seriesFormateurs);
+
+        // Personnaliser l'affichage de l'axe X
+        xAxis.setTickLabelRotation(0);
+        xAxis.setTickLabelGap(5);
+        xAxis.setTickLabelFont(Font.font("System", FontWeight.BOLD, 11));
+
+        // Appliquer les couleurs
+        applyChartColors();
     }
 
     private void applyChartColors() {
@@ -331,8 +405,11 @@ public class DashboardController {
     // ========== NAVIGATION MENU ==========
     @FXML
     private void handleHome() {
-        System.out.println("Navigation: Home");
-        // Déjà sur la page home
+        try {
+            StageManager.loadScene("/view/directeur/dashboard.fxml", "/styles/dashboard.css", "Dashboard");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML

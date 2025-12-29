@@ -242,7 +242,7 @@ public class GroupeDAO {
     }
 
     // Compter par directeur
-    public int countByDirecteurId(Long directeurId) {
+    public int countByDirecteurId(int directeurId) {
         String sql = "SELECT COUNT(*) as total FROM groupes WHERE directeur_id = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {

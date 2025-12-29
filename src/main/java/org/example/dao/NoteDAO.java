@@ -403,7 +403,7 @@ public class NoteDAO {
             stmt.setDouble(1, note.getNote());
             stmt.setString(2, note.getAppreciation());
             stmt.setString(3, note.getObservation());
-            stmt.setInt(5, note.getId());
+            stmt.setInt(4, note.getId());
 
             int affectedRows = stmt.executeUpdate();
             return affectedRows > 0;

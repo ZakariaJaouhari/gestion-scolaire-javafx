@@ -452,9 +452,12 @@ public class Ajouter_Module_Controller {
 
     @FXML
     private void handleNotes() {
-        showAlert("Notes", "Gestion des notes",
-                "Cette fonctionnalité sera disponible prochainement.",
-                Alert.AlertType.INFORMATION);
+        try {
+            StageManager.loadScene("/view/directeur/gestionNotesDirecteur.fxml",
+                    "/styles/gestionFormateurs.css", "Gestion des Notes");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML

@@ -19,6 +19,7 @@ import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.layout.properties.TextAlignment;
 import com.itextpdf.layout.properties.UnitValue;
 import com.itextpdf.layout.properties.VerticalAlignment;
+import com.sun.javafx.font.FontFactory;
 import org.example.dao.DirecteurDAO;
 import org.example.dao.EtudiantDAO;
 import org.example.dao.GroupeDAO;
@@ -27,6 +28,7 @@ import org.example.model.Directeur;
 import org.example.model.Etudiant;
 import org.example.model.Groupe;
 
+import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -138,6 +140,7 @@ public class BulletinPDFService {
                 String academie = directeur.getAcademie() != null ? directeur.getAcademie() : "None";
                 Paragraph academiePara = new Paragraph("Académie : " + academie)
                         .setFontSize(10)
+                        .setBold()
                         .setMarginBottom(2);
                 leftCell.add(academiePara);
 
@@ -145,6 +148,7 @@ public class BulletinPDFService {
                 String direction = directeur.getDirection() != null ? directeur.getDirection() : "None";
                 Paragraph directionPara = new Paragraph("Direction : " + direction)
                         .setFontSize(10)
+                        .setBold()
                         .setMarginBottom(2);
                 leftCell.add(directionPara);
             } else {
@@ -238,31 +242,46 @@ public class BulletinPDFService {
     }
 
     private void addTitleSection(Document document) {
-        // Titre avec bordure basse
-        Paragraph title = new Paragraph("BULLETIN DE NOTES")
-                .setFontSize(18)
-                .setBold()
-                .setTextAlignment(TextAlignment.CENTER)
-                .setMarginBottom(3);
 
-        // Ajouter une bordure basse
-        Table borderTable = new Table(1);
-        borderTable.setWidth(UnitValue.createPercentValue(100));
+        try {
+            PdfFont timesNewRomanBold = PdfFontFactory.createFont("Times-Bold");
+            // Titre avec bordure basse
+            Paragraph title = new Paragraph("BULLETIN DE NOTES")
+                    .setFont(timesNewRomanBold)
+                    .setFontSize(18)
+                    .setTextAlignment(TextAlignment.CENTER);
 
-        Cell titleCell = new Cell();
-        titleCell.setBorder(Border.NO_BORDER);
-        titleCell.add(title);
-        borderTable.addCell(titleCell);
+            // Ajouter une bordure basse
+            Table borderTable = new Table(1);
+            borderTable.setWidth(UnitValue.createPercentValue(100));
 
-        Cell borderCell = new Cell();
-        borderCell.setBorderBottom(new SolidBorder(1));
-        borderCell.setHeight(10);
-        borderCell.setBorderTop(Border.NO_BORDER);
-        borderCell.setBorderLeft(Border.NO_BORDER);
-        borderCell.setBorderRight(Border.NO_BORDER);
-        borderTable.addCell(borderCell);
+            Cell titleCell = new Cell();
+            titleCell.setBorder(Border.NO_BORDER);
+            titleCell.add(title);
+            borderTable.addCell(titleCell);
 
-        document.add(borderTable);
+            Cell borderCell = new Cell();
+            borderCell.setBorderBottom(new SolidBorder(1));
+            borderCell.setHeight(7);
+            borderCell.setBorderTop(Border.NO_BORDER);
+            borderCell.setBorderLeft(Border.NO_BORDER);
+            borderCell.setBorderRight(Border.NO_BORDER);
+            borderTable.addCell(borderCell);
+
+            document.add(borderTable);
+
+        } catch (IOException e) {
+            // Fallback: utiliser une police par défaut
+            e.printStackTrace();
+            Paragraph title = new Paragraph("BULLETIN DE NOTES")
+                    .setFontSize(18)
+                    .setBold()
+                    .setTextAlignment(TextAlignment.CENTER)
+                    .setMarginBottom(3);
+
+        }
+
+
     }
 
     private void addStudentInfo(Document document, Etudiant etudiant, Groupe groupe) {
@@ -273,18 +292,18 @@ public class BulletinPDFService {
         // Ajouter une bordure basse à tout le tableau
         infoTable.setBorderBottom(new SolidBorder(1));
 
-        // Colonne gauche
+        // Colonne gauche - largeur fixe pour le contenu
         Cell leftCell = new Cell();
         leftCell.setBorder(Border.NO_BORDER);
         leftCell.setPaddingBottom(10);
         leftCell.setPaddingTop(10);
+        leftCell.setWidth(UnitValue.createPercentValue(80));
 
-        // Établissement - Récupéré du directeur
+        // Établissement
         String nomEcole = "N/A";
         if (directeur != null && directeur.getNomEcole() != null) {
             nomEcole = directeur.getNomEcole();
         }
-
 
         leftCell.add(new Paragraph("Nom : " + etudiant.getNom())
                 .setFontSize(11)
@@ -304,17 +323,21 @@ public class BulletinPDFService {
 
         infoTable.addCell(leftCell);
 
-        // Colonne droite
+        // Colonne droite - largeur fixe pour aligner le texte
         Cell rightCell = new Cell();
         rightCell.setBorder(Border.NO_BORDER);
         rightCell.setPaddingBottom(10);
         rightCell.setPaddingTop(10);
+        rightCell.setWidth(UnitValue.createPercentValue(20));
 
-        rightCell.add(new Paragraph("")
-                .setFontSize(11)); // Espacement
+        // Espacement pour aligner avec la première ligne de gauche
+        rightCell.add(new Paragraph(" ")
+                .setFontSize(11));
+
         rightCell.add(new Paragraph("Né le : " + formatDate(etudiant.getDateNaissance()))
                 .setFontSize(11)
                 .setMarginTop(5));
+
         rightCell.add(new Paragraph("CIN : " + (etudiant.getCin() != null ? etudiant.getCin() : "N/A"))
                 .setFontSize(11)
                 .setMarginTop(5));
@@ -332,7 +355,6 @@ public class BulletinPDFService {
 
         document.add(infoTable);
     }
-
     private void addNotesTable(Document document, NoteDAO.BulletinResultat bulletin) {
         if (bulletin == null || bulletin.getModuleNotes() == null || bulletin.getModuleNotes().isEmpty()) {
             Paragraph noNotes = new Paragraph("Aucune matière assignée")
@@ -537,24 +559,30 @@ public class BulletinPDFService {
 
         document.add(signatureText);
 
-        // Ligne "DIRECTEUR D'ETABLISSEMENT"
-        Table directorTable = new Table(1);
-        directorTable.setWidth(UnitValue.createPercentValue(100));
-        directorTable.setHorizontalAlignment(HorizontalAlignment.CENTER);
-        directorTable.setMarginTop(5);
 
-        Cell directorCell = new Cell();
-        directorCell.setWidth(180);
-        directorCell.setPaddingBottom(3);
+        // Créer une ligne avec le texte "DIRECTEUR D'ETABLISSEMENT" souligné
+        Table signatureTable = new Table(1);
+        signatureTable.setWidth(UnitValue.createPercentValue(100));
+        signatureTable.setHorizontalAlignment(HorizontalAlignment.CENTER);
+        signatureTable.setMarginTop(3);
 
-        Paragraph directorText = new Paragraph("DIRECTEUR D'ETABLISSEMENT")
+        // Cellule sans bordure avec texte centré
+        Cell signatureCell = new Cell();
+        signatureCell.setBorder(Border.NO_BORDER); // Pas de bordure
+        signatureCell.setPaddingBottom(3);
+        signatureCell.setHorizontalAlignment(HorizontalAlignment.CENTER);
+
+        // Paragraphe avec texte souligné
+        Paragraph directeurText = new Paragraph("DIRECTEUR D'ETABLISSEMENT")
                 .setFontSize(11)
-                .setTextAlignment(TextAlignment.CENTER);
+                .setBold()
+                .setTextAlignment(TextAlignment.CENTER)
+                .setUnderline(); // Souligner le texte
 
-        directorCell.add(directorText);
-        directorTable.addCell(directorCell);
+        signatureCell.add(directeurText);
+        signatureTable.addCell(signatureCell);
 
-        document.add(directorTable);
+        document.add(signatureTable);
     }
 
     // Méthodes utilitaires

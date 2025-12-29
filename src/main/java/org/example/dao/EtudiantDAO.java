@@ -5,11 +5,10 @@ import org.example.model.Groupe;
 import org.example.util.DatabaseConnection;
 
 import java.sql.*;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class EtudiantDAO {
 
@@ -52,13 +51,20 @@ public class EtudiantDAO {
         return null;
     }
 
-    // Trouver par ID
     public Optional<Etudiant> findById(int id) {
-        String sql = "SELECT * FROM etudiant WHERE id = ?";
+        String sql = """
+        SELECT e.*, 
+               g.id AS g_id, 
+               g.matricule AS g_matricule, 
+               g.niveau AS g_niveau, 
+               g.directeur_id AS g_directeur_id
+        FROM etudiant e
+        LEFT JOIN groupes g ON e.groupe_id = g.id
+        WHERE e.id = ?
+    """;
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, id);
-
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return Optional.of(mapResultSetToEtudiant(rs));
@@ -68,6 +74,7 @@ public class EtudiantDAO {
         }
         return Optional.empty();
     }
+
 
     // Trouver par CIN
     public Optional<Etudiant> findByCin(String cin) {
@@ -86,13 +93,20 @@ public class EtudiantDAO {
         return Optional.empty();
     }
 
-    // Trouver par email
     public Optional<Etudiant> findByEmail(String email) {
-        String sql = "SELECT * FROM etudiant WHERE email = ?";
+        String sql = """
+        SELECT e.*, 
+               g.id AS g_id, 
+               g.matricule AS g_matricule, 
+               g.niveau AS g_niveau, 
+               g.directeur_id AS g_directeur_id
+        FROM etudiant e
+        LEFT JOIN groupes g ON e.groupe_id = g.id
+        WHERE e.email = ?
+    """;
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, email);
-
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return Optional.of(mapResultSetToEtudiant(rs));
@@ -102,6 +116,7 @@ public class EtudiantDAO {
         }
         return Optional.empty();
     }
+
 
     // Authentifier un étudiant
     public Optional<Etudiant> authenticate(String email, String password) {
@@ -161,7 +176,17 @@ public class EtudiantDAO {
     // Trouver par groupe
     public List<Etudiant> findByGroupeId(int groupeId) {
         List<Etudiant> etudiants = new ArrayList<>();
-        String sql = "SELECT * FROM etudiant WHERE groupe_id = ? ORDER BY nom, prenom";
+        String sql = """
+        SELECT e.*, 
+               g.id AS g_id, 
+               g.matricule AS g_matricule, 
+               g.niveau AS g_niveau, 
+               g.directeur_id AS g_directeur_id
+        FROM etudiant e
+        LEFT JOIN groupes g ON e.groupe_id = g.id
+        WHERE e.groupe_id = ? 
+        ORDER BY e.nom, e.prenom
+        """;
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, groupeId);
@@ -266,12 +291,39 @@ public class EtudiantDAO {
         return 0;
     }
 
-    // Compter par sexe
-    public int countBySexe(Etudiant.Sexe sexe) {
-        String sql = "SELECT COUNT(*) as total FROM etudiant WHERE sexe = ?";
+    // Compter le nombre d'hommes pour un directeur
+    public int countHommesByDirecteurId(int directeurId) {
+        String sql = """
+        SELECT COUNT(*) as total 
+        FROM etudiant e
+        JOIN groupes g ON e.groupe_id = g.id
+        WHERE e.sexe = 'HOMME' AND g.directeur_id = ?
+        """;
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, sexe.getValeur());
+            stmt.setInt(1, directeurId);
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    // Compter le nombre de femmes pour un directeur
+    public int countFemmesByDirecteurId(int directeurId) {
+        String sql = """
+        SELECT COUNT(*) as total 
+        FROM etudiant e
+        JOIN groupes g ON e.groupe_id = g.id
+        WHERE e.sexe = 'FEMME' AND g.directeur_id = ?
+        """;
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, directeurId);
 
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -384,19 +436,62 @@ public class EtudiantDAO {
         return stats;
     }
 
-    // Méthode utilitaire pour mapper ResultSet à Etudiant
+
+
+    public Map<String, Object> getStatistiquesParGroupe(int directeurId) {
+        Map<String, Object> stats = new HashMap<>();
+        String sql = """
+        SELECT 
+            g.id as groupe_id,
+            g.matricule as groupe_matricule,  
+            COUNT(e.id) as total_etudiants,
+            SUM(CASE WHEN e.sexe = 'HOMME' THEN 1 ELSE 0 END) as hommes,
+            SUM(CASE WHEN e.sexe = 'FEMME' THEN 1 ELSE 0 END) as femmes
+        FROM groupes g
+        LEFT JOIN etudiant e ON g.id = e.groupe_id
+        WHERE g.directeur_id = ?
+        GROUP BY g.id, g.matricule
+        ORDER BY g.matricule
+        """;
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, directeurId);
+            ResultSet rs = stmt.executeQuery();
+
+            List<String> groupes = new ArrayList<>();
+            List<String> matricules = new ArrayList<>();  // <-- Liste des matricules
+            List<Integer> hommes = new ArrayList<>();
+            List<Integer> femmes = new ArrayList<>();
+
+            while (rs.next()) {
+                String matricule = rs.getString("groupe_matricule");
+                matricules.add(matricule);
+                groupes.add(matricule); // Utiliser le matricule comme nom de groupe
+                hommes.add(rs.getInt("hommes"));
+                femmes.add(rs.getInt("femmes"));
+            }
+
+            stats.put("groupes", groupes);
+            stats.put("matricules", matricules);  // <-- Ajouter les matricules
+            stats.put("hommes", hommes);
+            stats.put("femmes", femmes);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return stats;
+    }
+
     private Etudiant mapResultSetToEtudiant(ResultSet rs) throws SQLException {
         Etudiant etudiant = new Etudiant();
 
         etudiant.setId(rs.getInt("id"));
         etudiant.setNom(rs.getString("nom"));
         etudiant.setPrenom(rs.getString("prenom"));
-
         Date dateNaissance = rs.getDate("date_naissance");
         if (dateNaissance != null) {
             etudiant.setDateNaissance(dateNaissance.toLocalDate());
         }
-
         etudiant.setCin(rs.getString("CIN"));
         etudiant.setSexe(Etudiant.Sexe.fromString(rs.getString("sexe")));
         etudiant.setGroupeId(rs.getInt("groupe_id"));
@@ -404,24 +499,21 @@ public class EtudiantDAO {
         etudiant.setPassword(rs.getString("password"));
         etudiant.setDirecteurId(rs.getInt("directeur_id"));
 
-        // 🔐 Mapper le groupe UNIQUEMENT si jointure présente
-        try {
-            rs.findColumn("g_id");
-
+        // Mapper le groupe si présent
+        int gId = rs.getInt("g_id");
+        if (!rs.wasNull()) {
             Groupe groupe = new Groupe();
-            groupe.setId(rs.getInt("g_id"));
+            groupe.setId(gId);
             groupe.setMatricule(rs.getString("g_matricule"));
             groupe.setNiveau(Groupe.Niveau.fromString(rs.getString("g_niveau")));
             groupe.setDirecteurId(rs.getInt("g_directeur_id"));
-
             etudiant.setGroupe(groupe);
-
-        } catch (SQLException ignored) {
-            // Aucun JOIN groupe → normal (login, findByEmail, etc.)
+        } else {
             etudiant.setGroupe(null);
         }
 
         return etudiant;
     }
+
 
 }

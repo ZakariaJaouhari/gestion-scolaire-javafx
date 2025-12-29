@@ -128,22 +128,6 @@ public class FormateurDAO {
         return null;
     }
 
-    // Trouver par matricule
-    public Optional<Formateur> findByMatricule(String matricule) {
-        String sql = "SELECT * FROM formateurs WHERE matricule = ?";
-
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, matricule);
-
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return Optional.of(mapResultSetToFormateur(rs));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return Optional.empty();
-    }
 
     // Trouver par email
     public Optional<Formateur> findByEmail(String email) {
@@ -162,39 +146,7 @@ public class FormateurDAO {
         return Optional.empty();
     }
 
-    // Trouver par CIN
-    public Optional<Formateur> findByCin(String cin) {
-        String sql = "SELECT * FROM formateurs WHERE CIN = ?";
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, cin);
-
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return Optional.of(mapResultSetToFormateur(rs));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return Optional.empty();
-    }
-
-    // Trouver tous les formateurs
-    public List<Formateur> findAll() {
-        List<Formateur> formateurs = new ArrayList<>();
-        String sql = "SELECT * FROM formateurs ORDER BY nom, prenom";
-
-        try (Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-
-            while (rs.next()) {
-                formateurs.add(mapResultSetToFormateur(rs));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return formateurs;
-    }
 
     // Trouver par directeur
     public List<Formateur> findByDirecteurId(int directeurId) {
@@ -214,46 +166,13 @@ public class FormateurDAO {
         return formateurs;
     }
 
-    // Trouver par sexe
-    public List<Formateur> findBySexe(Formateur.Sexe sexe) {
-        List<Formateur> formateurs = new ArrayList<>();
-        String sql = "SELECT * FROM formateurs WHERE sexe = ? ORDER BY nom, prenom";
-
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, sexe.getValeur());
-
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                formateurs.add(mapResultSetToFormateur(rs));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return formateurs;
-    }
 
     // Compter tous les formateurs
-    public int countAll() {
-        String sql = "SELECT COUNT(*) as total FROM formateurs";
-
-        try (Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-
-            if (rs.next()) {
-                return rs.getInt("total");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return 0;
-    }
-
-    // Compter par sexe
-    public int countBySexe(Formateur.Sexe sexe) {
-        String sql = "SELECT COUNT(*) as total FROM formateurs WHERE sexe = ?";
+    public int countByDirecteurId(int directeurId) {
+        String sql = "SELECT COUNT(*) as total FROM formateurs WHERE directeur_id = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, sexe.getValeur());
+            stmt.setLong(1, directeurId);
 
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
@@ -313,28 +232,68 @@ public class FormateurDAO {
         return false;
     }
 
-    // Rechercher par nom ou prénom
-    public List<Formateur> searchByName(String keyword) {
-        List<Formateur> formateurs = new ArrayList<>();
-        String sql = "SELECT * FROM formateurs WHERE nom LIKE ? OR prenom LIKE ? " +
-                "OR CONCAT(prenom, ' ', nom) LIKE ? ORDER BY nom, prenom";
+
+    public int countModules(int formateurId) {
+        String sql = "SELECT COUNT(*) as total FROM modules WHERE formateur_id = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            String searchTerm = "%" + keyword + "%";
-            stmt.setString(1, searchTerm);
-            stmt.setString(2, searchTerm);
-            stmt.setString(3, searchTerm);
+            stmt.setLong(1, formateurId);
 
             ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                formateurs.add(mapResultSetToFormateur(rs));
+            if (rs.next()) {
+                return rs.getInt("total");
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return formateurs;
+        return 0;
     }
 
+    public int countGroupes(int formateurId) {
+        String sql = """
+        SELECT COUNT(DISTINCT gngm.groupe_id) as total
+        FROM new_groupe_new_module gngm
+        JOIN modules m ON gngm.module_id = m.id
+        WHERE m.formateur_id = ?
+        """;
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, formateurId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("total");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int countStagiaires(int formateurId) {
+        String sql = """
+        SELECT COUNT(DISTINCT e.id) as total
+        FROM etudiant e
+        JOIN groupes g ON e.groupe_id = g.id
+        JOIN new_groupe_new_module gngm ON g.id = gngm.groupe_id
+        JOIN modules m ON gngm.module_id = m.id
+        WHERE m.formateur_id = ?
+        """;
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, formateurId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("total");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 
     public Formateur findByModuleAndGroupe(int moduleId, int groupeId) {
         String sql = """

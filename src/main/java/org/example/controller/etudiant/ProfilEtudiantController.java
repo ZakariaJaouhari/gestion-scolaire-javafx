@@ -10,6 +10,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.example.dao.DirecteurDAO;
 import org.example.dao.EtudiantDAO;
 import org.example.model.Etudiant;
 import org.example.util.SessionManager;
@@ -56,14 +57,19 @@ public class ProfilEtudiantController {
         // --- HEADER ----
         SessionManager session = SessionManager.getInstance();
         if (session.isLoggedIn()) {
-            nomEcoleLabel.setText(session.getNomEcole());
 
             // Récupérer l'étudiant connecté
             etudiantConnecte = session.getCurrentEtudiant();
             if (etudiantConnecte != null) {
                 nomEtudiantLabel.setText(etudiantConnecte.getNom() + " " + etudiantConnecte.getPrenom());
 
-                // Charger les informations complètes de l'étudiant depuis la base
+                if (etudiantConnecte.getDirecteurId() > 0) {
+                    DirecteurDAO DirecteurDAO = new DirecteurDAO();
+                    String nomEcole = DirecteurDAO.getNomEcoleByDirecteurId(etudiantConnecte.getDirecteurId());
+                    nomEcoleLabel.setText(nomEcole);
+                } else {
+                    nomEcoleLabel.setText("École non spécifiée");
+                }
                 chargerInformationsEtudiant();
             }
         }
@@ -109,8 +115,13 @@ public class ProfilEtudiantController {
                 } else {
                     groupeLabel.setText("Non assigné");
                 }
+
+                System.out.println("Étudiant cin: " + etudiant.getCin());
+                System.out.println("Étudiant groupe: " + etudiant.getGroupe().getMatricule());
             }
         }
+
+
     }
 
     private void configurerValidationMotDePasse() {
@@ -249,9 +260,11 @@ public class ProfilEtudiantController {
 
     @FXML
     private void handleNotes() {
-        System.out.println("Mes Notes clicked");
-        // Rediriger vers la page des notes
-        // StageManager.loadScene("/view/etudiant/notes.fxml", ...);
+        try {
+            StageManager.loadScene("/view/etudiant/espaceNotes.fxml", "/styles/gestionFormateurs.css", "Notes");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -278,7 +291,7 @@ public class ProfilEtudiantController {
     private void handleProfil() {
         try {
             StageManager.loadScene("/view/etudiant/profilEtudiant.fxml",
-                    "/styles/profil.css", "Mon Profil");
+                    "/styles/gestionFormateurs.css", "Mon Profil");
         } catch (IOException e) {
             e.printStackTrace();
         }

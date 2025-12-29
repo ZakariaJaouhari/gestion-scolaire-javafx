@@ -693,7 +693,8 @@ public class PlanningSemaineController {
     @FXML
     private void handleNotes() {
         try {
-            StageManager.loadScene("/view/directeur/gestionNotes.fxml", "/styles/gestionNotes.css", "Notes");
+            StageManager.loadScene("/view/directeur/gestionNotesDirecteur.fxml",
+                    "/styles/gestionFormateurs.css", "Gestion des Notes");
         } catch (IOException e) {
             e.printStackTrace();
         }

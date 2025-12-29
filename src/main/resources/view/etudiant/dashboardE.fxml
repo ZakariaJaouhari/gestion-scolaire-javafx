@@ -196,22 +196,9 @@ mise en place de nouvelles méthodes de gestion scolaire."
         <!-- TABLEAU DE BORD ÉTUDIANT -->
         <HBox style="-fx-padding: 40 40 40 165;" spacing="40">
 
-            <!-- NOTES RÉCENTES -->
-            <VBox prefWidth="800" style="-fx-background-color: white; -fx-background-radius: 30; -fx-padding: 24;">
-                <Label text="Mes Notes Récentes" style="-fx-font-size: 24; -fx-font-weight: bold; -fx-padding: 0 0 20 0;"/>
-
-                <TableView fx:id="notesTable" prefHeight="300">
-                    <columns>
-                        <TableColumn text="Module" prefWidth="200" fx:id="moduleColumn"/>
-                        <TableColumn text="Note" prefWidth="100" fx:id="noteColumn"/>
-                        <TableColumn text="Date" prefWidth="150" fx:id="dateNoteColumn"/>
-                        <TableColumn text="Coefficient" prefWidth="100" fx:id="coefficientColumn"/>
-                    </columns>
-                </TableView>
-            </VBox>
 
             <!-- CALENDRIER -->
-            <VBox prefWidth="490" style="-fx-background-color: white; -fx-background-radius: 30; -fx-padding: 20;">
+            <VBox prefWidth="490" alignment="CENTER_RIGHT" style="-fx-background-color: white; -fx-background-radius: 30; -fx-padding: 20;">
 
                 <HBox alignment="CENTER">
                     <Button text="&lt;" onAction="#previousMonth" style="-fx-background-color: transparent; -fx-font-size: 20;"/>

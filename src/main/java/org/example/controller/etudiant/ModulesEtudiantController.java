@@ -65,12 +65,9 @@ public class ModulesEtudiantController {
             if (etudiantConnecte != null) {
                 nomEtudiantLabel.setText(etudiantConnecte.getNom() + " " + etudiantConnecte.getPrenom());
                 if (etudiantConnecte.getDirecteurId() > 0) {
-                    Optional<Directeur> directeur = directeurDAO.findById(etudiantConnecte.getDirecteurId());
-                    if (directeur.isPresent() && directeur.get().getNomEcole() != null) {
-                        nomEcoleLabel.setText(directeur.get().getNomEcole());
-                    } else {
-                        nomEcoleLabel.setText("École non spécifiée");
-                    }
+                    DirecteurDAO DirecteurDAO = new DirecteurDAO();
+                    String nomEcole = DirecteurDAO.getNomEcoleByDirecteurId(etudiantConnecte.getDirecteurId());
+                    nomEcoleLabel.setText(nomEcole);
                 } else {
                     nomEcoleLabel.setText("École non spécifiée");
                 }
@@ -301,9 +298,11 @@ public class ModulesEtudiantController {
 
     @FXML
     private void handleNotes() {
-        System.out.println("Mes Notes clicked");
-        // Rediriger vers la page des notes
-        // StageManager.loadScene("/view/etudiant/notes.fxml", ...);
+        try {
+            StageManager.loadScene("/view/etudiant/espaceNotes.fxml", "/styles/gestionFormateurs.css", "Notes");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -330,7 +329,7 @@ public class ModulesEtudiantController {
     private void handleProfil() {
         try {
             StageManager.loadScene("/view/etudiant/profilEtudiant.fxml",
-                    "/styles/profil.css", "Mon Profil");
+                    "/styles/gestionFormateurs.css", "Mon Profil");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -357,9 +356,14 @@ public class ModulesEtudiantController {
         alert.setHeaderText(header);
         alert.setContentText(content);
 
-        Stage stage = (Stage) nomEcoleLabel.getScene().getWindow();
-        alert.initOwner(stage);
-        alert.initModality(Modality.WINDOW_MODAL);
+        // Ne pas crash si la scène n'est pas encore affichée
+        if (nomEcoleLabel.getScene() != null && nomEcoleLabel.getScene().getWindow() != null) {
+            Stage stage = (Stage) nomEcoleLabel.getScene().getWindow();
+            alert.initOwner(stage);
+            alert.initModality(Modality.WINDOW_MODAL);
+        }
+
         alert.showAndWait();
     }
+
 }

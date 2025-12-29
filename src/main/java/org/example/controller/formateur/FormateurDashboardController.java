@@ -112,15 +112,12 @@ public class FormateurDashboardController {
     }
 
     private void loadStats() {
+        SessionManager session = SessionManager.getInstance();
+        Formateur formateur = session.getCurrentFormateur();
         // Charger les statistiques depuis la base de données
-        // modulesCountLabel.setText(String.valueOf(formateurDAO.countModules()));
-        // stagiairesCountLabel.setText(formateurDAO.countStagiaires() + "/" + formateurDAO.totalStagiaires());
-        // groupesCountLabel.setText(String.valueOf(formateurDAO.countGroupes()));
-
-        // Données temporaires
-        modulesCountLabel.setText("4");
-        stagiairesCountLabel.setText("2/9");
-        groupesCountLabel.setText("4");
+        modulesCountLabel.setText(String.valueOf(formateurDAO.countModules(formateur.getId())));
+        stagiairesCountLabel.setText(String.valueOf(formateurDAO.countStagiaires(formateur.getId())));
+        groupesCountLabel.setText(String.valueOf(formateurDAO.countGroupes(formateur.getId())));
     }
 
     /*private void initializeExamensTable() {

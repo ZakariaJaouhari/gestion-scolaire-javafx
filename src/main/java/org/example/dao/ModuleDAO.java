@@ -7,10 +7,9 @@ import org.example.model.Module;
 import org.example.util.DatabaseConnection;
 
 import java.sql.*;
+import java.sql.Date;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class ModuleDAO {
 
@@ -386,5 +385,46 @@ public class ModuleDAO {
             e.printStackTrace();
         }
         return null;
+    }
+
+
+
+
+    public Map<String, Object> getStatistiquesModulesParGroupe(int directeurId) {
+        Map<String, Object> stats = new HashMap<>();
+        String sql = """
+        SELECT 
+            g.id as groupe_id,
+            g.matricule as groupe_nom,
+            COUNT(DISTINCT m.id) as nombre_modules,
+            COUNT(DISTINCT f.id) as nombre_formateurs
+        FROM groupes g
+        LEFT JOIN new_groupe_new_module gm ON g.id = gm.groupe_id
+        LEFT JOIN modules m ON gm.module_id = m.id
+        LEFT JOIN formateurs f ON m.formateur_id = f.id
+        WHERE g.directeur_id = ?
+        GROUP BY g.id, g.matricule
+        ORDER BY g.matricule
+        """;
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, directeurId);
+            ResultSet rs = stmt.executeQuery();
+
+            List<Integer> modules = new ArrayList<>();
+            List<Integer> formateurs = new ArrayList<>();
+
+            while (rs.next()) {
+                modules.add(rs.getInt("nombre_modules"));
+                formateurs.add(rs.getInt("nombre_formateurs"));
+            }
+
+            stats.put("modules", modules);
+            stats.put("formateurs", formateurs);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return stats;
     }
 }

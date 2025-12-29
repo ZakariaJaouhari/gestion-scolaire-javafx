@@ -546,22 +546,47 @@ public class GestionNotesDirecteurController {
         notesTable.refresh();
     }
 
-    // ======================= NAVIGATION ==================================
+    // ========== NAVIGATION MENU ==========
     @FXML
     private void handleHome() {
         try {
-            StageManager.loadScene("/view/directeur/dashboardD.fxml",
-                    "/styles/dashboard.css", "Dashboard Directeur");
+            StageManager.loadScene("/view/directeur/dashboard.fxml", "/styles/dashboard.css", "Dashboard");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     @FXML
-    private void handleProfile() {
+    private void handleFormateurs() {
         try {
-            StageManager.loadScene("/view/directeur/profilDirecteur.fxml",
-                    "/styles/profil.css", "Mon Profil");
+            StageManager.loadScene("/view/directeur/Gestion_Formateurs/gestionFormateurs.fxml", "/styles/gestionFormateurs.css", "gesttion des Formateurs");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleEtudiants() {
+        try {
+            StageManager.loadScene("/view/directeur/Gestion_Etudiants/gestionEtudiants.fxml", "/styles/gestionFormateurs.css", "gestion des Etudiants");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleGroupes() {
+        try {
+            StageManager.loadScene("/view/directeur/Gestion_Groupes/gestionGroupes.fxml", "/styles/gestionFormateurs.css", "gestion des Groupes");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleModules() {
+        try {
+            StageManager.loadScene("/view/directeur/Gestion_Modules/gestionModules.fxml", "/styles/gestionFormateurs.css", "gestion des Modules");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -569,12 +594,31 @@ public class GestionNotesDirecteurController {
 
     @FXML
     private void handleNotes() {
-        // Déjà sur la page
+        try {
+            StageManager.loadScene("/view/directeur/gestionNotesDirecteur.fxml",
+                    "/styles/gestionFormateurs.css", "Gestion des Notes");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void handleCertificats() {
+        try {
+            StageManager.loadScene("/view/directeur/Gestion_Planning/PlanningSemaine.fxml", "/styles/gestionFormateurs.css", "gestion des Modules");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
     private void handleLogout() {
+        System.out.println("Déconnexion demandée");
         SessionManager.getInstance().clearSession();
+        redirectToLogin();
+    }
+
+    private void redirectToLogin() {
         try {
             StageManager.loadScene("/view/login_register.fxml", "/styles/auth.css", "Connexion");
         } catch (IOException e) {

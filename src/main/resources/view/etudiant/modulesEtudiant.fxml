@@ -30,7 +30,7 @@
             </HBox>
 
             <!-- PROFIL -->
-            <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 0 12 30;" onMouseClicked="#handleProfile">
+            <HBox alignment="CENTER_LEFT" style="-fx-padding: 12 0 12 30;" onMouseClicked="#handleProfil">
                 <ImageView fitWidth="30" fitHeight="30">
                     <image><Image url="@../../images/stagiaire.png"/></image>
                 </ImageView>
